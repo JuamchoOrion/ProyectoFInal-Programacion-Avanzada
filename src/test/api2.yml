@@ -5,14 +5,11 @@ info:
   description: >
     API para gestión de alojamientos, reservas y comentarios.
     Roles: USER, HOST. Autenticación con JWT (Bearer).
-
 servers:
   - url: http://localhost:8080/api
     description: Servidor local de desarrollo
-
 security:
   - BearerAuth: []
-
 tags:
   - name: Auth
     description: Autenticación y recuperación de contraseñas

@@ -17,11 +17,6 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     private final UserService userService;
 
-    @PostMapping
-    public ResponseEntity<ResponseDTO<String>> create(@Valid @RequestBody CreateUserDTO userDTO) throws Exception{
-        userService.create(userDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO<>(false, "El registro ha sido exitoso"));
-    }
 
     @GetMapping("/{id}")
     public ResponseEntity<ResponseDTO<UserDTO>> get(@PathVariable String id) throws Exception{
@@ -46,5 +41,6 @@ public class UserController {
         userService.edit(id, userDTO);
         return ResponseEntity.ok(new ResponseDTO<>(false, "El usuario ha sido actualizado"));
     }
+
 
 }

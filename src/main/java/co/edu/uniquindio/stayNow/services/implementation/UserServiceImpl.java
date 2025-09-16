@@ -39,7 +39,7 @@ public class UserServiceImpl implements UserService {
                 .phone(userDTO.phone())
                 .role(userDTO.role())
                 .dateBirth(userDTO.dateBirth())
-                .photoUrl(userDTO.photoUrl())
+                //.photoUrl(userDTO.photoUrl())
                 .password(encode(userDTO.password())) // 🔑 cifrado
                 .createdAt(LocalDateTime.now())
                 .status(UserStatus.ACTIVE)
