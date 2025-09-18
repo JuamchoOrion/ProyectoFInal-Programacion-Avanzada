@@ -18,7 +18,10 @@ public class Reservation {
     private LocalDateTime checkOut;
     private int guestsNumber;
     private Double totalPrice;
+    //Many To One
     private User guest;
+
     private ReservationStatus reservationStatus;
+    //Many To One
     private Accommodation accommodation;
 }
