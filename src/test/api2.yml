@@ -706,6 +706,94 @@ paths:
               example:
                 error: "Service Unavailable"
                 message: "El servicio de alojamientos no está disponible temporalmente"
+
+  /accommodations/{id}/reservations:
+    get:
+      tags:
+        - Accommodations
+      summary: Ver reservas para un alojamiento específico (filtros por fechas y estado)
+      operationId: listAccommodationReservations
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID del alojamiento
+        - name: from
+          in: query
+          schema:
+            type: string
+            format: date
+          description: Fecha inicial del rango
+        - name: to
+          in: query
+          schema:
+            type: string
+            format: date
+          description: Fecha final del rango
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [ PENDING, CONFIRMED, CANCELLED, COMPLETED ]
+          description: Filtrar reservas por estado
+      responses:
+        '200':
+          description: Lista de reservas del alojamiento
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Reservation'
+              example:
+                - id: 5001
+                  accommodationId: 101
+                  userId: 1
+                  checkIn: "2025-09-15"
+                  checkOut: "2025-09-20"
+                  guests: 2
+                  totalPrice: 1250000
+                  status: "CONFIRMED"
+        '400':
+          description: Parámetros inválidos (ej. rango de fechas incorrecto o estado no permitido)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: No autorizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Prohibido (el usuario no es el dueño del alojamiento ni administrador)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Alojamiento no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Filtros no procesables o inconsistentes
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
     post:
       tags:
         - Accommodations
@@ -1019,7 +1107,7 @@ paths:
               example:
                 error: "Service Unavailable"
                 message: "El servicio de alojamientos no está disponible temporalmente"
-    patch:
+    delete:
       tags:
         - Accommodations
       summary: Soft-delete de alojamiento (marcar como DELETED) — solo si no hay reservas futuras
@@ -1033,14 +1121,9 @@ paths:
           schema:
             type: integer
       responses:
-        '200':
-          description: Alojamiento marcado como DELETED
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SuccessMessage'
-              example:
-                message: "Alojamiento marcado como DELETED"
+        '204':
+          description: Alojamiento eliminado con éxito (sin contenido)
+
         '400':
           description: No se puede eliminar (reservas futuras)
           content:
@@ -1135,14 +1218,14 @@ paths:
                   city: "Cartagena"
                   pricePerNight: 250000
                   maxGuests: 4
-                  status: "ACTIVE"
+                  averageRating: 3.5
                 - id: 201
                   hostId: 5
                   title: "Casa de descanso"
                   city: "Santa Marta"
                   pricePerNight: 350000
                   maxGuests: 8
-                  status: "ACTIVE"
+                  averageRating: 4
         '400':
           description: Parámetro hostId inválido
           content:
@@ -1278,7 +1361,7 @@ paths:
     get:
       tags:
         - Reservations
-      summary: Listar reservas del usuario autenticado o admin (con filtros)
+      summary: Listar reservas del usuario autenticado  (con filtros)
       operationId: listReservations
       security:
         - BearerAuth: []
@@ -1613,7 +1696,8 @@ paths:
                   - id: 900
                     reservationId: 5001
                     accommodationId: 101
-                    userId: 1
+                    userName: Laura
+                    imageUrl: "img1.jpg"
                     rating: 5
                     text: "Excelente lugar, muy limpio"
                     createdAt: "2025-09-21T10:15:00Z"
@@ -1732,7 +1816,7 @@ paths:
         '500':
           description: Error interno del servidor
 
-  /comments/{id}/reply:
+  /acommodations/{id}/comments/{idComment}/reply:
     post:
       tags:
         - Comments
@@ -1776,67 +1860,9 @@ paths:
         '500':
           description: Error interno del servidor
 
-  /hosts/{hostId}/reservations:
-    get:
-      tags:
-        - Hosts
-      summary: Ver reservas para los alojamientos de un anfitrión (filtros)
-      operationId: listHostReservations
-      security:
-        - BearerAuth: []
-      parameters:
-        - name: hostId
-          in: path
-          required: true
-          schema:
-            type: integer
-        - name: from
-          in: query
-          schema:
-            type: string
-            format: date
-        - name: to
-          in: query
-          schema:
-            type: string
-            format: date
-        - name: status
-          in: query
-          schema:
-            type: string
-            enum: [ PENDING, CONFIRMED, CANCELLED, COMPLETED ]
-      responses:
-        '200':
-          description: Lista de reservas de los alojamientos del host
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Reservation'
-              example:
-                - id: 5001
-                  accommodationId: 101
-                  userId: 1
-                  checkIn: "2025-09-15"
-                  checkOut: "2025-09-20"
-                  guests: 2
-                  totalPrice: 1250000
-                  status: "CONFIRMED"
-        '400':
-          description: Parámetros inválidos (ej. rango de fechas incorrecto o estado no permitido)
-        '401':
-          description: No autorizado
-        '403':
-          description: Prohibido (el usuario no tiene permisos para ver reservas de este host)
-        '404':
-          description: Host no encontrado
-        '422':
-          description: Filtros no procesables o inconsistentes
-        '500':
-          description: Error interno del servidor
 
-  /metrics/accommodation/{id}:
+
+  /accommodation/{id}/metrics:
     get:
       tags:
         - Metrics

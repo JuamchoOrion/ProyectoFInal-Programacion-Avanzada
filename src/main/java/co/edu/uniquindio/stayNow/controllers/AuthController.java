@@ -1,8 +1,6 @@
 package co.edu.uniquindio.stayNow.controllers;
 
-import co.edu.uniquindio.stayNow.dto.CreateUserDTO;
-import co.edu.uniquindio.stayNow.dto.ResponseDTO;
-import co.edu.uniquindio.stayNow.dto.UserDTO;
+import co.edu.uniquindio.stayNow.dto.*;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +19,17 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<ResponseDTO<String>> login(@RequestBody UserDTO userDTO){
-        return;
+        return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO<>(false, "El registro ha sido exitoso"));
     }
+
+    @PostMapping("/password/reset")
+    public ResponseEntity<ResponseDTO<String>> resetPasswordRequest(@RequestBody ResetPasswordRequestDTO resetPasswordRequestDTO){
+        return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO<>(false, "Codigo enviado con exito"));
+    }
+
+    @PatchMapping("/password/confirm")
+    public ResponseEntity<ResponseDTO<String>> confirmPassword(@RequestBody EditPasswordRequestDTO editPasswordRequestDTO){
+        return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO<>(false, "Contraseña actualizada con exito"));
+    }
+
 }

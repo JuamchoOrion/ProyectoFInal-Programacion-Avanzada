@@ -1,16 +1,15 @@
 package co.edu.uniquindio.stayNow.model.entity;
 
-import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Review {
-    User user;
-    Reply reply;
-    Accommodation accommodation;
-    LocalDateTime createdAt;
+public class Reply {
+    String message;
+    LocalDateTime repliedAt;
+
 }

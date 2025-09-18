@@ -1,9 +1,7 @@
 package co.edu.uniquindio.stayNow.controllers;
 import java.util.*;
-import co.edu.uniquindio.stayNow.dto.CreateUserDTO;
-import co.edu.uniquindio.stayNow.dto.EditUserDTO;
-import co.edu.uniquindio.stayNow.dto.ResponseDTO;
-import co.edu.uniquindio.stayNow.dto.UserDTO;
+
+import co.edu.uniquindio.stayNow.dto.*;
 import co.edu.uniquindio.stayNow.services.interfaces.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -30,16 +28,15 @@ public class UserController {
         return ResponseEntity.ok(new ResponseDTO<>(false, "El usuario ha sido eliminado"));
     }
 
-    @GetMapping
-    public ResponseEntity<ResponseDTO<List<UserDTO>>> listAll(){
-        List<UserDTO> list = userService.listAll();
-        return ResponseEntity.ok(new ResponseDTO<>(false, list));
-    }
-
     @PutMapping("/{id}")
     public ResponseEntity<ResponseDTO<String>> edit(@PathVariable String id, @Valid @RequestBody EditUserDTO userDTO) throws Exception{
         userService.edit(id, userDTO);
         return ResponseEntity.ok(new ResponseDTO<>(false, "El usuario ha sido actualizado"));
+    }
+
+    @PatchMapping("/{id}/password")
+    public ResponseEntity<ResponseDTO<String>> changePassword(@PathVariable String id, @RequestBody ChangePasswordRequestDTO changePasswordRequestDTO){
+        return ResponseEntity.ok(new ResponseDTO<>(false, "Contraseña actualizada"));
     }
 
 
