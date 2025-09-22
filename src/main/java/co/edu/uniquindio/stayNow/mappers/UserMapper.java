@@ -10,7 +10,7 @@ import org.mapstruct.MappingConstants;
 public interface UserMapper {
 
     @Mapping(target = "id", expression = "java(java.util.UUID.randomUUID().toString())")
-    @Mapping(target = "status", constant = "ACTIVE")
+    @Mapping(target = "status", expression = "java(co.edu.uniquindio.stayNow.model.enums.UserStatus.ACTIVE)")
     @Mapping(target = "createdAt", expression = "java(java.time.LocalDateTime.now())")
     User toEntity(CreateUserDTO userDTO);
 

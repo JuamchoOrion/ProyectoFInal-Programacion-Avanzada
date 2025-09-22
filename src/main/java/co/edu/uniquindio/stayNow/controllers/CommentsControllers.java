@@ -10,12 +10,4 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/comments")
 public class CommentsControllers {
 
-    @GetMapping("/{id}/comments")
-    public ResponseEntity<ResponseDTO<List<CommentDTO>>> getListOfComments
-
-    @PostMapping("/{id}/comments")
-    
-
-    @PostMapping("")
-    public ResponseEntity<>
 }
