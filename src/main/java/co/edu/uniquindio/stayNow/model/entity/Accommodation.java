@@ -19,38 +19,28 @@ import java.util.Set;
 public class Accommodation {
     @Id
     private Long id;
-    @Column
     private String city;
-    @Column
     private String title;
-    @Column
     private String description;
-    @Column
     private int maxGuests;
-    @Column
     private double pricePerNight;
-@Column
     private double averageRate;
-@Column
     private LocalDateTime createdAt;
-    //Many To One
-    @Transient
+    @OneToOne
     private Address address;
-
     @ManyToOne
     private User host;
-@Column
     private AccommodationStatus status;
-
-    //One To Many
-    @Transient
-    private List<Reservation> bookingList;
-    @Transient
+    //private List<Reservation> bookingList;
+    @ElementCollection
+    @CollectionTable(name = "accommodation_images", joinColumns = @JoinColumn(name = "accommodation_id"))
+    @Column(name = "image")
     private List<String> images;
-    @Transient
+    @ElementCollection(targetClass = Service.class)
+    @Enumerated(EnumType.STRING)
+    @CollectionTable(name = "usuario_services", joinColumns = @JoinColumn(name = "usuario_id"))
+    @Column(name = "service")
     private Set<Service> services;
-//ACOMODATION PUEDE EXISTIR SIN LA REVIEW
-    //private List<Review> reviews;
 
 
 }

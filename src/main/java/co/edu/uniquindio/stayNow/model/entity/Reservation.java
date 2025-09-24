@@ -6,22 +6,24 @@ import co.edu.uniquindio.stayNow.model.enums.ReservationStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import jakarta.persistence.*;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Entity
 public class Reservation {
-
+    @Id
     private Long id;
     private LocalDateTime createdAt;
     private LocalDateTime checkIn;
     private LocalDateTime checkOut;
     private int guestsNumber;
     private Double totalPrice;
-    //Many To One
+    @ManyToOne
     private User guest;
 
     private ReservationStatus reservationStatus;
-    //Many To One
+    @ManyToOne
     private Accommodation accommodation;
 }
