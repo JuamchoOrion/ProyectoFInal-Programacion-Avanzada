@@ -1,18 +1,23 @@
 package co.edu.uniquindio.stayNow.controllers;
 
 import co.edu.uniquindio.stayNow.dto.*;
+import co.edu.uniquindio.stayNow.services.implementation.UserServiceImpl;
+import co.edu.uniquindio.stayNow.services.interfaces.UserService;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+//TODAS LAS APIS LISTAS PARA ESTA SEMANA (28 DE SEPTIEMBRE)
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
+    @Autowired
+    UserServiceImpl userService;
     //Inyeccion de dependencias
     @PostMapping("/register")
     public ResponseEntity<ResponseDTO<String>> register(@Valid @RequestBody CreateUserDTO userDTO) throws Exception{
-        //userService.create(userDTO);
+        userService.create(userDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO<>(false, "El registro ha sido exitoso"));
     }
 

@@ -13,6 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/accommodations")
+//faltan los de comments
 public class AccomodationController {
     //aca debemos llamar al service para buscar y lsitar los accommodation despues con esa lista mapearla a el dto por eso se devuelve un responseENtity con un dto
     @GetMapping

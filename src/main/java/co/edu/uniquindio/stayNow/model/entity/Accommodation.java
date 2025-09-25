@@ -18,7 +18,7 @@ import java.util.Set;
 @Entity
 public class Accommodation {
     @Id
-    private Long id;
+    private String id;
     private String city;
     private String title;
     private String description;
@@ -31,7 +31,6 @@ public class Accommodation {
     @ManyToOne
     private User host;
     private AccommodationStatus status;
-    //private List<Reservation> bookingList;
     @ElementCollection
     @CollectionTable(name = "accommodation_images", joinColumns = @JoinColumn(name = "accommodation_id"))
     @Column(name = "image")

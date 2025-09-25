@@ -1,0 +1,11 @@
+POST http://localhost:8080/auth/register
+Content-Type: application/json
+
+{
+  "name" : "Juan",
+  "phone" : "123123123",
+  "email" : "ramirezcarmonajuandavid@gmail.com",
+  "password" : "juandavid_14",
+  "dateBirth": "2000-05-20",
+  "role": "GUEST"
+}
