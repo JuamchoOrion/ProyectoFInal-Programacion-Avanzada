@@ -24,6 +24,7 @@ public class Review {
     private Reply reply;
     @ManyToOne
     private Accommodation accommodation;
+    private String comment;
 
     private LocalDateTime createdAt;
 }

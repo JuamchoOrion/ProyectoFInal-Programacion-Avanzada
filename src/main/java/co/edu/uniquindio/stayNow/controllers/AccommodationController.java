@@ -1,9 +1,6 @@
 package co.edu.uniquindio.stayNow.controllers;
 
-import co.edu.uniquindio.stayNow.dto.AccomodationDTO;
-import co.edu.uniquindio.stayNow.dto.CreateAccommodationDTO;
-import co.edu.uniquindio.stayNow.dto.ReservationDTO;
-import co.edu.uniquindio.stayNow.dto.ResponseDTO;
+import co.edu.uniquindio.stayNow.dto.*;
 import co.edu.uniquindio.stayNow.model.enums.ReservationStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +11,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/accommodations")
 //faltan los de comments
-public class AccomodationController {
+public class AccommodationController {
     //aca debemos llamar al service para buscar y lsitar los accommodation despues con esa lista mapearla a el dto por eso se devuelve un responseENtity con un dto
     @GetMapping
     public ResponseEntity<ResponseDTO<List<AccomodationDTO>>> getListOfAccomodation(
@@ -29,7 +26,7 @@ public class AccomodationController {
     ){
         List<AccomodationDTO> list = new ArrayList<AccomodationDTO>();
         //DE HECHO DEBEMOS RETORNAR UNA LISTA DE LOS DTOS, NO UN SOLO DTO. ARREGLAR CON EL SERVICE C:
-    return ResponseEntity.ok(new ResponseDTO<>(false, list));
+        return ResponseEntity.ok(new ResponseDTO<>(false, list));
     }
 
     //lo mismo tambien debe retornar una lista de dtos
@@ -62,6 +59,16 @@ public class AccomodationController {
     @DeleteMapping("/{id}")
     public ResponseEntity<ResponseDTO<String>> deleteAccommodation(@PathVariable long id){
         return ResponseEntity.ok(new ResponseDTO<>(false, "El alojamiento fue eliminado exitosamente"));
+    }
+    @GetMapping("/{id}/review")
+    public ResponseEntity<ResponseDTO<List<ReviewDTO>>> getReviews(@PathVariable long id){
+        List<ReviewDTO> list = new ArrayList<ReviewDTO>();
+
+        return ResponseEntity.ok(new ResponseDTO<>(false, list));
+    }
+    @PostMapping("/{id}/review")
+    public ResponseEntity<ResponseDTO<String>> createReview(@PathVariable long id, @RequestBody CreateReviewDTO reviewDTO){
+        return ResponseEntity.ok(new ResponseDTO<>(false, "Reseña creada con exito"));
     }
 
 }

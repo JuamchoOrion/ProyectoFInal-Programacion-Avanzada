@@ -10,17 +10,10 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
+@Embeddable
 public class Address {
-    @Id
-    private Long id;
     private String city;
     private String address;
-    @OneToOne
+    @Embedded
     private Location location;
-
-    @OneToOne
-    private Accommodation accomodation;
-
-
 }

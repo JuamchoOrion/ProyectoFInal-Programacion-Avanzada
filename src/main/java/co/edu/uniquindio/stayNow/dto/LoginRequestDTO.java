@@ -1,7 +1,9 @@
 package co.edu.uniquindio.stayNow.dto;
 
+import jakarta.validation.constraints.NotBlank;
+
 public  record LoginRequestDTO(
-    String email,
-    String password
+    @NotBlank String email,
+    @NotBlank String password
     ){
 }
