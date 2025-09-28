@@ -7,9 +7,11 @@ import co.edu.uniquindio.stayNow.dto.UserDTO;
 import co.edu.uniquindio.stayNow.mappers.UserMapper;
 import co.edu.uniquindio.stayNow.model.entity.User;
 import co.edu.uniquindio.stayNow.model.enums.UserStatus;
+import co.edu.uniquindio.stayNow.repositories.UserRepository;
 import co.edu.uniquindio.stayNow.services.interfaces.UserService;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -25,11 +27,19 @@ public class UserServiceImpl implements UserService {
 
     private final UserMapper userMapper;
     private final Map<String, User> userStore = new ConcurrentHashMap<>();
+    //Esto se llama inyeccion de dependencias
+
+    private final UserRepository userRepository;
 
     @Override
     public void create(CreateUserDTO userDTO) throws Exception {
 
         if (isEmailDuplicated(userDTO.email())) {
+            throw new Exception("El correo electrónico ya está en uso.");
+        }
+        //Con bd se llama al metodo para obtener el optional del usuario, hace la consulta si el email exist
+        //si no existe se crea, de lo contrario se lanza exception
+        if(userRepository.findByEmail(userDTO.email()).isPresent()){
             throw new Exception("El correo electrónico ya está en uso.");
         }
 
@@ -45,7 +55,8 @@ public class UserServiceImpl implements UserService {
                 .createdAt(LocalDateTime.now())
                 .status(UserStatus.ACTIVE)
                 .build();
-
+            //aca se debe guardar en la bd
+        userRepository.save(newUser);
         userStore.put(newUser.getId(), newUser);
     }
 

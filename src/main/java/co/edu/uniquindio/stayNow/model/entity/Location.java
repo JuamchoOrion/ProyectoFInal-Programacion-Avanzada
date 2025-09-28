@@ -8,12 +8,8 @@ import jakarta.persistence.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
+@Embeddable
 public class Location {
-    @Id
-    private Long id;
     private float latitude;
     private float longitude;
-    @OneToOne
-    private Address address;
 }

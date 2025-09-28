@@ -26,7 +26,7 @@ public class Accommodation {
     private double pricePerNight;
     private double averageRate;
     private LocalDateTime createdAt;
-    @OneToOne
+    @Embedded
     private Address address;
     @ManyToOne
     private User host;

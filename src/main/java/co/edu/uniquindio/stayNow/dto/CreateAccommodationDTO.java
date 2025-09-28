@@ -17,7 +17,10 @@ public record CreateAccommodationDTO(
 
         @NotBlank @Length(max = 200)
         String address,
-        
+
+        float latitude,
+
+        float longitude,
 
         @NotNull @Positive
         Double pricePerNight,
