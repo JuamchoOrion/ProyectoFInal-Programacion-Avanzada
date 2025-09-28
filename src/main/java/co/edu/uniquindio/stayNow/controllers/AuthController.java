@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
     @Autowired
     UserServiceImpl userService;
+
     //Inyeccion de dependencias
     @PostMapping("/register")
     public ResponseEntity<ResponseDTO<String>> register(@Valid @RequestBody CreateUserDTO userDTO) throws Exception{
@@ -23,7 +24,8 @@ public class AuthController {
 
 
     @PostMapping("/login")
-    public ResponseEntity<ResponseDTO<String>> login(@RequestBody UserDTO userDTO){
+    public ResponseEntity<ResponseDTO<String>> login(@RequestBody LoginRequestDTO loginDTO){
+        userService.login(userDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO<>(false, "El registro ha sido exitoso"));
     }
 

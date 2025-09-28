@@ -1,4 +1,4 @@
 package co.edu.uniquindio.stayNow.repositories;
 
-public interface UserRepository {
+public interface UserRepository{
 }

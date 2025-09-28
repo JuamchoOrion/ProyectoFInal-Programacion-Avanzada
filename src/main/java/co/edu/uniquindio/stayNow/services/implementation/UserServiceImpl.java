@@ -28,6 +28,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void create(CreateUserDTO userDTO) throws Exception {
+
         if (isEmailDuplicated(userDTO.email())) {
             throw new Exception("El correo electrónico ya está en uso.");
         }
@@ -109,4 +110,5 @@ public class UserServiceImpl implements UserService {
         var passwordEncoder = new BCryptPasswordEncoder();
         return passwordEncoder.encode(password);
     }
+
 }
