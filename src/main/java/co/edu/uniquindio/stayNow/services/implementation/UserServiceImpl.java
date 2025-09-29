@@ -62,7 +62,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDTO get(String id) throws Exception {
-        User user = userStore.get(id);
+        User user = userRepository.findById(id).orElse(null);
 
         if (user == null) {
             throw new Exception("Usuario no encontrado.");
