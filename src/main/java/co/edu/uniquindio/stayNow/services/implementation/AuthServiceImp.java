@@ -1,6 +1,7 @@
 package co.edu.uniquindio.stayNow.services.implementation;
 
 import co.edu.uniquindio.stayNow.dto.LoginRequestDTO;
+import co.edu.uniquindio.stayNow.exceptions.UserNotFoundException;
 import co.edu.uniquindio.stayNow.model.entity.User;
 import co.edu.uniquindio.stayNow.repositories.UserRepository;
 import co.edu.uniquindio.stayNow.services.interfaces.AuthService;
@@ -15,7 +16,7 @@ public class AuthServiceImp implements AuthService {
     public String login(LoginRequestDTO loginRequestDTO) throws Exception {
         User user  = userRepository.findByEmail(loginRequestDTO.email()).orElse(null);
         if (user == null) {
-            throw new Exception("Usuario no encontrado");
+            throw new UserNotFoundException("Usuario no encontrado");
         }
         return "";
     }

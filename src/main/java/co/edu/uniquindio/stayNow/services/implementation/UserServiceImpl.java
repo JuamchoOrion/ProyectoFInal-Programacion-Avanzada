@@ -4,6 +4,7 @@ package co.edu.uniquindio.stayNow.services.implementation;
 import co.edu.uniquindio.stayNow.dto.CreateUserDTO;
 import co.edu.uniquindio.stayNow.dto.EditUserDTO;
 import co.edu.uniquindio.stayNow.dto.UserDTO;
+import co.edu.uniquindio.stayNow.exceptions.UserNotFoundException;
 import co.edu.uniquindio.stayNow.mappers.UserMapper;
 import co.edu.uniquindio.stayNow.model.entity.User;
 import co.edu.uniquindio.stayNow.model.enums.UserStatus;
@@ -11,7 +12,6 @@ import co.edu.uniquindio.stayNow.repositories.UserRepository;
 import co.edu.uniquindio.stayNow.services.interfaces.UserService;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -65,7 +65,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(id).orElse(null);
 
         if (user == null) {
-            throw new Exception("Usuario no encontrado.");
+            throw new UserNotFoundException("Usuario no encontrado.");
         }
 
         return userMapper.toUserDTO(user);
@@ -76,7 +76,7 @@ public class UserServiceImpl implements UserService {
         User removedUser = userStore.remove(id);
 
         if (removedUser == null) {
-            throw new Exception("Usuario no encontrado.");
+            throw new UserNotFoundException("Usuario no encontrado.");
         }
     }
 
@@ -93,7 +93,7 @@ public class UserServiceImpl implements UserService {
         User user = userStore.get(id);
 
         if (user == null) {
-            throw new Exception("Usuario no encontrado.");
+            throw new UserNotFoundException("Usuario no encontrado.");
         }
 
         if (!user.getEmail().equalsIgnoreCase(userDTO.email())
