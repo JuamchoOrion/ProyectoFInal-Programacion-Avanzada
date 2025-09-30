@@ -19,10 +19,6 @@ tags:
     description: CRUD y búsqueda de alojamientos
   - name: Reservations
     description: Reservas y cancelaciones
-  - name: Comments
-    description: Comentarios y respuestas
-  - name: Hosts
-    description: Endpoints para anfitriones (hosts)
   - name: Metrics
     description: Métricas por alojamiento
 
@@ -1187,11 +1183,168 @@ paths:
               example:
                 error: "Service Unavailable"
                 message: "El servicio de alojamientos no está disponible temporalmente"
+  /accommodations/{id}/reviews:
 
+    get:
+      tags:
+        - Accommodations
+      summary: Listar reviews de un alojamiento (más recientes primero)
+      operationId: listReviews
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Lista paginada de reviews
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Review'
+                  page:
+                    type: integer
+                  size:
+                    type: integer
+                  totalItems:
+                    type: integer
+                  totalPages:
+                    type: integer
+        '400':
+          description: Parámetros inválidos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: No autorizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Prohibido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Alojamiento no encontrado o sin reviews
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error interno
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    post:
+      tags:
+        - Accommodations
+      summary: Añadir review (solo si reserva COMPLETED)
+      operationId: createReview
+      security:
+        - BearerAuth: [ ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReviewCreate'
+      responses:
+        '201':
+          description: Review creada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Review'
+        '400':
+          description: No cumple condiciones
+        '401':
+          description: No autorizado
+        '403':
+          description: Prohibido
+        '404':
+          description: Alojamiento o reserva no encontrada
+        '422':
+          description: Datos de entrada inválidos
+        '500':
+          description: Error interno
+
+  /accommodations/{id}/reviews/{reviewId}/reply:
+
+    post:
+      tags:
+        - Accommodations
+      summary: Responder review (solo anfitrión dueño del alojamiento)
+      operationId: replyReview
+      security:
+        - BearerAuth: [ ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: reviewId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReviewReply'
+      responses:
+        '200':
+          description: Respuesta agregada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessage'
+        '400':
+          description: Datos inválidos
+        '401':
+          description: No autorizado
+        '403':
+          description: Prohibido
+        '404':
+          description: Review no encontrada
+        '422':
+          description: Ya tiene respuesta
+        '500':
+          description: Error interno
   /hosts/{hostId}/accommodations:
     get:
       tags:
-        - Hosts
+        - Accommodations
       summary: Listar alojamientos de un anfitrión
       operationId: listHostAccommodations
       security:
@@ -1645,221 +1798,6 @@ paths:
                 error: "Internal Server Error"
                 message: "Ha ocurrido un error inesperado en el servidor"
 
-  /accommodations/{id}/comments:
-    get:
-      tags:
-        - Comments
-      summary: Listar comentarios de un alojamiento (más recientes primero)
-      operationId: listComments
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-        - name: page
-          in: query
-          schema:
-            type: integer
-            default: 0
-        - name: size
-          in: query
-          schema:
-            type: integer
-            default: 10
-      responses:
-        '200':
-          description: Lista paginada de comentarios
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  items:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/Comment'
-                  page:
-                    type: integer
-                  size:
-                    type: integer
-                  totalItems:
-                    type: integer
-                  totalPages:
-                    type: integer
-              example:
-                page: 0
-                size: 2
-                totalItems: 3
-                totalPages: 2
-                items:
-                  - id: 900
-                    reservationId: 5001
-                    accommodationId: 101
-                    userName: Laura
-                    imageUrl: "img1.jpg"
-                    rating: 5
-                    text: "Excelente lugar, muy limpio"
-                    createdAt: "2025-09-21T10:15:00Z"
-                    hostReply: "Gracias por tu comentario"
-                  - id: 901
-                    reservationId: 5002
-                    accommodationId: 101
-                    userId: 2
-                    rating: 4
-                    text: "Buena ubicación"
-                    createdAt: "2025-09-10T12:00:00Z"
-                    hostReply: null
-        '400':
-          description: Parámetros inválidos (id, page o size incorrectos)
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-              example:
-                error: "Bad Request"
-                message: "El parámetro 'page' debe ser mayor o igual a 0"
-        '401':
-          description: No autorizado (se requiere token válido)
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-              example:
-                error: "Unauthorized"
-                message: "Token inválido o no proporcionado"
-        '403':
-          description: Prohibido (el usuario no tiene permisos para ver comentarios de este alojamiento)
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-              example:
-                error: "Forbidden"
-                message: "El usuario no tiene permisos para acceder a estos comentarios"
-        '404':
-          description: Alojamiento no encontrado o sin comentarios
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-              example:
-                error: "Not Found"
-                message: "No se encontraron comentarios para este alojamiento"
-        '500':
-          description: Error interno del servidor
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-              example:
-                error: "Internal Server Error"
-                message: "Ocurrió un error inesperado"
-        '503':
-          description: Servicio no disponible temporalmente
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-              example:
-                error: "Service Unavailable"
-                message: "El servicio de comentarios no está disponible"
-    post:
-      tags:
-        - Comments
-      summary: Añadir comentario (solo si reserva COMPLETED)
-      operationId: createComment
-      security:
-        - BearerAuth: []
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CommentCreate'
-            example:
-              reservationId: 5001
-              rating: 5
-              text: "Excelente lugar, muy limpio y con buena ubicación"
-      responses:
-        '201':
-          description: Comentario creado
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Comment'
-              example:
-                id: 902
-                reservationId: 5001
-                accommodationId: 101
-                userId: 1
-                rating: 5
-                text: "Excelente lugar, muy limpio y con buena ubicación"
-                createdAt: "2025-09-21T10:15:00Z"
-                hostReply: null
-        '400':
-          description: No cumple condiciones (no tuvo reserva COMPLETED o ya comentó)
-        '401':
-          description: No autorizado (JWT inválido o ausente)
-        '403':
-          description: Prohibido (la reserva no pertenece al usuario autenticado)
-        '404':
-          description: Alojamiento o reserva no encontrada
-        '422':
-          description: Datos de entrada no procesables (ej. rating fuera de rango)
-        '500':
-          description: Error interno del servidor
-
-  /acommodations/{id}/comments/{idComment}/reply:
-    post:
-      tags:
-        - Comments
-      summary: Responder comentario (solo anfitrión dueño del alojamiento)
-      operationId: replyComment
-      security:
-        - BearerAuth: []
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CommentReply'
-            example:
-              reply: "Gracias por tu feedback, esperamos verte de nuevo"
-      responses:
-        '200':
-          description: Respuesta agregada al comentario
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SuccessMessage'
-              example:
-                message: "Respuesta añadida correctamente"
-        '400':
-          description: Datos inválidos en la petición (ej. reply vacío o demasiado largo)
-        '401':
-          description: No autorizado
-        '403':
-          description: Prohibido (el usuario no es propietario del alojamiento)
-        '404':
-          description: Comentario no encontrado
-        '422':
-          description: El comentario ya tiene respuesta y no puede ser actualizado
-        '500':
-          description: Error interno del servidor
-
 
 
   /accommodation/{id}/metrics:
@@ -2229,8 +2167,9 @@ components:
         - guests
         - status
 
-    # --- Comments
-    CommentCreate:
+
+    # --- Reviews
+    ReviewCreate:
       type: object
       properties:
         reservationId:
@@ -2246,7 +2185,7 @@ components:
         - reservationId
         - rating
 
-    Comment:
+    Review:
       type: object
       properties:
         id:
@@ -2275,7 +2214,7 @@ components:
         - rating
         - createdAt
 
-    CommentReply:
+    ReviewReply:
       type: object
       properties:
         reply:
