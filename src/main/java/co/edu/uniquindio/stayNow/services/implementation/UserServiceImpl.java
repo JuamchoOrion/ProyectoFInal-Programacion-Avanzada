@@ -8,6 +8,7 @@ import co.edu.uniquindio.stayNow.exceptions.EmailAlreadyInUseException;
 import co.edu.uniquindio.stayNow.exceptions.UserNotFoundException;
 import co.edu.uniquindio.stayNow.mappers.UserMapper;
 import co.edu.uniquindio.stayNow.model.entity.User;
+import co.edu.uniquindio.stayNow.model.enums.Role;
 import co.edu.uniquindio.stayNow.model.enums.UserStatus;
 import co.edu.uniquindio.stayNow.repositories.UserRepository;
 import co.edu.uniquindio.stayNow.services.interfaces.UserService;
@@ -121,6 +122,15 @@ public class UserServiceImpl implements UserService {
     private String encode(String password) {
         var passwordEncoder = new BCryptPasswordEncoder();
         return passwordEncoder.encode(password);
+    }
+    // ... dentro de UserServiceImpl ...
+
+    @Override
+    public boolean isHost(Long userId) {
+        // 1. Busca el usuario en la DB por ID.
+        return userRepository.findById(String.valueOf(userId)) // Ajusta a tu tipo de ID
+                .map(user -> user.getRole() == Role.HOST) // Si lo encuentra, chequea el rol
+                .orElse(false); // Si no lo encuentra, no es anfitrión
     }
 
 }
