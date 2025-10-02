@@ -4,6 +4,7 @@ package co.edu.uniquindio.stayNow.services.implementation;
 import co.edu.uniquindio.stayNow.dto.CreateUserDTO;
 import co.edu.uniquindio.stayNow.dto.EditUserDTO;
 import co.edu.uniquindio.stayNow.dto.UserDTO;
+import co.edu.uniquindio.stayNow.exceptions.EmailAlreadyInUseException;
 import co.edu.uniquindio.stayNow.exceptions.UserNotFoundException;
 import co.edu.uniquindio.stayNow.mappers.UserMapper;
 import co.edu.uniquindio.stayNow.model.entity.User;
@@ -98,7 +99,7 @@ public class UserServiceImpl implements UserService {
 
         if (!user.getEmail().equalsIgnoreCase(userDTO.email())
                 && isEmailDuplicated(userDTO.email())) {
-            throw new Exception("El correo electrónico ya está en uso.");
+            throw new EmailAlreadyInUseException("El correo electrónico ya está en uso.");
         }
 
         user.setName(userDTO.name());
