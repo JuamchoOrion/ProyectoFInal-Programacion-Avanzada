@@ -4,12 +4,9 @@ import co.edu.uniquindio.stayNow.model.enums.AccommodationStatus;
 import co.edu.uniquindio.stayNow.model.enums.Service;
 import jakarta.persistence.*;
 import lombok.*;
-import java.awt.image.BufferedImage;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
-
-
 
 @Data
 @NoArgsConstructor
@@ -26,20 +23,25 @@ public class Accommodation {
     private double pricePerNight;
     private double averageRate;
     private LocalDateTime createdAt;
+
     @Embedded
     private Address address;
-    @ManyToOne
+
+    @ManyToOne // This maps to the Host User entity
     private User host;
+
+    @Enumerated(EnumType.STRING)
     private AccommodationStatus status;
+
     @ElementCollection
     @CollectionTable(name = "accommodation_images", joinColumns = @JoinColumn(name = "accommodation_id"))
     @Column(name = "image")
     private List<String> images;
+
     @ElementCollection(targetClass = Service.class)
     @Enumerated(EnumType.STRING)
-    @CollectionTable(name = "usuario_services", joinColumns = @JoinColumn(name = "usuario_id"))
+    // CORRECTED: Ensure table and join column names reflect the Accommodation entity
+    @CollectionTable(name = "accommodation_services", joinColumns = @JoinColumn(name = "accommodation_id"))
     @Column(name = "service")
     private Set<Service> services;
-
-
 }

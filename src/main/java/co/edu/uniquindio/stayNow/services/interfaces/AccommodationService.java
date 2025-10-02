@@ -8,11 +8,11 @@ public interface AccommodationService {
 
     void create(CreateAccommodationDTO accommodationDTO) throws Exception;
 
-    AccomodationDTO get(String id) throws Exception;
+    AccomodationDTO get(Long id) throws Exception;
 
-    void edit(String id, EditAccommodationDTO accommodationDTO) throws Exception;
+    void edit(Long id, EditAccommodationDTO accommodationDTO) throws Exception;
 
-    void delete(String id) throws Exception;
+    void delete(Long id) throws Exception;
 
     List<AccomodationDTO> listAll() throws Exception;
 
@@ -25,20 +25,20 @@ public interface AccommodationService {
                                  int page,
                                  int size) throws Exception;
 
-    List<ReservationDTO> getReservations(String accommodationId,
+    List<ReservationDTO> getReservations(Long accommodationId,
                                          String startDate,
                                          String endDate,
                                          String status) throws Exception;
 
-    void createReservation(String accommodationId,
+    void createReservation(Long accommodationId,
                            CreateReservationDTO reservationDTO) throws Exception;
 
-    List<ReviewDTO> getReviews(String accommodationId) throws Exception;
+    List<ReviewDTO> getReviews(Long accommodationId) throws Exception;
 
-    void createReview(String accommodationId,
+    void createReview(Long accommodationId,
                       CreateReviewDTO reviewDTO) throws Exception;
 
-    void replyToReview(String accommodationId,
+    void replyToReview(Long accommodationId,
                        Long reviewId,
                        ReplyReviewDTO replyDTO) throws Exception;
 }
