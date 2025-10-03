@@ -14,7 +14,6 @@ import org.mapstruct.Named;
 public interface AccommodationMapper {
 
     //No se coloca el usuario pq se obtiene del token
-    @Mapping(target = "id", expression = "java(java.util.UUID.randomUUID().toString())")
     @Mapping(target = "status", expression = "java(co.edu.uniquindio.stayNow.model.enums.AccommodationStatus.ACTIVE)")
     @Mapping(target = "createdAt", expression = "java(java.time.LocalDateTime.now())")
     @Mapping(target = "averageRate", expression = "java(0.0)")
@@ -25,7 +24,7 @@ public interface AccommodationMapper {
     @Mapping(target = "address.location.longitude", source = "longitude" )
     Accommodation toEntity(CreateAccommodationDTO accommodationDTO);
 
-    @Mapping(target = "host", ignore = true)
+    @Mapping(target = "hostId", ignore = true)
     AccomodationDTO toAccommodationDTO(Accommodation accommodation);
 
 }

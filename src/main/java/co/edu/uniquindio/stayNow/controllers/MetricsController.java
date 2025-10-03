@@ -16,7 +16,7 @@ import java.time.LocalDate;
 @RequestMapping("/accommodation")
 @RequiredArgsConstructor
 public class MetricsController {
-
+/**
     private final MetricsService metricsService;
 
     @GetMapping("/{id}/metrics")
@@ -27,5 +27,5 @@ public class MetricsController {
 
         MetricsResponseDTO metrics = metricsService.getAccommodationMetrics(accommodationId, from, to);
         return ResponseEntity.ok(metrics);
-    }
+    }**/
 }

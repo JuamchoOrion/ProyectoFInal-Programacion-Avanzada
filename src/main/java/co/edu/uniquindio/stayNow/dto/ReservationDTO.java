@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 
 public record ReservationDTO(
 //faltan atributos
+        Long id,
         Long accommodationId,
         LocalDateTime checkIn,
         LocalDateTime checkOut,

@@ -1,5 +1,4 @@
-package co.edu.uniquindio.stayNow.Utils;
-
+package co.edu.uniquindio.stayNow.security;
 import co.edu.uniquindio.stayNow.dto.ResponseDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;

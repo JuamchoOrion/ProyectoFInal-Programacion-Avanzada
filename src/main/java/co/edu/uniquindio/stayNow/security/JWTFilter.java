@@ -1,5 +1,4 @@
-package co.edu.uniquindio.stayNow.Utils;
-
+package co.edu.uniquindio.stayNow.security;
 
 import co.edu.uniquindio.stayNow.services.implementation.UserDetailsServiceImpl;
 import io.jsonwebtoken.Claims;

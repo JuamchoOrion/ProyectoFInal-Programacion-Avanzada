@@ -9,7 +9,6 @@ import org.mapstruct.MappingConstants;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface ReservationMapper {
-    @Mapping(target = "id", expression = "java(java.util.UUID.randomUUID().toString())")
     @Mapping(target = "createdAt", expression = "java(java.time.LocalDateTime.now())")
     @Mapping (target = "reservationStatus", expression = "java(co.edu.uniquindio.stayNow.model.enums.ReservationStatus.PENDING)")
     Reservation toEntity(CreateReservationDTO ReservationDTO);

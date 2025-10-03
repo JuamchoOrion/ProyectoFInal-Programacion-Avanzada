@@ -1,5 +1,4 @@
-package co.edu.uniquindio.stayNow.Utils;
-
+package co.edu.uniquindio.stayNow.security;
 
 
 import io.jsonwebtoken.*;

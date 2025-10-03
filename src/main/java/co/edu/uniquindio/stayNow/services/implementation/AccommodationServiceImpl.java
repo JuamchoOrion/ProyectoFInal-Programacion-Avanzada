@@ -3,7 +3,6 @@ package co.edu.uniquindio.stayNow.services.implementation;
 import co.edu.uniquindio.stayNow.dto.*;
 import co.edu.uniquindio.stayNow.exceptions.*;
 import co.edu.uniquindio.stayNow.mappers.AccommodationMapper;
-import co.edu.uniquindio.stayNow.model.*;
 import co.edu.uniquindio.stayNow.model.entity.Accommodation;
 import co.edu.uniquindio.stayNow.model.entity.User;
 import co.edu.uniquindio.stayNow.model.enums.AccommodationStatus;

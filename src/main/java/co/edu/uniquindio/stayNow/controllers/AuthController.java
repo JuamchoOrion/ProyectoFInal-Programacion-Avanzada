@@ -2,8 +2,11 @@ package co.edu.uniquindio.stayNow.controllers;
 
 import co.edu.uniquindio.stayNow.dto.*;
 import co.edu.uniquindio.stayNow.services.implementation.UserServiceImpl;
+import co.edu.uniquindio.stayNow.services.interfaces.AuthService;
 import co.edu.uniquindio.stayNow.services.interfaces.UserService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.antlr.v4.runtime.Token;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,9 +14,11 @@ import org.springframework.web.bind.annotation.*;
 //TODAS LAS APIS LISTAS PARA ESTA SEMANA (28 DE SEPTIEMBRE)
 @RestController
 @RequestMapping("/auth")
+@RequiredArgsConstructor
 public class AuthController {
-    @Autowired
+
     UserServiceImpl userService;
+    AuthService authService;
 
     //Inyeccion de dependencias
     @PostMapping("/register")
@@ -24,8 +29,10 @@ public class AuthController {
 
 
     @PostMapping("/login")
-    public ResponseEntity<ResponseDTO<String>> login(@RequestBody LoginRequestDTO loginDTO){
-        return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO<>(false, "El registro ha sido exitoso"));
+    public ResponseEntity<ResponseDTO<TokenDTO>> login(@RequestBody LoginRequestDTO loginDTO) throws Exception {
+        TokenDTO token = authService.login(loginDTO);
+
+        return ResponseEntity.ok(new ResponseDTO<>(false, token));
     }
 
     @PostMapping("/password/reset")

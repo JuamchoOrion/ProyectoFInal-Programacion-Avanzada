@@ -15,6 +15,7 @@ import co.edu.uniquindio.stayNow.services.interfaces.UserService;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -32,6 +33,7 @@ public class UserServiceImpl implements UserService {
     private final Map<String, User> userStore = new ConcurrentHashMap<>();
     //Esto se llama inyeccion de dependencias
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public void create(CreateUserDTO userDTO) throws Exception {
@@ -53,7 +55,7 @@ public class UserServiceImpl implements UserService {
                 .role(userDTO.role())
                 .dateBirth(userDTO.dateBirth())
                 //.photoUrl(userDTO.photoUrl())
-                .password(encode(userDTO.password())) // 🔑 cifrado
+                .password(passwordEncoder.encode(userDTO.password())) // 🔑 cifrado
                 .createdAt(LocalDateTime.now())
                 .status(UserStatus.ACTIVE)
                 .build();

@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Embeddable
 public class Address {
+    @Column(name = "address_city")
     private String city;
     private String address;
     @Embedded

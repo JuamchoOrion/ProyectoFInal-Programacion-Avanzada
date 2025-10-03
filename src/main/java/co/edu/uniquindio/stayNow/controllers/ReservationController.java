@@ -16,7 +16,8 @@ import java.util.List;
 public class ReservationController {
     @PostMapping
     public ResponseEntity<ResponseDTO<ReservationDTO>> createReservation(@RequestBody CreateReservationDTO reservationDTO){
-        return ResponseEntity.ok(new ResponseDTO<>(false, new ReservationDTO()));
+        //return ResponseEntity.ok(new ResponseDTO<>(false, new ReservationDTO(1,)));
+        return null;
     }
 
     @GetMapping
@@ -36,7 +37,8 @@ public class ReservationController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ResponseDTO<ReservationDTO>> getReservationById(@PathVariable Integer id){
-        return ResponseEntity.ok(new ResponseDTO<>(false, new ReservationDTO(0123123L, LocalDate.now(), LocalDate.now(),12)));
+        //return ResponseEntity.ok(new ResponseDTO<>(false, new ReservationDTO(0123123L, LocalDate.now(), LocalDate.now(),12)));
+        return null;
     }
     
     @PatchMapping("/{id}/cancel")

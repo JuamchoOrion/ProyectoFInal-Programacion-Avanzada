@@ -13,5 +13,5 @@ import java.util.List;
 // dentro de el generico va la entidad y el tipo de id
 public interface AccommodationRepository extends JpaRepository<Accommodation, Long> {
 
-    List<Accommodation> findAllByAccommodationStatus(AccommodationStatus status);
+    List<Accommodation> findAllByStatus(AccommodationStatus status);
 }

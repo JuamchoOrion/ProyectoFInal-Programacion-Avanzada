@@ -28,16 +28,16 @@ public class ReservationServiceImp implements ReservationService {
     private final AccommodationRepository accommodationRepository;
     private final ReservationRepository reservationRepository;
     private final EmailService emailService;
-    private final AuthService authService;
+    //private final AuthService authService;
 
     @Override
     public ReservationDTO create(CreateReservationDTO dto) throws Exception {
 
-        authService.getUserID();
+        //authService.getUserID();
 
         // buscar alojamiento
         Accommodation accommodation = accommodationRepository.findById(dto.accommodationId())
-                .orElseThrow(() -> new NotFoundException("Alojamiento no encontrado"));
+                .orElseThrow(() -> new Exception("Alojamiento no encontrado"));
 
         // validaciones
         validateAccommodation(accommodation);
@@ -59,9 +59,10 @@ public class ReservationServiceImp implements ReservationService {
         reservation.setTotalPrice(totalPrice);
 
         // guardar en BD
-        reservationRepository.save(reservation);
+        Reservation saved = reservationRepository.save(reservation);
 
         // enviar email (antes del return)
+        /**
         emailService.sendMail(new EmailDTO(
                 "Reserva generada el día " + LocalDate.now(),
                 "Tu reserva en " + accommodation.getName() + " fue creada con éxito. " +
@@ -69,11 +70,12 @@ public class ReservationServiceImp implements ReservationService {
                         ". Número de huéspedes: " + dto.guests() +
                         ". Precio total: $" + totalPrice,
                 dto.() // <-- suponiendo que viene en tu DTO
-        ));
+        ));**/
 
 
         // mapear a DTO de respuesta
         return new ReservationDTO(
+                saved.getId(),
                 accommodation.getId(),
                 reservation.getCheckIn(),
                 reservation.getCheckOut(),
