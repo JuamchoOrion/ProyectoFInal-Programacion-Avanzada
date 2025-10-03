@@ -12,7 +12,7 @@ public interface UserService {
 
     void create(CreateUserDTO userDTO) throws Exception;
 
-
+    boolean isHost(Long userId);
 
     UserDTO get(String id) throws Exception;
 
