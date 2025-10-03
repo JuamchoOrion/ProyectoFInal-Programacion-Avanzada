@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Entity
 public class Reply {
     @Id
-    private long id;
+    private Long id;
     private String message;
     private LocalDateTime repliedAt;
     @OneToOne

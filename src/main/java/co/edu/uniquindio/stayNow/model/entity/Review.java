@@ -17,7 +17,7 @@ import jakarta.persistence.*;
 @Entity
 public class Review {
     @Id
-    private long id;
+    private Long id;
     @ManyToOne
     private User user;
     @OneToOne

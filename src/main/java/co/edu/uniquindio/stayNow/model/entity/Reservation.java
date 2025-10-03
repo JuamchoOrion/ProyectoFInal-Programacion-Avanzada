@@ -14,7 +14,7 @@ import jakarta.persistence.*;
 @Entity
 public class Reservation {
     @Id
-    private String id;
+    private Long id;
     private LocalDateTime createdAt;
     private LocalDateTime checkIn;
     private LocalDateTime checkOut;

@@ -4,13 +4,14 @@ import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public record CreateReservationDTO(
-        @NotNull Integer accommodationId,
+        @NotNull Long accommodationId,
 
-        @NotNull @Future LocalDate checkIn,
+        @NotNull @Future LocalDateTime checkIn,
 
-        @NotNull @Future LocalDate checkOut,
+        @NotNull @Future LocalDateTime checkOut,
 
         @NotNull @Min(1) Integer guests
 ) {

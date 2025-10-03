@@ -19,4 +19,10 @@ public class AuthServiceImp implements AuthService {
         }
         return "";
     }
+
+    public String getUserID(){
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String idUser = user.getUsername();
+        return idUser;
+    }
 }

@@ -18,7 +18,7 @@ import java.util.Set;
 @Entity
 public class Accommodation {
     @Id
-    private String id;
+    private Long id;
     private String city;
     private String title;
     private String description;
@@ -30,6 +30,7 @@ public class Accommodation {
     private Address address;
     @ManyToOne
     private User host;
+    @Enumerated(EnumType.STRING)
     private AccommodationStatus status;
     @ElementCollection
     @CollectionTable(name = "accommodation_images", joinColumns = @JoinColumn(name = "accommodation_id"))
@@ -40,6 +41,9 @@ public class Accommodation {
     @CollectionTable(name = "usuario_services", joinColumns = @JoinColumn(name = "usuario_id"))
     @Column(name = "service")
     private Set<Service> services;
+    //Con el mappedBy se especifica cual tabla tiene la fk en este caso una reserva tiene la fk para accommodation
+    @OneToMany(mappedBy = "accommodation")
+    private List<Reservation> reservations;
 
 
 }

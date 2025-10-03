@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -28,7 +29,6 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
     private final Map<String, User> userStore = new ConcurrentHashMap<>();
     //Esto se llama inyeccion de dependencias
-
     private final UserRepository userRepository;
 
     @Override
@@ -73,24 +73,22 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void delete(String id) throws Exception {
-        User removedUser = userStore.remove(id);
+        User removedUser = userRepository.findById(id).orElse(null);
 
         if (removedUser == null) {
             throw new Exception("Usuario no encontrado.");
         }
+        userRepository.delete(removedUser);
     }
 
     @Override
     public List<UserDTO> listAll() {
-        return userStore.values()
-                .stream()
-                .map(userMapper::toUserDTO)
-                .toList();
+        return userRepository.findAll().stream().map(userMapper::toUserDTO).collect(Collectors.toList());
     }
 
     @Override
     public void edit(String id, EditUserDTO userDTO) throws Exception {
-        User user = userStore.get(id);
+        User user = userRepository.findById(id).orElse(null);
 
         if (user == null) {
             throw new Exception("Usuario no encontrado.");

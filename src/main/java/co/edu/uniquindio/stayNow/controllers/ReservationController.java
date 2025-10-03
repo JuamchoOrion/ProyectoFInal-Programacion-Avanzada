@@ -15,8 +15,8 @@ import java.util.List;
 @RequestMapping("/reservations")
 public class ReservationController {
     @PostMapping
-    public ResponseEntity<ResponseDTO<String>> createReservation(@RequestBody CreateReservationDTO reservationDTO){
-        return ResponseEntity.ok(new ResponseDTO<>(false, "La resreva ha sido creada con exito" ));
+    public ResponseEntity<ResponseDTO<ReservationDTO>> createReservation(@RequestBody CreateReservationDTO reservationDTO){
+        return ResponseEntity.ok(new ResponseDTO<>(false, new ReservationDTO()));
     }
 
     @GetMapping
