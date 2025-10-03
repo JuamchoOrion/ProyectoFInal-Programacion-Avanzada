@@ -7,17 +7,19 @@ import co.edu.uniquindio.stayNow.model.entity.User;
 import co.edu.uniquindio.stayNow.repositories.UserRepository;
 import co.edu.uniquindio.stayNow.services.interfaces.AuthService;
 import lombok.AllArgsConstructor;
-import org.apache.tomcat.util.http.parser.Authorization;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import co.edu.uniquindio.stayNow.security.JWTUtils;
+import org.springframework.stereotype.Service;
 
 import java.util.Map;
 import java.util.Optional;
-
-@AllArgsConstructor
+@Service
+@RequiredArgsConstructor
 public class AuthServiceImp implements AuthService {
-    private final Authorization authorization;
+
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JWTUtils jwtUtils;

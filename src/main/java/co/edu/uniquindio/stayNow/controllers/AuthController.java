@@ -13,12 +13,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 //TODAS LAS APIS LISTAS PARA ESTA SEMANA (28 DE SEPTIEMBRE)
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class AuthController {
 
-    UserServiceImpl userService;
-    AuthService authService;
+    private final UserServiceImpl userService;
+    private final AuthService authService;
 
     //Inyeccion de dependencias
     @PostMapping("/register")
