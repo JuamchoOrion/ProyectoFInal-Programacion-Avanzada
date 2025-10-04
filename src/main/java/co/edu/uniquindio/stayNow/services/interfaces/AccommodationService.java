@@ -6,24 +6,24 @@ import java.util.List;
 
 public interface AccommodationService {
 
-    void create(CreateAccommodationDTO accommodationDTO) throws Exception;
+    AccommodationDTO create(CreateAccommodationDTO accommodationDTO) throws Exception;
 
-    AccomodationDTO get(Long id) throws Exception;
+    AccommodationDTO get(Long id) throws Exception;
 
     void edit(Long id, EditAccommodationDTO accommodationDTO) throws Exception;
 
     void delete(Long id) throws Exception;
 
-    List<AccomodationDTO> listAll() throws Exception;
+    List<AccommodationDTO> listAll() throws Exception;
 
-    List<AccomodationDTO> search(String city,
-                                 String checkIn,
-                                 String checkOut,
-                                 Double minPrice,
-                                 Double maxPrice,
-                                 List<String> services,
-                                 int page,
-                                 int size) throws Exception;
+    List<AccommodationDTO> search(String city,
+                                  String checkIn,
+                                  String checkOut,
+                                  Double minPrice,
+                                  Double maxPrice,
+                                  List<String> services,
+                                  int page,
+                                  int size) throws Exception;
 
     List<ReservationDTO> getReservations(Long accommodationId,
                                          String startDate,
