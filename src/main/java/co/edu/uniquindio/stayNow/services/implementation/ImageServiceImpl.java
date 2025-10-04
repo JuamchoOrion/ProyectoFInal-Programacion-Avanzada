@@ -6,6 +6,7 @@ import co.edu.uniquindio.stayNow.services.interfaces.ImageService;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
@@ -18,12 +19,22 @@ import java.util.Map;
 public class ImageServiceImpl implements ImageService {
 
     private final Cloudinary cloudinary;
+    private final String folderName;
+    // Constructor en ImageServiceImpl.java
 
-    public ImageServiceImpl(){
+    public ImageServiceImpl(
+            @Value("${cloudinary.cloudName}") String cloudName,
+            @Value("${cloudinary.apiKey}") String apiKey,
+            @Value("${cloudinary.apiSecret}") String apiSecret,
+            @Value("${cloudinary.folderName}") String folderName
+    ){
+        this.folderName = folderName;
+
+        // Configura el objeto Cloudinary usando los valores inyectados
         Map<String, String> config = new HashMap<>();
-        config.put("cloud_name", "SU_CLOUD_NAME");
-        config.put("api_key", "SU_API_KEY");
-        config.put("api_secret", "SU_API_SECRET");
+        config.put("cloud_name", cloudName);
+        config.put("api_key", apiKey);
+        config.put("api_secret", apiSecret);
         cloudinary = new Cloudinary(config);
     }
 
@@ -31,7 +42,7 @@ public class ImageServiceImpl implements ImageService {
     public Map upload(MultipartFile image) throws Exception {
         File file = convert(image);
         // Reemplace "app_name" con el nombre de la carpeta donde se guardarán las imágenes en Cloudinary
-        return cloudinary.uploader().upload(file, ObjectUtils.asMap("folder", "app_name"));
+        return cloudinary.uploader().upload(file, ObjectUtils.asMap("folder", this.folderName));
     }
 
     @Override

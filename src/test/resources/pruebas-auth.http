@@ -29,6 +29,8 @@ Content-Type: application/json
   "email" : "willy@gmail.com",
   "password" : "willy123"
 }
+###
+@token = {{response.body.token}}
 
 ###
 
