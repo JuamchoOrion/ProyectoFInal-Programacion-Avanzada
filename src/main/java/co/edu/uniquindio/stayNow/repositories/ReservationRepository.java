@@ -19,4 +19,12 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             @Param("accomodationId") Long accomodationId,
             @Param("checkIn") LocalDateTime checkIn,
             @Param("checkOut") LocalDateTime checkOut);
+
+    @Query("SELECT COUNT(r) FROM Reservation r WHERE r.accommodation.id = :accommodationId " +
+           "AND (:from IS NULL OR r.checkIn >= :from) " +
+           "AND (:to IS NULL OR r.checkOut <= :to)")
+    Long countByAccommodationAndDateRange(
+            @Param("accommodationId") Long accommodationId,
+            @Param("from") LocalDate from,
+            @Param("to") LocalDate to);
 }

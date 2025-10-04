@@ -117,7 +117,12 @@ public class RestExceptionHandler {
 
     @ExceptionHandler(UnauthorizedReviewException.class)
     public ResponseEntity<ResponseDTO<String>> unauthorizedReviewExceptionHandler(UnauthorizedReviewException ex){
-        return ResponseEntity.status(403).body(new ResponseDTO<>(true, "No tiene permisos para dejar una reseña en este alojamiento."));
+        return ResponseEntity.status(403).body(new ResponseDTO<>(true, "No tiene permisos para dejar una reseña en este alojamiento. Es posible que no haya hecho una reserva."));
+    }
+
+    @ExceptionHandler(ReplyAlreadyExistsException.class)
+    public ResponseEntity<ResponseDTO<String>> replyAlreadyExistsExceptionHandler(ReplyAlreadyExistsException ex){
+        return ResponseEntity.status(409).body(new ResponseDTO<>(true, "Este comentario ya tiene una respuesta."));
     }
 
     // Generales
