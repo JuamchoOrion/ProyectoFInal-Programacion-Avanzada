@@ -14,6 +14,7 @@ import jakarta.persistence.*;
 @Entity
 public class Reservation {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private LocalDateTime createdAt;
     private LocalDateTime checkIn;

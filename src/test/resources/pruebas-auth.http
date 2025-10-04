@@ -1,4 +1,4 @@
-POST http://localhost:8080/api/auth/register
+POST http://localhost:9090/api/auth/register
 Content-Type: application/json
 
 {
@@ -12,7 +12,7 @@ Content-Type: application/json
 
 ###
 
-POST http://localhost:8080/api/auth/login
+POST http://localhost:9090/api/auth/login
 Content-Type: application/json
 
 {
@@ -22,7 +22,7 @@ Content-Type: application/json
 
 ###
 
-POST http://localhost:8080/api/auth/login
+POST http://localhost:9090/api/auth/login
 Content-Type: application/json
 
 {
@@ -32,7 +32,7 @@ Content-Type: application/json
 
 ###
 
-POST http://localhost:8080/api/auth/register
+POST http://localhost:9090/api/auth/register
 Content-Type: application/json
 
 {
@@ -46,7 +46,7 @@ Content-Type: application/json
 
 ###
 
-POST http://localhost:8080/api/auth/login
+POST http://localhost:9090/api/auth/login
 Content-Type: application/json
 
 {
@@ -56,14 +56,14 @@ Content-Type: application/json
 
 ###
 
-POST http://localhost:8080/api/accommodations
+POST http://localhost:9090/api/accommodations
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsIm5hbWUiOiJBZG1pbiIsInJvbGUiOiJST0xFX0hPU1QiLCJzdWIiOiI2MDk3MjQ5NS1jZjRlLTRhMjYtYjAyZS1jYmMwYmZiNzIwMGEiLCJpYXQiOjE3NTk1NTU3MTUsImV4cCI6MTc1OTU1OTMxNX0.os-x6_TP_8I58BQCtfAGYXTs839w-RNHl_TlMfV0wM6uZki22-_A1VzflD3QbcMw
+Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInJvbGUiOiJST0xFX0hPU1QiLCJuYW1lIjoiQWRtaW4iLCJzdWIiOiI2MDk3MjQ5NS1jZjRlLTRhMjYtYjAyZS1jYmMwYmZiNzIwMGEiLCJpYXQiOjE3NTk1NzMzMTMsImV4cCI6MTc1OTU3NjkxM30.uM1iuxRD7ANsQD7aEoMAE3c8JKKhI_rWiKTtfHHK7XmCIqFRsh_siYa536gY1uBl
 
 {
-  "title": "Apartamento en el centro",
-  "description": "Muy bonito y cerca a todo",
-  "city": "Bogotá",
+  "title": "Casa Armenia Piscina",
+  "description": "lorem asdksadlasd aslkdklasdkl",
+  "city": "Armenia",
   "address": "Calle 123 #45-67",
   "latitude": 4.60971,
   "longitude": -74.08175,
@@ -76,6 +76,39 @@ Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsI
   "maxImages": 5
 }
 
+###
 
+POST http://localhost:9090/reservations
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJlbWFpbCI6InJhbWlyZXNqdWFuZGExMjNAZ21haWwuY29tIiwicm9sZSI6IlJPTEVfR1VFU1QiLCJuYW1lIjoidGVzdGVyIiwic3ViIjoiNDZjN2FlMWItZmJkMS00ZTA0LWE2ZmEtNzViODY2OTQ5OTAxIiwiaWF0IjoxNzU5NTczNDU3LCJleHAiOjE3NTk1NzcwNTd9.2FPp-E5X0CnO7L5tGZBUQ6wgSSJCAxle16ITNQ4K-TE2cXznZKt0CBLu_RV5_PhZ
 
+{
+  "accommodationId": 2,
+  "checkIn": "2025-10-11T14:00:00",
+  "checkOut": "2025-11-16T12:00:00",
+  "guests": 2
+}
 
+###
+
+POST http://localhost:9090/api/auth/register
+Content-Type: application/json
+
+{
+  "name" : "tester",
+  "phone" : "123123123",
+  "email" : "ramiresjuanda123@gmail.com",
+  "password" : "12345678",
+  "dateBirth": "2000-05-20",
+  "role": "GUEST"
+}
+
+###
+
+POST http://localhost:9090/api/auth/login
+Content-Type: application/json
+
+{
+  "email" : "ramiresjuanda123@gmail.com",
+  "password" : "12345678"
+}

@@ -15,8 +15,10 @@ public class AccommodationDTO {
     String hostId;
     String city;
     String description;
-    String addres;
+    String address;
     Double pricePerNight;
+    float latitude;
+    float longitude;
     int maxGuests;
     List<Service> services;
     List<String> images;

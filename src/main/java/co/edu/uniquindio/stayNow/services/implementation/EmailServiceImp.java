@@ -18,7 +18,7 @@ public class EmailServiceImp implements EmailService {
     @Async
     public void sendMail(EmailDTO emailDTO) throws Exception {
         Email email = EmailBuilder.startingBlank()
-                .from("SMTP_USERNAME")
+                .from("devjuanchotest@gmail.com")
                 .to(emailDTO.recipient())
                 .withSubject(emailDTO.subject())
                 .withPlainText(emailDTO.body())

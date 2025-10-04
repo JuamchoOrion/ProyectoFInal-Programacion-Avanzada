@@ -58,6 +58,7 @@ public class ReservationServiceImp implements ReservationService {
         Reservation reservation = new Reservation();
         reservation.setAccommodation(accommodation);
         reservation.setCheckIn(dto.checkIn());
+        reservation.setGuest(user);
         reservation.setCheckOut(dto.checkOut());
         reservation.setGuestsNumber(dto.guests());
         reservation.setReservationStatus(ReservationStatus.PENDING);
