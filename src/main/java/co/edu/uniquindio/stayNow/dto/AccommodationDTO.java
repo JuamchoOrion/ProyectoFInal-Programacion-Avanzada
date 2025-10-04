@@ -10,7 +10,7 @@ import java.util.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class AccomodationDTO {
+public class AccommodationDTO {
     String id;
     String hostId;
     String city;

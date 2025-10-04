@@ -6,9 +6,12 @@ import co.edu.uniquindio.stayNow.dto.ReservationDTO;
 import co.edu.uniquindio.stayNow.mappers.ReservationMapper;
 import co.edu.uniquindio.stayNow.model.entity.Accommodation;
 import co.edu.uniquindio.stayNow.model.entity.Reservation;
+import co.edu.uniquindio.stayNow.model.entity.User;
 import co.edu.uniquindio.stayNow.model.enums.ReservationStatus;
+import co.edu.uniquindio.stayNow.model.enums.Role;
 import co.edu.uniquindio.stayNow.repositories.AccommodationRepository;
 import co.edu.uniquindio.stayNow.repositories.ReservationRepository;
+import co.edu.uniquindio.stayNow.repositories.UserRepository;
 import co.edu.uniquindio.stayNow.services.interfaces.AuthService;
 import co.edu.uniquindio.stayNow.services.interfaces.EmailService;
 import co.edu.uniquindio.stayNow.services.interfaces.ReservationService;
@@ -28,12 +31,14 @@ public class ReservationServiceImp implements ReservationService {
     private final AccommodationRepository accommodationRepository;
     private final ReservationRepository reservationRepository;
     private final EmailService emailService;
-    //private final AuthService authService;
+    private final AuthService authService;
+    private final UserRepository userRepository;
 
     @Override
     public ReservationDTO create(CreateReservationDTO dto) throws Exception {
-
-        //authService.getUserID();
+        //obtener usuario
+        User user = userRepository.getUserById(authService.getUserID()).orElse(null);
+        String email = user.getEmail();
 
         // buscar alojamiento
         Accommodation accommodation = accommodationRepository.findById(dto.accommodationId())
@@ -62,15 +67,14 @@ public class ReservationServiceImp implements ReservationService {
         Reservation saved = reservationRepository.save(reservation);
 
         // enviar email (antes del return)
-        /**
         emailService.sendMail(new EmailDTO(
                 "Reserva generada el día " + LocalDate.now(),
-                "Tu reserva en " + accommodation.getName() + " fue creada con éxito. " +
+                "Tu reserva en " + accommodation.getTitle() + " fue creada con éxito. " +
                         "Fechas: " + dto.checkIn() + " - " + dto.checkOut() +
                         ". Número de huéspedes: " + dto.guests() +
                         ". Precio total: $" + totalPrice,
-                dto.() // <-- suponiendo que viene en tu DTO
-        ));**/
+                email // <-- suponiendo que viene en tu DTO
+        ));
 
 
         // mapear a DTO de respuesta

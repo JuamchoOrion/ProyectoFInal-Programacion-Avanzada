@@ -1,14 +1,11 @@
 package co.edu.uniquindio.stayNow.mappers;
 
-import co.edu.uniquindio.stayNow.dto.AccomodationDTO;
+import co.edu.uniquindio.stayNow.dto.AccommodationDTO;
 import co.edu.uniquindio.stayNow.dto.CreateAccommodationDTO;
 import co.edu.uniquindio.stayNow.model.entity.Accommodation;
-import co.edu.uniquindio.stayNow.model.entity.Address;
-import co.edu.uniquindio.stayNow.model.entity.Location;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
-import org.mapstruct.Named;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface AccommodationMapper {
@@ -25,6 +22,6 @@ public interface AccommodationMapper {
     Accommodation toEntity(CreateAccommodationDTO accommodationDTO);
 
     @Mapping(target = "hostId", ignore = true)
-    AccomodationDTO toAccommodationDTO(Accommodation accommodation);
+    AccommodationDTO toAccommodationDTO(Accommodation accommodation);
 
 }

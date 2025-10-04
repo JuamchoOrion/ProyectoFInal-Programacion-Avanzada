@@ -1,7 +1,8 @@
 package co.edu.uniquindio.stayNow.controllers;
 
 import co.edu.uniquindio.stayNow.dto.*;
-import co.edu.uniquindio.stayNow.model.enums.ReservationStatus;
+import co.edu.uniquindio.stayNow.services.interfaces.AccommodationService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -9,12 +10,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/accommodations")
+@RequestMapping("/api/accommodations")
 //faltan los de comments
+@RequiredArgsConstructor
 public class AccommodationController {
+    private final AccommodationService accommodationService;
     //aca debemos llamar al service para buscar y lsitar los accommodation despues con esa lista mapearla a el dto por eso se devuelve un responseENtity con un dto
+
     @GetMapping
-    public ResponseEntity<ResponseDTO<List<AccomodationDTO>>> getListOfAccomodation(
+    public ResponseEntity<ResponseDTO<List<AccommodationDTO>>> getListOfAccomodation(
             @RequestParam(required = false) String city,
             @RequestParam(required = false) String checkIn,
             @RequestParam(required = false) String checkOut,
@@ -24,7 +28,7 @@ public class AccommodationController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ){
-        List<AccomodationDTO> list = new ArrayList<AccomodationDTO>();
+        List<AccommodationDTO> list = new ArrayList<AccommodationDTO>();
         //DE HECHO DEBEMOS RETORNAR UNA LISTA DE LOS DTOS, NO UN SOLO DTO. ARREGLAR CON EL SERVICE C:
         return ResponseEntity.ok(new ResponseDTO<>(false, list));
     }
@@ -41,18 +45,19 @@ public class AccommodationController {
         return ResponseEntity.ok(new ResponseDTO<>(false, list));
     }
 
-    @PostMapping("/{id}/reservations")
-    public ResponseEntity<ResponseDTO<String>> createAccommodation(@RequestBody CreateAccommodationDTO AccomodationDTO){
-        return ResponseEntity.ok(new ResponseDTO<>(false,"El alojamiento ha sido creado exitosamente"));
+    @PostMapping("")
+    public ResponseEntity<ResponseDTO<AccommodationDTO>> createAccommodation(@RequestBody CreateAccommodationDTO accommodationDTO) throws Exception {
+        AccommodationDTO dto = accommodationService.create(accommodationDTO);
+        return ResponseEntity.ok(new ResponseDTO<>(false,dto));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ResponseDTO<AccomodationDTO>> getAccommodationById(@PathVariable long id){
-        return ResponseEntity.ok(new ResponseDTO<>(false,new AccomodationDTO()));
+    public ResponseEntity<ResponseDTO<AccommodationDTO>> getAccommodationById(@PathVariable long id){
+        return ResponseEntity.ok(new ResponseDTO<>(false,new AccommodationDTO()));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ResponseDTO<String>> editAccommodation(@PathVariable long id, @RequestBody AccomodationDTO accomodationDTO){
+    public ResponseEntity<ResponseDTO<String>> editAccommodation(@PathVariable long id, @RequestBody AccommodationDTO accommodationDTO){
         return ResponseEntity.ok(new ResponseDTO<>(false, "alojamiento editado correctamente"));
     }
 

@@ -1,21 +1,18 @@
 package co.edu.uniquindio.stayNow.services.implementation;
-
 import co.edu.uniquindio.stayNow.dto.LoginRequestDTO;
 import co.edu.uniquindio.stayNow.dto.TokenDTO;
-import co.edu.uniquindio.stayNow.exceptions.UserNotFoundException;
 import co.edu.uniquindio.stayNow.model.entity.User;
 import co.edu.uniquindio.stayNow.repositories.UserRepository;
+import co.edu.uniquindio.stayNow.security.JWTUtils;
 import co.edu.uniquindio.stayNow.services.interfaces.AuthService;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import co.edu.uniquindio.stayNow.security.JWTUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
 import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImp implements AuthService {
@@ -23,6 +20,7 @@ public class AuthServiceImp implements AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JWTUtils jwtUtils;
+
     @Override
     public TokenDTO login(LoginRequestDTO loginDTO) throws Exception {
         Optional<User> optionalUser = userRepository.findByEmail(loginDTO.email());
@@ -33,11 +31,12 @@ public class AuthServiceImp implements AuthService {
 
         User user = optionalUser.get();
 
-        // Verificar si la contraseña es correcta usando el PasswordEncoder
+        // Verificar si la contraseña es correcta
         if(!passwordEncoder.matches(loginDTO.password(), user.getPassword())){
             throw new Exception("El usuario no existe");
         }
 
+        // Generar token con claims
         String token = jwtUtils.generateToken(user.getId(), createClaims(user));
         return new TokenDTO(token);
     }
@@ -46,13 +45,25 @@ public class AuthServiceImp implements AuthService {
         return Map.of(
                 "email", user.getEmail(),
                 "name", user.getName(),
-                "role", "ROLE_"+user.getRole().name()
+                "role", "ROLE_" + user.getRole().name()
         );
     }
 
+    /**
+     * Devuelve el ID del usuario autenticado
+     * (el subject "sub" que se guardó en el JWT al generarlo).
+     */
     public String getUserID(){
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String idUser = user.getId();
-        return idUser;
+        return SecurityContextHolder.getContext().getAuthentication().getName();
+    }
+
+    /**
+     * Devuelve la entidad User completa del usuario autenticado
+     */
+    @Override
+    public User getCurrentUser() throws Exception {
+        String userId = getUserID();
+        return userRepository.getUserById(userId)
+                .orElseThrow(() -> new Exception("User not found"));
     }
 }

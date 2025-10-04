@@ -4,6 +4,8 @@ import co.edu.uniquindio.stayNow.dto.CreateReservationDTO;
 import co.edu.uniquindio.stayNow.dto.ReservationDTO;
 import co.edu.uniquindio.stayNow.dto.ResponseDTO;
 import co.edu.uniquindio.stayNow.model.enums.ReservationStatus;
+import co.edu.uniquindio.stayNow.services.interfaces.ReservationService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,11 +15,14 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/reservations")
+@RequiredArgsConstructor
 public class ReservationController {
+    private final ReservationService reservationService;
     @PostMapping
-    public ResponseEntity<ResponseDTO<ReservationDTO>> createReservation(@RequestBody CreateReservationDTO reservationDTO){
-        //return ResponseEntity.ok(new ResponseDTO<>(false, new ReservationDTO(1,)));
-        return null;
+    public ResponseEntity<ResponseDTO<ReservationDTO>> createReservation(@RequestBody CreateReservationDTO reservationDTO) throws Exception {
+        ReservationDTO dto = reservationService.create(reservationDTO);
+        return ResponseEntity.ok(new ResponseDTO<>(false, dto));
+
     }
 
     @GetMapping
