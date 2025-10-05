@@ -117,7 +117,7 @@ Content-Type: application/json
 
 ### Obtener todos los alojamientos
 
-GET http://localhost:9090/api/accommodations
+GET http://localhost:9090/api/accommodations?services=wifi
 
 Accept: application/json
 

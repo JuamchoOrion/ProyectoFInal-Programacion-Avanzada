@@ -142,7 +142,7 @@ public class AccommodationServiceImpl implements AccommodationService {
                     .collect(Collectors.toSet());
 
             filters.add((root, query, cb) -> {
-                Join<Accommodation, AccommodationServiceType> join = root.joinSet("services");
+                Join<Accommodation, AccommodationServiceType> join = root.joinSet("accommodationServiceTypes");
                 query.distinct(true);
                 return join.in(enumServices);
             });
