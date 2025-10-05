@@ -36,6 +36,9 @@ dependencies {
     implementation 'org.simplejavamail:batch-module:8.12.6'
     runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
 
+    //Cloudinary, servicio en la nube para imagenes
+    implementation 'com.cloudinary:cloudinary-http5:2.3.2'
+
     //Spring security
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'io.jsonwebtoken:jjwt-api:0.13.0'
