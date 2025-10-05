@@ -3,10 +3,14 @@ package co.edu.uniquindio.stayNow.controllers;
 import co.edu.uniquindio.stayNow.dto.*;
 import co.edu.uniquindio.stayNow.services.interfaces.AccommodationService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -18,7 +22,7 @@ public class AccommodationController {
     //aca debemos llamar al service para buscar y lsitar los accommodation despues con esa lista mapearla a el dto por eso se devuelve un responseENtity con un dto
 
     @GetMapping
-    public ResponseEntity<ResponseDTO<List<AccommodationDTO>>> getListOfAccomodation(
+    public ResponseEntity<ResponseDTO<Page<AccommodationDTO>>> getListOfAccomodation(
             @RequestParam(required = false) String city,
             @RequestParam(required = false) String checkIn,
             @RequestParam(required = false) String checkOut,
@@ -27,10 +31,25 @@ public class AccommodationController {
             @RequestParam(required = false) String services, // lista separada por comas
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
-    ){
-        List<AccommodationDTO> list = new ArrayList<AccommodationDTO>();
+    ) throws Exception {
+
+        Pageable pageable = PageRequest.of(page, size);
+        List<String> serviceList = null;
+        if (services != null && !services.isBlank()) {
+            serviceList = Arrays.stream(services.split(","))
+                    .map(String::trim)
+                    .toList();
+        }
+        Page<AccommodationDTO> result = accommodationService.search(
+                city,
+                checkIn,
+                checkOut,
+                minPrice,
+                maxPrice,
+                serviceList,
+                pageable);
         //DE HECHO DEBEMOS RETORNAR UNA LISTA DE LOS DTOS, NO UN SOLO DTO. ARREGLAR CON EL SERVICE C:
-        return ResponseEntity.ok(new ResponseDTO<>(false, list));
+        return ResponseEntity.ok(new ResponseDTO<>(false, result));
     }
 
     //lo mismo tambien debe retornar una lista de dtos

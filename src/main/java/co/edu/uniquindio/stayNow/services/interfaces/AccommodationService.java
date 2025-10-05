@@ -1,6 +1,8 @@
 package co.edu.uniquindio.stayNow.services.interfaces;
 
 import co.edu.uniquindio.stayNow.dto.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -14,16 +16,15 @@ public interface AccommodationService {
 
     void delete(Long id) throws Exception;
 
-    List<AccommodationDTO> listAll() throws Exception;
+    Page<AccommodationDTO> listAll() throws Exception;
 
-    List<AccommodationDTO> search(String city,
+    Page<AccommodationDTO> search(String city,
                                   String checkIn,
                                   String checkOut,
                                   Double minPrice,
                                   Double maxPrice,
                                   List<String> services,
-                                  int page,
-                                  int size) throws Exception;
+                                  Pageable pageable) throws Exception;
 
     List<ReservationDTO> getReservations(Long accommodationId,
                                          String startDate,

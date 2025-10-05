@@ -58,18 +58,18 @@ Content-Type: application/json
 
 POST http://localhost:9090/api/accommodations
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInJvbGUiOiJST0xFX0hPU1QiLCJuYW1lIjoiQWRtaW4iLCJzdWIiOiI2MDk3MjQ5NS1jZjRlLTRhMjYtYjAyZS1jYmMwYmZiNzIwMGEiLCJpYXQiOjE3NTk1NzMzMTMsImV4cCI6MTc1OTU3NjkxM30.uM1iuxRD7ANsQD7aEoMAE3c8JKKhI_rWiKTtfHHK7XmCIqFRsh_siYa536gY1uBl
+Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsIm5hbWUiOiJBZG1pbiIsInJvbGUiOiJST0xFX0hPU1QiLCJzdWIiOiIyYzMwNGI1OC0xOTE0LTRhODctYmIzMS00YTY4OTE5MDg0YmMiLCJpYXQiOjE3NTk2MzU3OTksImV4cCI6MTc1OTYzOTM5OX0.eQ5Y6k3QVc--f-jNu_ySpXA67wNlAgqq2ZBaCczhiqKMQZqvo1WZR6KSJJcJimrG
 
 {
-  "title": "Casa Armenia Piscina",
+  "title": "Casa ",
   "description": "lorem asdksadlasd aslkdklasdkl",
-  "city": "Armenia",
+  "city": "Bogota",
   "address": "Calle 123 #45-67",
   "latitude": 4.60971,
   "longitude": -74.08175,
   "pricePerNight": 150000,
   "maxGuests": 4,
-  "services": ["WIFI", "TV", "COCINA"],
+  "services": ["WIFI"],
   "images": ["img1.jpg", "img2.jpg"],
   "mainImage": "img1.jpg",
   "minImage": 1,
@@ -112,3 +112,11 @@ Content-Type: application/json
   "email" : "ramiresjuanda123@gmail.com",
   "password" : "12345678"
 }
+
+### Obtener todos los alojamientos
+
+GET http://localhost:9090/api/accommodations
+
+Accept: application/json
+
+###

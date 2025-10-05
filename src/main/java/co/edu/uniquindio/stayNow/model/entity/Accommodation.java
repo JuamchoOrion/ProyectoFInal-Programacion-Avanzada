@@ -1,10 +1,10 @@
 package co.edu.uniquindio.stayNow.model.entity;
 
+import co.edu.uniquindio.stayNow.model.enums.AccommodationServiceType;
 import co.edu.uniquindio.stayNow.model.enums.AccommodationStatus;
-import co.edu.uniquindio.stayNow.model.enums.Service;
 import jakarta.persistence.*;
 import lombok.*;
-import java.awt.image.BufferedImage;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
@@ -33,15 +33,20 @@ public class Accommodation {
     private User host;
     @Enumerated(EnumType.STRING)
     private AccommodationStatus status;
+
     @ElementCollection
     @CollectionTable(name = "accommodation_images", joinColumns = @JoinColumn(name = "accommodation_id"))
     @Column(name = "image")
     private List<String> images;
-    @ElementCollection(targetClass = Service.class)
+
+    @ElementCollection(targetClass = AccommodationServiceType.class, fetch = FetchType.EAGER)
+    @CollectionTable(
+            name = "accommodation_services",
+            joinColumns = @JoinColumn(name = "accommodation_id")
+    )
     @Enumerated(EnumType.STRING)
-    @CollectionTable(name = "usuario_services", joinColumns = @JoinColumn(name = "usuario_id"))
     @Column(name = "service")
-    private Set<Service> services;
+    private Set<AccommodationServiceType> accommodationServiceTypes;
     //Con el mappedBy se especifica cual tabla tiene la fk en este caso una reserva tiene la fk para accommodation
     @OneToMany(mappedBy = "accommodation")
     private List<Reservation> reservations;

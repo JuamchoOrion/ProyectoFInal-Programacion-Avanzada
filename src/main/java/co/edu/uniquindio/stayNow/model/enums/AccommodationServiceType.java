@@ -1,6 +1,6 @@
 package co.edu.uniquindio.stayNow.model.enums;
 
-public enum Service {
+public enum AccommodationServiceType {
     WIFI,
     POOL,
     BREAKFAST,
