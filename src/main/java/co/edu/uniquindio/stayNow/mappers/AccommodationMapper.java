@@ -2,9 +2,11 @@ package co.edu.uniquindio.stayNow.mappers;
 
 import co.edu.uniquindio.stayNow.dto.AccommodationDTO;
 import co.edu.uniquindio.stayNow.dto.CreateAccommodationDTO;
+import co.edu.uniquindio.stayNow.dto.EditAccommodationDTO;
 import co.edu.uniquindio.stayNow.model.entity.Accommodation;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 import org.mapstruct.MappingConstants;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
@@ -28,4 +30,10 @@ public interface AccommodationMapper {
     @Mapping(target = "latitude", source = "address.location.latitude")
     @Mapping(target = "longitude", source = "address.location.longitude")
     AccommodationDTO toAccommodationDTO(Accommodation accommodation);
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    void updateEntity(EditAccommodationDTO dto, @MappingTarget Accommodation accommodation);
+
 }
+

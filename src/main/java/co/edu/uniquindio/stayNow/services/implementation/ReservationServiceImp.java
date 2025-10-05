@@ -3,6 +3,7 @@ package co.edu.uniquindio.stayNow.services.implementation;
 import co.edu.uniquindio.stayNow.dto.CreateReservationDTO;
 import co.edu.uniquindio.stayNow.dto.EmailDTO;
 import co.edu.uniquindio.stayNow.dto.ReservationDTO;
+import co.edu.uniquindio.stayNow.exceptions.*;
 import co.edu.uniquindio.stayNow.mappers.ReservationMapper;
 import co.edu.uniquindio.stayNow.model.entity.Accommodation;
 import co.edu.uniquindio.stayNow.model.entity.Reservation;
@@ -20,20 +21,20 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @RequiredArgsConstructor
 @Service
 public class ReservationServiceImp implements ReservationService {
-
     private final AccommodationRepository accommodationRepository;
     private final ReservationRepository reservationRepository;
     private final EmailService emailService;
     private final AuthService authService;
     private final UserRepository userRepository;
-
+    private final ReservationMapper reservationMapper;
     @Override
     public ReservationDTO create(CreateReservationDTO dto) throws Exception {
         //obtener usuario
@@ -42,9 +43,8 @@ public class ReservationServiceImp implements ReservationService {
 
         // buscar alojamiento
         Accommodation accommodation = accommodationRepository.findById(dto.accommodationId())
-                .orElseThrow(() -> new Exception("Alojamiento no encontrado"));
+                .orElseThrow(() -> new AccommodationNotFoundException("Alojamiento no encontrado"));
 
-        // validaciones
         validateAccommodation(accommodation);
         validateGuests(dto, accommodation);
         validateDates(dto);
@@ -54,68 +54,132 @@ public class ReservationServiceImp implements ReservationService {
         long nights = ChronoUnit.DAYS.between(dto.checkIn(), dto.checkOut());
         double totalPrice = nights * accommodation.getPricePerNight();
 
-        // mapear a entidad Reservation
-        Reservation reservation = new Reservation();
-        reservation.setAccommodation(accommodation);
-        reservation.setCheckIn(dto.checkIn());
+
+        Reservation reservation = reservationMapper.toEntity(dto);
         reservation.setGuest(user);
-        reservation.setCheckOut(dto.checkOut());
-        reservation.setGuestsNumber(dto.guests());
-        reservation.setReservationStatus(ReservationStatus.PENDING);
-        reservation.setTotalPrice(totalPrice);
+        reservation.setAccommodation(accommodation);
 
         // guardar en BD
         Reservation saved = reservationRepository.save(reservation);
-
         // enviar email (antes del return)
         emailService.sendMail(new EmailDTO(
-                "Reserva generada el día " + LocalDate.now(),
+                "Reserva generada el día " + LocalDateTime.now(),
                 "Tu reserva en " + accommodation.getTitle() + " fue creada con éxito. " +
                         "Fechas: " + dto.checkIn() + " - " + dto.checkOut() +
                         ". Número de huéspedes: " + dto.guests() +
                         ". Precio total: $" + totalPrice,
-                email // <-- suponiendo que viene en tu DTO
+                email // <-- suponi.endo que viene en tu DTO
         ));
 
 
-        // mapear a DTO de respuesta
-        return new ReservationDTO(
-                saved.getId(),
-                accommodation.getId(),
-                reservation.getCheckIn(),
-                reservation.getCheckOut(),
-                reservation.getGuestsNumber(),
-                reservation.getTotalPrice(),
-                reservation.getReservationStatus()
-        );
+        return reservationMapper.toReservationDTO(saved);
     }
 
 
+
+
     @Override
-    public Page<Reservation> getReservations(Long userId, String status, LocalDate from, LocalDate to, Pageable pageable) {
+    public Page<Reservation> getReservations(String status, LocalDateTime from, LocalDateTime to, LocalDateTime checkIn, LocalDateTime checkOut, Pageable pageable) throws Exception {
+
+        String currentUserId = authService.getUserID();
+        User currentUser = userRepository.getUserById(currentUserId)
+                .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado."));
+
+        String userIdFilter = null; // Para GUEST
+        String hostIdFilter = null; // Para HOST
+
+        // 2. Determinar el filtro a aplicar
+        if (currentUser.getRole().equals(Role.GUEST)) {
+            userIdFilter = currentUserId;
+        } else if (currentUser.getRole().equals(Role.HOST)) {
+            hostIdFilter = currentUserId;
+        } else {
+            throw new UnauthorizedActionException("Rol de usuario no autorizado para ver listados de reservas.");
+        }
+
+        // 3. Convertir estado
+        ReservationStatus statusFilter = null;
+        if (status != null && !status.isEmpty()) {
+            try {
+                statusFilter = ReservationStatus.valueOf(status.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                throw new BadRequestException("Estado de reserva inválido: " + status);
+            }
+        }
+
+        // 4. Llamar al repositorio con la consulta dinámica (hay que verifica rla consulta dianmica)
+        /**return reservationRepository.findReservationsWithFilters(
+                userIdFilter,
+                hostIdFilter,
+                statusFilter,
+                from,
+                to,
+                checkIn,
+                checkOut,
+                pageable
+        );**/
+
+        //return reservationMapper.toReservationDTO();
         return null;
+    }
+
+    @Override
+    public ReservationDTO getReservationById(Long reservationId) throws Exception{
+        Reservation reservation = reservationRepository.findById(reservationId).
+                orElseThrow(() -> new ReservationNotFoundException("Reserva no encontrada"));
+        return reservationMapper.toReservationDTO(reservation);
+    }
+
+    @Override
+    public ReservationDTO cancelReservation(Long reservationId) throws Exception{
+        String currentUserId = authService.getUserID();
+        User currentUser = userRepository.getUserById(currentUserId)
+                .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado."));
+
+        Reservation reservation = reservationRepository.findById(reservationId).
+                orElseThrow(() -> new ReservationNotFoundException("Reserva no encontrada."));
+
+        if(!reservation.getGuest().getId().equals(currentUser.getId())){
+            throw new UnauthorizedActionException("No puede cancelar una reserva de otra persona.");
+        }
+
+        if(reservation.getReservationStatus() == ReservationStatus.CANCELED){
+            throw new ReservationCancellationNotAllowedException("Esta reserva ya está cancelada.");
+        }
+
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime checkIn = reservation.getCheckIn();
+
+        if(Duration.between(now, checkIn).toHours() < 48){
+            throw new ReservationCancellationNotAllowedException("Solo se pueden cancelar las reservas " +
+                    "hasta 48 horas antes del CheckIn");
+        }
+
+        reservation.setReservationStatus(ReservationStatus.CANCELED);
+        Reservation reservationSaved = reservationRepository.save(reservation);
+        return reservationMapper.toReservationDTO(reservationSaved);
     }
 
     // 🔹 Métodos privados para validaciones
     private void validateAccommodation(Accommodation accommodation) throws Exception {
         if (accommodation == null) {
-            throw new Exception("Accommodation not found");
+            throw new AccommodationNotFoundException("Accommodation not found");
         }
         if ("INACTIVE".equals(accommodation.getStatus())) {
-            throw new Exception("Accommodation is inactive");
+            throw new AccommodationUnavailableException("Accommodation is inactive");
         }
     }
 
     private void validateGuests(CreateReservationDTO dto, Accommodation accommodation) throws Exception {
         if (dto.guests() > accommodation.getMaxGuests()) {
-            throw new Exception("Max guests exceeded");
+            throw new MaxGuestsExceededException("Max guests exceeded");
         }
     }
 
     private void validateDates(CreateReservationDTO dto) throws Exception {
         long nights = ChronoUnit.DAYS.between(dto.checkIn(), dto.checkOut());
         if (nights < 1) {
-            throw new Exception("Reservation must be at least 1 night");
+            throw new BadRequestException("Reservation must be at least 1 night");
         }
     }
 
@@ -126,7 +190,7 @@ public class ReservationServiceImp implements ReservationService {
                 dto.checkOut()
         );
         if (!overlaps.isEmpty()) {
-            throw new Exception("Reservation overlaps with existing one");
+            throw new ReservationConflictException("Reservation overlaps with existing one");
         }
     }
 }

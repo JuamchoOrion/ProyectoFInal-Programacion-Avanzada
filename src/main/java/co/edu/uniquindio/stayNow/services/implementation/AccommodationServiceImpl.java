@@ -1,13 +1,15 @@
 package co.edu.uniquindio.stayNow.services.implementation;
 
 import co.edu.uniquindio.stayNow.dto.*;
+import co.edu.uniquindio.stayNow.exceptions.AccommodationNotFoundException;
+import co.edu.uniquindio.stayNow.exceptions.UnauthorizedActionException;
+import co.edu.uniquindio.stayNow.exceptions.UserNotFoundException;
 import co.edu.uniquindio.stayNow.mappers.AccommodationMapper;
-import co.edu.uniquindio.stayNow.model.entity.Accommodation;
-import co.edu.uniquindio.stayNow.model.entity.Address;
-import co.edu.uniquindio.stayNow.model.entity.Location;
-import co.edu.uniquindio.stayNow.model.entity.User;
+import co.edu.uniquindio.stayNow.mappers.ReservationMapper;
+import co.edu.uniquindio.stayNow.model.entity.*;
 import co.edu.uniquindio.stayNow.model.enums.AccommodationServiceType;
 import co.edu.uniquindio.stayNow.model.enums.AccommodationStatus;
+import co.edu.uniquindio.stayNow.model.enums.ReservationStatus;
 import co.edu.uniquindio.stayNow.model.enums.Role;
 import co.edu.uniquindio.stayNow.repositories.*;
 import co.edu.uniquindio.stayNow.services.interfaces.AccommodationService;
@@ -18,7 +20,9 @@ import co.edu.uniquindio.stayNow.services.interfaces.UserService;
 import jakarta.persistence.criteria.Join;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -41,6 +45,7 @@ public class AccommodationServiceImpl implements AccommodationService {
     private final UserService userService;
     private final AccommodationMapper accommodationMapper;
     private final UserRepository userRepository;
+    private final ReservationMapper reservationMapper;
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE;
     private final AuthService authService;
@@ -50,11 +55,11 @@ public class AccommodationServiceImpl implements AccommodationService {
 
         String id = authService.getUserID();
         User user = userRepository.getUserById(id)
-                .orElseThrow(() -> new Exception("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
 
         if (!user.getRole().equals(Role.HOST)) {
-            throw new Exception("User is not a host");
+            throw new UnauthorizedActionException("User is not a host");
         }
 
 
@@ -84,17 +89,36 @@ public class AccommodationServiceImpl implements AccommodationService {
 
 
     @Override
-    public AccommodationDTO get(Long id) throws Exception {
-        return null;
+    public AccommodationDTO get(Long accomodationId) throws Exception {
+        String id = authService.getUserID();
+        User user = userRepository.getUserById(id)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        Accommodation accommodation = accommodationRepo.findById(accomodationId)
+                .orElseThrow(() -> new AccommodationNotFoundException("Accommodation not found"));
+
+
+        return accommodationMapper.toAccommodationDTO(accommodation);
     }
 
     @Override
-    public void edit(Long id, EditAccommodationDTO accommodationDTO) throws Exception {
+    public AccommodationDTO edit(Long id, EditAccommodationDTO accommodationDTO) throws Exception {
+
+        Accommodation accommodation = accommodationRepo.findById(id).orElse(null);
+        if (accommodation == null) {
+            throw new Exception("Accommodation not found");
+        }
+        accommodationMapper.updateEntity(accommodationDTO, accommodation);
+        accommodationRepo.save(accommodation);
+
+        return accommodationMapper.toAccommodationDTO(accommodation);
 
     }
 
     @Override
     public void delete(Long id) throws Exception {
+        Accommodation accommodation = accommodationRepo.findById(id).orElseThrow(()-> new Exception("Accommodation does not exist"));
+        accommodationRepo.delete(accommodation);
 
     }
 
@@ -151,6 +175,14 @@ public class AccommodationServiceImpl implements AccommodationService {
         // Combinar todos los filtros dinámicamente
         Specification<Accommodation> spec = Specification.allOf(filters);
 
+        if (pageable.getSort().isUnsorted()) {
+            pageable = PageRequest.of(
+                    pageable.getPageNumber(),
+                    pageable.getPageSize(),
+                    Sort.by(Sort.Direction.DESC, "createdAt")
+            );
+        }
+
         // Ejecutar la consulta con paginación
         Page<Accommodation> page = accommodationRepo.findAll(spec, pageable);
 
@@ -159,14 +191,32 @@ public class AccommodationServiceImpl implements AccommodationService {
 
 
     @Override
-    public List<ReservationDTO> getReservations(Long accommodationId, String startDate, String endDate, String status) throws Exception {
-        return List.of();
+    public Page<ReservationDTO> getReservations(Long accommodationId, LocalDateTime from, LocalDateTime to, List<String> status, Pageable pageable) throws Exception {
+        List<Specification<Reservation>> filters = new ArrayList<>();
+        //SPECIFICATION ES BASICAMENTE CONSTRUIR FILTROS EN CONSULTAS SQL CON WHERE (AND)
+        filters.add((root,query,cb)->cb.equal(root.get("accommodation").get("id"), accommodationId));
+        if(from != null ) {
+            filters.add((root,query,cb)->cb.greaterThanOrEqualTo(root.get("checkIn"), from));
+        }
+        if(to != null ) {
+            filters.add((root, query, cb)-> cb.lessThanOrEqualTo(root.get("checkOut"), to));
+        }
+        if(status != null) {
+            Set<ReservationStatus> enumStatus = status.stream()
+                    .map(String::toUpperCase)
+                    .map(ReservationStatus::valueOf)
+                    .collect(Collectors.toSet());
+            filters.add((root, query, cb) -> {
+                Join<Reservation, ReservationStatus> join = root.joinSet("reservationStatus");
+                query.distinct(true);
+                return join.in(enumStatus);
+            });
+        }
+        Specification<Reservation> spec = Specification.allOf(filters);
+        Page<Reservation> page = reservationRepo.findAll(spec,pageable );
+        return page.map(reservationMapper::toReservationDTO);
     }
 
-    @Override
-    public void createReservation(Long accommodationId, CreateReservationDTO reservationDTO) throws Exception {
-
-    }
 
     @Override
     public List<ReviewDTO> getReviews(Long accommodationId) throws Exception {

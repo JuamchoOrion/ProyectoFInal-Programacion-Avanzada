@@ -6,9 +6,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -54,14 +56,29 @@ public class AccommodationController {
 
     //lo mismo tambien debe retornar una lista de dtos
     @GetMapping("/{id}/reservations")
-    public ResponseEntity<ResponseDTO<List<ReservationDTO>>> getListOfReservation(
+    public ResponseEntity<ResponseDTO<Page<ReservationDTO>>> getListOfReservation(
             @PathVariable Long id,
-            @RequestParam(required = false) String startDate,
-            @RequestParam(required = false) String endDate,
-            @RequestParam(required = false) String status
-    ){
-        List<ReservationDTO> list = new ArrayList<ReservationDTO>();
-        return ResponseEntity.ok(new ResponseDTO<>(false, list));
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime from,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime to,
+            @RequestParam(required = false) String status,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) throws Exception {
+        List<String> statusList = new ArrayList<String>();
+        Pageable pageable = PageRequest.of(page, size);
+        if (status != null && !status.isBlank()) {
+            statusList = Arrays.stream(status.split(","))
+                    .map(String::trim)
+                    .toList();
+        }
+        Page<ReservationDTO> result = accommodationService.getReservations(
+                id,
+                from,
+                to,
+                statusList,
+                pageable
+        );
+        return ResponseEntity.ok(new ResponseDTO<>(false, result));
     }
 
     @PostMapping("")
@@ -71,19 +88,23 @@ public class AccommodationController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ResponseDTO<AccommodationDTO>> getAccommodationById(@PathVariable long id){
-        return ResponseEntity.ok(new ResponseDTO<>(false,new AccommodationDTO()));
+    public ResponseEntity<ResponseDTO<AccommodationDTO>> getAccommodationById(@PathVariable long id) throws Exception {
+        AccommodationDTO response = accommodationService.get(id);
+        return ResponseEntity.ok(new ResponseDTO<>(false, response));
+
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ResponseDTO<String>> editAccommodation(@PathVariable long id, @RequestBody AccommodationDTO accommodationDTO){
-        return ResponseEntity.ok(new ResponseDTO<>(false, "alojamiento editado correctamente"));
+    public ResponseEntity<ResponseDTO<AccommodationDTO>> editAccommodation(@PathVariable long id, @RequestBody EditAccommodationDTO accommodationDTO) throws Exception {
+        return ResponseEntity.ok(new ResponseDTO<>(false, accommodationService.edit(id, accommodationDTO)));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ResponseDTO<String>> deleteAccommodation(@PathVariable long id){
-        return ResponseEntity.ok(new ResponseDTO<>(false, "El alojamiento fue eliminado exitosamente"));
+    public ResponseEntity<ResponseDTO<String>> deleteAccommodation(@PathVariable long id) throws Exception {
+        accommodationService.delete(id);
+        return ResponseEntity.ok(new ResponseDTO<>(false, "El alojamiento con id: "+ id +" fue eliminado exitosamente"));
     }
+    // esto lo hace cardenas
     @GetMapping("/{id}/review")
     public ResponseEntity<ResponseDTO<List<ReviewDTO>>> getReviews(@PathVariable long id){
         List<ReviewDTO> list = new ArrayList<ReviewDTO>();

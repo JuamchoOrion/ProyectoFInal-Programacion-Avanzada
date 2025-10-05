@@ -9,9 +9,17 @@ import org.mapstruct.MappingConstants;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface ReservationMapper {
-    @Mapping(target = "createdAt", expression = "java(java.time.LocalDateTime.now())")
-    @Mapping (target = "reservationStatus", expression = "java(co.edu.uniquindio.stayNow.model.enums.ReservationStatus.PENDING)")
-    Reservation toEntity(CreateReservationDTO ReservationDTO);
-    ReservationDTO toReservationDTO(Reservation reservation);
 
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "createdAt", expression = "java(java.time.LocalDateTime.now())")
+    @Mapping(target = "reservationStatus", expression = "java(co.edu.uniquindio.stayNow.model.enums.ReservationStatus.PENDING)")
+    @Mapping(target = "accommodation", ignore = true)
+    @Mapping(target = "guest", ignore = true)
+    Reservation toEntity(CreateReservationDTO dto);
+
+    @Mapping(target = "accommodationId", source = "accommodation.id")
+    @Mapping(target = "guestId", source = "guest.id")
+    @Mapping(target = "guestsNumber", source = "guestsNumber")
+    @Mapping(target = "reservationStatus", source = "reservationStatus")
+    ReservationDTO toReservationDTO(Reservation reservation);
 }

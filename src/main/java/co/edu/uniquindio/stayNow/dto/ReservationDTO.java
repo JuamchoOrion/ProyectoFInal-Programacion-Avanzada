@@ -9,16 +9,15 @@ import java.time.LocalDateTime;
 
 
 public record ReservationDTO(
-//faltan atributos
-        //deberia tener GuestID?= PREGUNTAR AL PROFE
+
         Long id,
         Long accommodationId,
+        String guestId,
         LocalDateTime checkIn,
         LocalDateTime checkOut,
-        Integer guests,
+        Integer guestsNumber,
         Double totalPrice,
-        ReservationStatus status
-
+        ReservationStatus reservationStatus
 
 ) {
 }

@@ -23,7 +23,7 @@ public class Reservation {
     private Double totalPrice;
     @ManyToOne
     private User guest;
-
+    @Enumerated(EnumType.STRING)
     private ReservationStatus reservationStatus;
     @ManyToOne
     private Accommodation accommodation;

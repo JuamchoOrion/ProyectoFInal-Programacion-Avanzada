@@ -1,9 +1,11 @@
 package co.edu.uniquindio.stayNow.services.interfaces;
 
 import co.edu.uniquindio.stayNow.dto.*;
+import co.edu.uniquindio.stayNow.model.enums.ReservationStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface AccommodationService {
@@ -12,7 +14,7 @@ public interface AccommodationService {
 
     AccommodationDTO get(Long id) throws Exception;
 
-    void edit(Long id, EditAccommodationDTO accommodationDTO) throws Exception;
+    AccommodationDTO edit(Long id, EditAccommodationDTO accommodationDTO) throws Exception;
 
     void delete(Long id) throws Exception;
 
@@ -26,13 +28,13 @@ public interface AccommodationService {
                                   List<String> services,
                                   Pageable pageable) throws Exception;
 
-    List<ReservationDTO> getReservations(Long accommodationId,
-                                         String startDate,
-                                         String endDate,
-                                         String status) throws Exception;
+    Page<ReservationDTO> getReservations(Long accommodationId,
+                                         LocalDateTime startDate,
+                                         LocalDateTime endDate,
+                                         List<String> status,
+                                         Pageable pageable) throws Exception;
 
-    void createReservation(Long accommodationId,
-                           CreateReservationDTO reservationDTO) throws Exception;
+
 
     List<ReviewDTO> getReviews(Long accommodationId) throws Exception;
 
