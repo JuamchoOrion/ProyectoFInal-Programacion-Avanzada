@@ -26,5 +26,6 @@ public class Review {
     private Accommodation accommodation;
     private String comment;
 
+    private int rate;
     private LocalDateTime createdAt;
 }

@@ -33,6 +33,11 @@ public interface AccommodationMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "address.address", source = "address")
+    @Mapping(target = "address.city", source = "city")
+    @Mapping(target = "address.location.latitude", source = "latitude")
+    @Mapping(target = "address.location.longitude", source = "longitude")
+    @Mapping(target = "host", ignore = true)
     void updateEntity(EditAccommodationDTO dto, @MappingTarget Accommodation accommodation);
 
 }

@@ -21,7 +21,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AccommodationController {
     private final AccommodationService accommodationService;
-    //aca debemos llamar al service para buscar y lsitar los accommodation despues con esa lista mapearla a el dto por eso se devuelve un responseENtity con un dto
 
     @GetMapping
     public ResponseEntity<ResponseDTO<Page<AccommodationDTO>>> getListOfAccomodation(
@@ -50,11 +49,9 @@ public class AccommodationController {
                 maxPrice,
                 serviceList,
                 pageable);
-        //DE HECHO DEBEMOS RETORNAR UNA LISTA DE LOS DTOS, NO UN SOLO DTO. ARREGLAR CON EL SERVICE C:
         return ResponseEntity.ok(new ResponseDTO<>(false, result));
     }
 
-    //lo mismo tambien debe retornar una lista de dtos
     @GetMapping("/{id}/reservations")
     public ResponseEntity<ResponseDTO<Page<ReservationDTO>>> getListOfReservation(
             @PathVariable Long id,
@@ -91,7 +88,6 @@ public class AccommodationController {
     public ResponseEntity<ResponseDTO<AccommodationDTO>> getAccommodationById(@PathVariable long id) throws Exception {
         AccommodationDTO response = accommodationService.get(id);
         return ResponseEntity.ok(new ResponseDTO<>(false, response));
-
     }
 
     @PutMapping("/{id}")

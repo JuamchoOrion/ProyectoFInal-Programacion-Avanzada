@@ -44,7 +44,8 @@ public class ReservationServiceImp implements ReservationService {
         // buscar alojamiento
         Accommodation accommodation = accommodationRepository.findById(dto.accommodationId())
                 .orElseThrow(() -> new AccommodationNotFoundException("Alojamiento no encontrado"));
-
+        User host = accommodation.getHost();
+        String emailHost = host.getEmail();
         validateAccommodation(accommodation);
         validateGuests(dto, accommodation);
         validateDates(dto);
@@ -68,7 +69,15 @@ public class ReservationServiceImp implements ReservationService {
                         "Fechas: " + dto.checkIn() + " - " + dto.checkOut() +
                         ". Número de huéspedes: " + dto.guests() +
                         ". Precio total: $" + totalPrice,
-                email // <-- suponi.endo que viene en tu DTO
+                email
+        ));
+        emailService.sendMail(new EmailDTO(
+                "Reserva generada el día " + LocalDateTime.now(),
+                "Nueva reserva generada en tu Alojamiento " + accommodation.getTitle()  +
+                        "Fechas: " + dto.checkIn() + " - " + dto.checkOut() +
+                        ". Número de huéspedes: " + dto.guests() +
+                        ". Precio total: $" + totalPrice,
+                emailHost
         ));
 
 

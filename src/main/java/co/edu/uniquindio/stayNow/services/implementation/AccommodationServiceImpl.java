@@ -117,8 +117,13 @@ public class AccommodationServiceImpl implements AccommodationService {
 
     @Override
     public void delete(Long id) throws Exception {
-        Accommodation accommodation = accommodationRepo.findById(id).orElseThrow(()-> new Exception("Accommodation does not exist"));
-        accommodationRepo.delete(accommodation);
+        Accommodation accommodation = accommodationRepo.findById(id)
+                .orElseThrow(() -> new AccommodationNotFoundException("Accommodation does not exist"));
+        if(accommodation.getReservations().stream().anyMatch(r -> !r.getReservationStatus().equals(ReservationStatus.CANCELED))) {
+            throw new AccommodationNotFoundException("Accommodation cannot be deleted because it has active reservations");
+        }
+        accommodation.setStatus(AccommodationStatus.DELETED);
+        accommodationRepo.save(accommodation);
 
     }
 
