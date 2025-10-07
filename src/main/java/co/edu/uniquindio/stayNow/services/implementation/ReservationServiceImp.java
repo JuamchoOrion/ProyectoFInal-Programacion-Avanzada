@@ -19,8 +19,9 @@ import co.edu.uniquindio.stayNow.services.interfaces.ReservationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-
+import java.util.*;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -86,50 +87,66 @@ public class ReservationServiceImp implements ReservationService {
 
 
 
-
     @Override
-    public Page<Reservation> getReservations(String status, LocalDateTime from, LocalDateTime to, LocalDateTime checkIn, LocalDateTime checkOut, Pageable pageable) throws Exception {
+    public Page<ReservationDTO> getReservationsUser(
+            String status,
+            LocalDateTime from,
+            LocalDateTime to,
+            LocalDateTime checkIn,
+            LocalDateTime checkOut,
+            Pageable pageable) throws Exception {
 
         String currentUserId = authService.getUserID();
         User currentUser = userRepository.getUserById(currentUserId)
                 .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado."));
 
-        String userIdFilter = null; // Para GUEST
-        String hostIdFilter = null; // Para HOST
-
-        // 2. Determinar el filtro a aplicar
-        if (currentUser.getRole().equals(Role.GUEST)) {
-            userIdFilter = currentUserId;
-        } else if (currentUser.getRole().equals(Role.HOST)) {
-            hostIdFilter = currentUserId;
-        } else {
-            throw new UnauthorizedActionException("Rol de usuario no autorizado para ver listados de reservas.");
+        // ⚙️ Verificamos que sea GUEST (ya no manejas HOST aquí)
+        if (!currentUser.getRole().equals(Role.GUEST)) {
+            throw new UnauthorizedActionException("Solo los usuarios GUEST pueden ver sus reservas.");
         }
 
-        // 3. Convertir estado
-        ReservationStatus statusFilter = null;
+        // 🔹 Construimos una lista de filtros Specification dinámicos
+        List<Specification<Reservation>> filters = new ArrayList<>();
+
+        // Filtrar por usuario logueado
+        filters.add((root, query, cb) -> cb.equal(root.get("guest").get("id"), currentUserId));
+
+        // Filtrar por estado
         if (status != null && !status.isEmpty()) {
             try {
-                statusFilter = ReservationStatus.valueOf(status.toUpperCase());
+                ReservationStatus enumStatus = ReservationStatus.valueOf(status.toUpperCase());
+                filters.add((root, query, cb) -> cb.equal(root.get("reservationStatus"), enumStatus));
             } catch (IllegalArgumentException e) {
                 throw new BadRequestException("Estado de reserva inválido: " + status);
             }
         }
 
-        // 4. Llamar al repositorio con la consulta dinámica (hay que verifica rla consulta dianmica)
-        /**return reservationRepository.findReservationsWithFilters(
-                userIdFilter,
-                hostIdFilter,
-                statusFilter,
-                from,
-                to,
-                checkIn,
-                checkOut,
-                pageable
-        );**/
+        // Filtrar por rango de fechas de creación
+        if (from != null) {
+            filters.add((root, query, cb) -> cb.greaterThanOrEqualTo(root.get("createdAt"), from));
+        }
+        if (to != null) {
+            filters.add((root, query, cb) -> cb.lessThanOrEqualTo(root.get("createdAt"), to));
+        }
 
-        //return reservationMapper.toReservationDTO();
-        return null;
+        // Filtrar por fechas de check-in / check-out
+        if (checkIn != null) {
+            filters.add((root, query, cb) -> cb.greaterThanOrEqualTo(root.get("checkIn"), checkIn));
+        }
+        if (checkOut != null) {
+            filters.add((root, query, cb) -> cb.lessThanOrEqualTo(root.get("checkOut"), checkOut));
+        }
+
+        // Combinar todos los filtros
+        Specification<Reservation> spec = filters.stream()
+                .reduce(Specification::and)
+                .orElse(null);
+
+        // Ejecutar consulta
+        Page<Reservation> reservationsPage = reservationRepository.findAll(spec, pageable);
+
+        // Convertir entidades a DTOs
+        return reservationsPage.map(reservationMapper::toReservationDTO);
     }
 
     @Override

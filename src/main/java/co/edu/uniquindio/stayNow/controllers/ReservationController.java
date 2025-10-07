@@ -34,24 +34,23 @@ public class ReservationController {
         return ResponseEntity.ok(new ResponseDTO<>(false, dto));
 
     }
-    //lala arreglar esto pls
+
     @GetMapping
     public ResponseEntity<ResponseDTO<Page<ReservationDTO>>> getReservationsUser(
             @RequestParam(required = false) String status,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime from, // Fecha de creación (desde)
-
-            // Fechas de estadía (Check-In/Check-Out)
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime checkIn,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime checkOut,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime from, // Fecha de creación desde
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime to,   // Fecha de creación hasta
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime checkIn, // Fecha de entrada
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime checkOut, // Fecha de salida
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) throws Exception {
-/**
-        // 1. Construir el objeto Pageable manualmente (igual que en Accommodation)
+
+        // 1️⃣ Crear el objeto de paginación
         Pageable pageable = PageRequest.of(page, size);
 
-        // 3. Llamar al servicio, que devuelve Page<Reservation>
-        Page<Reservation> reservationPage = reservationService.getReservations(
+        // 2️⃣ Llamar al servicio con los filtros
+        Page<ReservationDTO> reservationPage = reservationService.getReservationsUser(
                 status,
                 from,
                 to,
@@ -60,10 +59,10 @@ public class ReservationController {
                 pageable
         );
 
-        // 4. Mapear Page<Reservation> a Page<ReservationDTO> y retornar
-        Page<ReservationDTO> dtoPage = reservationMapper.toReservationDTOPage(reservationPage);
-**/
-        return null;
+        // 3️⃣ Retornar la respuesta estandarizada
+        return ResponseEntity.ok(
+                new ResponseDTO<>(false, reservationPage)
+        );
     }
     @GetMapping("/{id}")
     public ResponseEntity<ResponseDTO<ReservationDTO>> getReservationById(@PathVariable Long id) throws Exception {

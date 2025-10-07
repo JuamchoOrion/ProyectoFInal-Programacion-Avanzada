@@ -23,29 +23,4 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long>,
             @Param("accomodationId") Long accomodationId,
             @Param("checkIn") LocalDateTime checkIn,
             @Param("checkOut") LocalDateTime checkOut);
-
-    @Query("SELECT r FROM Reservation r " +
-            "WHERE (:userId IS NULL OR r.guest.id = :userId) " +
-            "AND (:hostId IS NULL OR r.accommodation.host.id = :hostId) " +
-
-            "AND (:status IS NULL OR r.reservationStatus = :status) " +
-
-            "AND (COALESCE(:from, r.createdAt) <= r.createdAt AND r.createdAt <= COALESCE(:to, r.createdAt)) " +
-
-            "AND (COALESCE(:checkInTime, r.checkIn) <= r.checkIn) " +
-            "AND (COALESCE(:checkOutTime, r.checkOut) >= r.checkOut) " +
-
-            "ORDER BY r.createdAt DESC")
-    Page<Reservation> findReservationsWithFilters(
-            @Param("userId") String userId,
-            @Param("hostId") String hostId,
-            @Param("status") ReservationStatus status,
-            // Aquí usamos LocalDateTime para filtrar la fecha de creación
-            @Param("from") LocalDateTime from,
-            @Param("to") LocalDateTime to,
-            // Usamos nuevos nombres para evitar conflicto con los de LocalDate
-            @Param("checkInTime") LocalDateTime checkIn,
-            @Param("checkOutTime") LocalDateTime checkOut,
-            Pageable pageable
-    );
 }
