@@ -6,6 +6,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -24,7 +27,13 @@ public class Review {
     private Reply reply;
     @ManyToOne
     private Accommodation accommodation;
+    @OneToOne
+    private Reservation reservation;
+    @Size(max = 500)
     private String comment;
+    @Min(1)
+    @Max(5)
+    private Integer rating;
 
     private int rate;
     private LocalDateTime createdAt;

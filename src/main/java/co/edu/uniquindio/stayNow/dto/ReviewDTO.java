@@ -4,10 +4,10 @@ import java.time.LocalDateTime;
 
 public record ReviewDTO(
         Long id,
-        Long userId,
+        String userId,
         String userName,
         int rating,
-        String comment,
+        String text,
         LocalDateTime createdAt,
         String reply
 ) {}

@@ -36,10 +36,10 @@ dependencies {
     implementation 'org.simplejavamail:batch-module:8.12.6'
     runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
 
-    //Cloudinary, servicio en la nube para imagenes
+    // Cloudinary
     implementation 'com.cloudinary:cloudinary-http5:2.3.2'
 
-    //Spring security
+    // Spring Security + JWT
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'io.jsonwebtoken:jjwt-api:0.13.0'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.13.0'
@@ -62,6 +62,13 @@ dependencies {
     testCompileOnly 'org.projectlombok:lombok:1.18.34'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.34'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+
+    // Mockito (para simular repositorios y servicios)
+    testImplementation 'org.mockito:mockito-core:5.11.0'
+    testImplementation 'org.mockito:mockito-junit-jupiter:5.11.0'
+
+    // JUnit Jupiter
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.0'
 }
 
 tasks.named('test') {
