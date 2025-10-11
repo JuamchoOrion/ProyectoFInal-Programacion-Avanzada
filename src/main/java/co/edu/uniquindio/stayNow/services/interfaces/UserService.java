@@ -20,6 +20,6 @@ public interface UserService {
 
     List<UserDTO> listAll();
 
-    void edit(String id, EditUserDTO userDTO) throws Exception;
+    void edit( EditUserDTO userDTO) throws Exception;
 
 }

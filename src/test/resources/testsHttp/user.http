@@ -1,14 +1,32 @@
-PUT http://localhost:9090/users/e0ed0696-f39b-48cc-b84a-7ff587e70d22
-Authorization: eyJhbGciOiJIUzM4NCJ9.eyJyb2xlIjoiUk9MRV9HVUVTVCIsImVtYWlsIjoicmFtaXJlc2p1YW5kYTEyM0BnbWFpbC5jb20iLCJuYW1lIjoidGVzdGVyIiwic3ViIjoiZTBlZDA2OTYtZjM5Yi00OGNjLWI4NGEtN2ZmNTg3ZTcwZDIyIiwiaWF0IjoxNzYwMTk1NDAxLCJleHAiOjE3NjAxOTkwMDF9.C-d5jqsUI7iWWoVXRa0OnJpJBM62prD0MYvL8NXkliSgM8ahr4gQlxrQ2vy7LBtI
+### Variables
+@token = eyJhbGciOiJIUzM4NCJ9.eyJyb2xlIjoiUk9MRV9HVUVTVCIsIm5hbWUiOiJ0ZXN0ZXIiLCJlbWFpbCI6InJhbWlyZXNqdWFuZGExMjNAZ21haWwuY29tIiwic3ViIjoiOWM5MjE2MDUtNmZhNC00MTlmLTllMGUtZTdjNTRlNmY5M2Q0IiwiaWF0IjoxNzYwMjE2MDc3LCJleHAiOjE3NjAyMTk2Nzd9.bHeW3KTFTGGW0G8oczswQac1pM5pH0Hx8PytLeObEd6-hkcSH60cXMXEDMd4ninL
+### Editar Usuario con foto local
+PUT http://localhost:9090/users
 Content-Type: application/json
-Accept: application/json
+Authorization: Bearer {{token}}
 
 {
-  "name": "Ramires Juanda Edición Exitosa",
-  "phone": "3009998877",
+  "name": "Admin",
   "email": "ramiresjuanda123@gmail.com",
-  "password": "",
-  "dateBirth": "2000-05-20",
-  "role": "GUEST",
-  "photoUrl": "http://res.cloudinary.com/dbeyylkba/image/upload/v1760190499/stayNow/pcgjygrpohzplcbxpmo0.jpg"
+  "phone": "3123456789",
+  "password": "123456789",
+  "photoUrl": "C:\\Users\\ramir\\Downloads\\roblox.jpg",
+  "dateBirth": "1995-06-15",
+  "role": "GUEST"
 }
+
+### Editar Usuario con foto local
+PUT http://localhost:9090/users
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJyb2xlIjoiUk9MRV9IT1NUIiwibmFtZSI6IkFkbWluIiwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJzdWIiOiI3NDJmYTk4Yy05YzVlLTQ2NGItYmY1MC1mYWM2YjNkMzQ2ZmIiLCJpYXQiOjE3NjAyMTYyMTAsImV4cCI6MTc2MDIxOTgxMH0.jcgvZ5O5BQEWzNmZAEfpEvsiYfxIQW1PMfHwNe-rKBoKP4hMup1KF_SG7yAHWOBR
+
+{
+  "name": "Admin2",
+  "email": "ramiresjuandaadmin@gmail.com",
+  "phone": "3123456789",
+  "password": "123456789",
+  "photoUrl": "C:\\Users\\ramir\\Downloads\\roblox.jpg",
+  "dateBirth": "1995-06-15",
+  "role": "HOST"
+}
+

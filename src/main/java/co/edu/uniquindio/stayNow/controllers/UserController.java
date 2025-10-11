@@ -28,9 +28,9 @@ public class UserController {
         return ResponseEntity.ok(new ResponseDTO<>(false, "The user has been deleted"));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ResponseDTO<String>> edit(@PathVariable String id, @Valid @RequestBody EditUserDTO userDTO) throws Exception {
-        userService.edit(id, userDTO);
+    @PutMapping
+    public ResponseEntity<ResponseDTO<String>> edit( @Valid @RequestBody EditUserDTO userDTO) throws Exception {
+        userService.edit( userDTO);
         return ResponseEntity.ok(new ResponseDTO<>(false, "The user has been updated"));
     }
 

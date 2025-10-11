@@ -38,6 +38,7 @@ public class SecurityConfig {
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(req -> req
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/ws-chat/**").permitAll()
                         .requestMatchers("/api/auth/**",   // login, register, etc.
@@ -48,20 +49,8 @@ public class SecurityConfig {
                                 "/topic/**",      // ✅ prefijos STOMP de recepción
                                 "/queue/**").permitAll()
                         .requestMatchers("/chat-websocket/**", "/topic/**").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/users").hasAnyAuthority("ROLE_ADMIN", "ROLE_HOST", "ROLE_GUEST")
                         .requestMatchers(HttpMethod.GET,"/api/accommodations/**").permitAll()
-
-                        // ⬅️ SOLUCIÓN: REGLA EXPLÍCITA PARA EDITAR PERFILES
-                        // Permite editar el usuario si:
-                        // 1. El usuario tiene el rol HOST/ADMIN, O
-                        // 2. El ID en la URL ({id}) coincide con el ID del usuario logueado (principal.id).
-                        // Nota: Tu rol es GUEST, usaremos 'hasAuthority' ya que tu token usa "ROLE_GUEST".
-                        .requestMatchers(HttpMethod.GET, "/users/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_HOST", "ROLE_GUEST")
-                        .requestMatchers(HttpMethod.PUT, "/users/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_HOST", "ROLE_GUEST")
-                        .requestMatchers(HttpMethod.DELETE, "/users/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_HOST", "ROLE_GUEST")
-
-
-                        // ⬅️ 2. PROTECCIÓN DE LA CARGA DE IMÁGENES
-                        // Solo usuarios autenticados pueden subir archivos (lo correcto).
                         .requestMatchers("/api/images").authenticated()
 
 

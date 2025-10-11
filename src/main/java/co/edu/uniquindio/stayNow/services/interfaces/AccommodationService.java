@@ -36,12 +36,4 @@ public interface AccommodationService {
 
 
 
-    List<ReviewDTO> getReviews(Long accommodationId) throws Exception;
-
-    void createReview(Long accommodationId,
-                      CreateReviewDTO reviewDTO) throws Exception;
-
-    void replyToReview(Long accommodationId,
-                       Long reviewId,
-                       ReplyReviewDTO replyDTO) throws Exception;
 }

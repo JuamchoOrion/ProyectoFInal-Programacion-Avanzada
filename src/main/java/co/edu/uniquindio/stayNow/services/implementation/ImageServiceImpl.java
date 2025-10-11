@@ -20,7 +20,6 @@ public class ImageServiceImpl implements ImageService {
 
     private final Cloudinary cloudinary;
     private final String folderName;
-    // Constructor en ImageServiceImpl.java
 
     public ImageServiceImpl(
             @Value("${cloudinary.cloudName}") String cloudName,
@@ -50,6 +49,14 @@ public class ImageServiceImpl implements ImageService {
         return cloudinary.uploader().destroy(imageId, ObjectUtils.emptyMap());
     }
 
+    @Override
+    public Map uploadFromPath(String filePath) throws Exception {
+        File file = new File(filePath);
+        if (!file.exists() || !file.isFile()) {
+            throw new IOException("File not found: " + filePath);
+        }
+        return cloudinary.uploader().upload(file, ObjectUtils.asMap("folder", this.folderName));
+    }
 
     private File convert(MultipartFile image) throws IOException {
         File file = File.createTempFile(image.getOriginalFilename(), null);

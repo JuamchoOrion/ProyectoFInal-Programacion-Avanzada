@@ -1,9 +1,33 @@
+@tokenHost = eyJhbGciOiJIUzM4NCJ9.eyJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsIm5hbWUiOiJBZG1pbiIsInJvbGUiOiJST0xFX0hPU1QiLCJzdWIiOiI3NDJmYTk4Yy05YzVlLTQ2NGItYmY1MC1mYWM2YjNkMzQ2ZmIiLCJpYXQiOjE3NjAyMTIyNTksImV4cCI6MTc2MDIxNTg1OX0.L9pOn1wJVNxpcVzwkdkeGD8o5f1sH-t3n8yqDOv014wyb-pnQ7T-Yynr_iYNlMvt
+##############################################
+# 🏠 CREAR ALOJAMIENTO CON IMÁGENES LOCALES
+##############################################
+
+POST http://localhost:9090/api/accommodations
+Content-Type: application/json
+Authorization: Bearer {{tokenHost}}
+
+{
+  "title": "Casa de prueba con imágenes",
+  "description": "Casa de prueba donde las imágenes se suben automáticamente a Cloudinary.",
+  "city": "Bogotá222",
+  "address": "Calle 100 #10-20",
+  "latitude": 4.658,
+  "longitude": -74.093,
+  "pricePerNight": 200000,
+  "maxGuests": 4,
+  "services": ["WIFI", "POOL"],
+  "images": [
+    "C:\\Users\\ramir\\Downloads\\gato.jpg",
+    "C:\\Users\\ramir\\Downloads\\foto2.jpg"
+  ],
+  "mainImage": "C:\\Users\\ramir\\Downloads\\gato.jpg",
+  "minImage": 1,
+  "maxImages": 5
+}
 ##############################################
 # 🔐 TOKENS DE AUTENTICACIÓN
 ##############################################
-
-### 🔐 Token del host (ROLE_HOST)
-@tokenHost = eyJhbGciOiJIUzM4NCJ9.eyJuYW1lIjoiQWRtaW4iLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInJvbGUiOiJST0xFX0hPU1QiLCJzdWIiOiI3NDJmYTk4Yy05YzVlLTQ2NGItYmY1MC1mYWM2YjNkMzQ2ZmIiLCJpYXQiOjE3NjAxMzI5MTMsImV4cCI6MTc2MDEzNjUxM30.2yGIhEt0uCeEF7gDj-6SGRdx9_QJDeQ9G2z86QjNgPsrNRK4bgz6LAgzLOpzvESr
 
 ### 🔐 Token del guest (ROLE_GUEST)
 @tokenGuest = eyJhbGciOiJIUzM4NCJ9.eyJyb2xlIjoiUk9MRV9HVUVTVCIsIm5hbWUiOiJ0ZXN0ZXIiLCJlbWFpbCI6InJhbWlyZXNqdWFuZGExMjNAZ21haWwuY29tIiwic3ViIjoiOWM5MjE2MDUtNmZhNC00MTlmLTllMGUtZTdjNTRlNmY5M2Q0IiwiaWF0IjoxNzYwMTk5MzQ4LCJleHAiOjE3NjAyMDI5NDh9.G0ERNiNEpvCGe9I1_HsIEZOYHWQG-Z9DxmxikR60IoFsIpYC2aZa4QJNlqF44BFl
@@ -113,7 +137,7 @@ Authorization: Bearer {{tokenHost}}
 ##############################################
 
 ### Buscar por ciudad
-GET http://localhost:9090/api/accommodations?city=Bogotá
+GET http://localhost:9090/api/accommodations
 
 ### Buscar por rango de precios
 GET http://localhost:9090/api/accommodations?minPrice=100000&maxPrice=300000
@@ -153,26 +177,4 @@ Authorization: Bearer {{tokenHost}}
 }
 
 
-##############################################
-# ❌ ELIMINAR ALOJAMIENTO
-##############################################
 
-DELETE http://localhost:9090/api/accommodations/2
-Authorization: Bearer {{tokenHost}}
-
-
-##############################################
-# 🧾 RESERVAS POR ALOJAMIENTO
-##############################################
-
-### Listar todas las reservas
-GET http://localhost:9090/api/accommodations/1/reservations
-Authorization: Bearer {{tokenHost}}
-
-### Filtrar reservas por fechas
-GET http://localhost:9090/api/accommodations/1/reservations?from=2025-10-01T00:00:00&to=2025-12-01T00:00:00
-Authorization: Bearer {{tokenHost}}
-
-### Filtrar reservas por estado
-GET http://localhost:9090/api/accommodations/1/reservations?status=CONFIRMED,PENDING
-Authorization: Bearer {{tokenHost}}

@@ -35,6 +35,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -61,6 +62,14 @@ public class AccommodationServiceImpl implements AccommodationService {
     @Override
     public AccommodationDTO create(CreateAccommodationDTO accommodationDTO) throws Exception {
 
+        List<String> uploadedImageUrls = new ArrayList<>();
+
+        for (String localPath : accommodationDTO.images()) {
+            Map result = imageService.uploadFromPath(localPath);
+            String url = (String) result.get("secure_url");
+            uploadedImageUrls.add(url);
+            System.out.println("Imagen subida: " + url);
+        }
 
         String id = authService.getUserID();
         User user = userRepository.getUserById(id)
@@ -89,6 +98,8 @@ public class AccommodationServiceImpl implements AccommodationService {
             accommodation.setAccommodationServiceTypes(Set.of()); // vacío si no hay servicios
         }
 
+        accommodation.setImages(uploadedImageUrls);
+        accommodation.setMainImage(uploadedImageUrls.get(0));
 
         Accommodation saved = accommodationRepo.save(accommodation);
 
@@ -329,19 +340,4 @@ public class AccommodationServiceImpl implements AccommodationService {
         return page.map(reservationMapper::toReservationDTO);
     }
 
-
-    @Override
-    public List<ReviewDTO> getReviews(Long accommodationId) throws Exception {
-        return List.of();
-    }
-
-    @Override
-    public void createReview(Long accommodationId, CreateReviewDTO reviewDTO) throws Exception {
-
-    }
-
-    @Override
-    public void replyToReview(Long accommodationId, Long reviewId, ReplyReviewDTO replyDTO) throws Exception {
-
-    }
 }

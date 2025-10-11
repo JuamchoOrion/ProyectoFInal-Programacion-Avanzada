@@ -49,12 +49,15 @@ public class JWTFilter extends OncePerRequestFilter{
                 // Crear un objeto de autenticación y establecerlo en el contexto de seguridad
                 UsernamePasswordAuthenticationToken authentication = new
                         UsernamePasswordAuthenticationToken(
-                                // este lo cmabie porqiue no me funcionaba el edit user antes estaba userDetails
-                        username,
+
+                        userDetails,
                         null,
                         userDetails.getAuthorities()
                 );
                 SecurityContextHolder.getContext().setAuthentication(authentication);
+                System.out.println("USERNAME FROM JWT: " + username);
+                System.out.println("AUTHORITIES: " + userDetails.getAuthorities());
+
             }
         } catch (Exception e) {
             // Si el token no es válido, enviar un error 401

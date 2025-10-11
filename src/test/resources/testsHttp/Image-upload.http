@@ -1,6 +1,6 @@
 ### Variables
 # Token JWT del usuario 'tester' (ya logueado)
-@token = eyJhbGciOiJIUzM4NCJ9.eyJyb2xlIjoiUk9MRV9HVUVTVCIsIm5hbWUiOiJ0ZXN0ZXIiLCJlbWFpbCI6InJhbWlyZXNqdWFuZGExMjNAZ21haWwuY29tIiwic3ViIjoiZTBlZDA2OTYtZjM5Yi00OGNjLWI4NGEtN2ZmNTg3ZTcwZDIyIiwiaWF0IjoxNzYwMTkxOTYwLCJleHAiOjE3NjAxOTU1NjB9.VcM5Vo_dF1PMYWgcvMuBDyOx1G9EFNuzLFqHY8hbybOeAYx6uJzid2B1iyvCvr0I
+@token = eyJhbGciOiJIUzM4NCJ9.eyJuYW1lIjoiV2lsbHkiLCJlbWFpbCI6IndpbGx5QGdtYWlsLmNvbSIsInJvbGUiOiJST0xFX0dVRVNUIiwic3ViIjoiMDkzYWQwMzEtOGRmNC00YTdjLWI5MGEtZWM1MmMwYjNkNDY5IiwiaWF0IjoxNzYwMjA5NzYwLCJleHAiOjE3NjAyMTMzNjB9.J7EDbRml0h_NE_IyUo_H0cE-ai9i80_P7SJPey87V7miB5plQf7tZw-IyaYjSeap
 @baseUrl = http://localhost:9090/api/images
 
 ---
@@ -14,7 +14,7 @@ Authorization: Bearer {{token}}
 Content-Disposition: form-data; name="file"; filename="Kaladin_Lyon.png"
 Content-Type: image/png
 
-< /Users/lala/Downloads/Kaladin_Lyon.png.5c0b30937c260bf7f14bde7c50a5f8b0.png
+< C:\\Users\\ramir\\Downloads\\gato.jpg
 
 --WebAppBoundary--
 

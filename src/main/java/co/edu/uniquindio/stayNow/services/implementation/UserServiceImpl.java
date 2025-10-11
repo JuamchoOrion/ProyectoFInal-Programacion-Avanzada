@@ -11,6 +11,7 @@ import co.edu.uniquindio.stayNow.model.entity.User;
 import co.edu.uniquindio.stayNow.model.enums.Role;
 import co.edu.uniquindio.stayNow.model.enums.UserStatus;
 import co.edu.uniquindio.stayNow.repositories.UserRepository;
+import co.edu.uniquindio.stayNow.services.interfaces.AuthService;
 import co.edu.uniquindio.stayNow.services.interfaces.ImageService;
 import co.edu.uniquindio.stayNow.services.interfaces.UserService;
 
@@ -33,6 +34,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserMapper userMapper;
     //Esto se llama inyeccion de dependencias
+    private final AuthService authService;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final ImageService imageService; // ⬅️ INYECCIÓN DE DEPENDENCIA
@@ -93,50 +95,49 @@ public class UserServiceImpl implements UserService {
     public List<UserDTO> listAll() {
         return userRepository.findAll().stream().map(userMapper::toUserDTO).collect(Collectors.toList());
     }
-
     @Override
-    public void edit(String id, EditUserDTO userDTO) throws Exception {
-        User user = userRepository.findById(id).orElse(null);
+    public void edit(EditUserDTO userDTO) throws Exception {
 
-        if (user == null) {
-            throw new UserNotFoundException("Usuario no encontrado.");
-        }
+        String id = authService.getUserID();
+        User user = userRepository.getUserById(id)
+                .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
 
-        // 1. Guardar la URL de la foto antigua antes de la actualización
+        // 1️⃣ Guardar URL antigua para borrado
         String oldPhotoUrl = user.getPhotoUrl();
 
+        // 2️⃣ Validar correo
         if (!user.getEmail().equalsIgnoreCase(userDTO.email())
                 && isEmailDuplicated(userDTO.email())) {
             throw new EmailAlreadyInUseException("El correo electrónico ya está en uso.");
         }
 
-        // 2. Aplicar los nuevos datos del DTO (incluida la nueva photoUrl)
-        //nota: si esto no funciona
-        userMapper.updateEntity(userDTO, user);
-        //usar el mapeo manual
-        /*
+        // 3️⃣ Subir nueva foto si userDTO.photoUrl es ruta local
+        String newPhotoUrl = userDTO.photoUrl();
+        if (newPhotoUrl != null && !newPhotoUrl.isBlank() && newPhotoUrl.startsWith("C:\\")) {
+            Map uploadResult = imageService.uploadFromPath(newPhotoUrl);
+            newPhotoUrl = (String) uploadResult.get("secure_url");
+        }
+
+        // 4️⃣ Actualizar campos manualmente
         user.setName(userDTO.name());
         user.setPhone(userDTO.phone());
         user.setEmail(userDTO.email());
-        user.setPhotoUrl(userDTO.photoUrl());
+        user.setPhotoUrl(newPhotoUrl); // nueva URL de Cloudinary
         user.setRole(userDTO.role());
-
-        */
 
         if (userDTO.password() != null && !userDTO.password().isBlank()) {
             user.setPassword(encode(userDTO.password()));
         }
 
-        // 3. Lógica de limpieza en Cloudinary
-        // Si la foto antigua existe, no está vacía y es diferente a la nueva foto:
-        if (oldPhotoUrl != null && !oldPhotoUrl.isBlank() && !oldPhotoUrl.equals(userDTO.photoUrl())) {
+        // 5️⃣ Eliminar foto antigua de Cloudinary si cambió
+        if (oldPhotoUrl != null && !oldPhotoUrl.isBlank() && !oldPhotoUrl.equals(newPhotoUrl)) {
             String publicId = extractPublicId(oldPhotoUrl);
             if (publicId != null) {
-                imageService.delete(publicId); // ⬅️ ¡Eliminar la imagen antigua!
+                imageService.delete(publicId);
             }
         }
 
-        // 4. Guardar el usuario actualizado en la BD
+        // 6️⃣ Guardar cambios
         userRepository.save(user);
     }
 
