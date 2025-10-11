@@ -1,6 +1,7 @@
 package co.edu.uniquindio.stayNow.services.implementation;
 import co.edu.uniquindio.stayNow.dto.LoginRequestDTO;
 import co.edu.uniquindio.stayNow.dto.TokenDTO;
+import co.edu.uniquindio.stayNow.exceptions.UserNotFoundException;
 import co.edu.uniquindio.stayNow.model.entity.User;
 import co.edu.uniquindio.stayNow.repositories.UserRepository;
 import co.edu.uniquindio.stayNow.security.JWTUtils;
@@ -26,14 +27,14 @@ public class AuthServiceImp implements AuthService {
         Optional<User> optionalUser = userRepository.findByEmail(loginDTO.email());
 
         if(optionalUser.isEmpty()){
-            throw new Exception("El usuario no existe");
+            throw new UserNotFoundException("El usuario no existe");
         }
 
         User user = optionalUser.get();
 
         // Verificar si la contraseña es correcta
         if(!passwordEncoder.matches(loginDTO.password(), user.getPassword())){
-            throw new Exception("El usuario no existe");
+            throw new UserNotFoundException("El usuario no existe");
         }
 
         // Generar token con claims
@@ -64,6 +65,6 @@ public class AuthServiceImp implements AuthService {
     public User getCurrentUser() throws Exception {
         String userId = getUserID();
         return userRepository.getUserById(userId)
-                .orElseThrow(() -> new Exception("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
     }
 }

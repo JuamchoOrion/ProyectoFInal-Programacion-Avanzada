@@ -39,12 +39,12 @@ public class UserServiceImpl implements UserService {
     public void create(CreateUserDTO userDTO) throws Exception {
 
         if (isEmailDuplicated(userDTO.email())) {
-            throw new Exception("El correo electrónico ya está en uso.");
+            throw new EmailAlreadyInUseException("El correo electrónico ya está en uso.");
         }
         //Con bd se llama al metodo para obtener el optional del usuario, hace la consulta si el email exist
         //si no existe se crea, de lo contrario se lanza exception
         if(userRepository.findByEmail(userDTO.email()).isPresent()){
-            throw new Exception("El correo electrónico ya está en uso.");
+            throw new EmailAlreadyInUseException("El correo electrónico ya está en uso.");
         }
 
         User newUser = User.builder()
