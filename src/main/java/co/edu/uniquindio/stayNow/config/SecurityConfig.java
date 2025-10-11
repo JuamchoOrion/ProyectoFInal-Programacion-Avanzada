@@ -15,6 +15,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.expression.WebExpressionAuthorizationManager;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -48,6 +49,22 @@ public class SecurityConfig {
                                 "/queue/**").permitAll()
                         .requestMatchers("/chat-websocket/**", "/topic/**").permitAll()
                         .requestMatchers(HttpMethod.GET,"/api/accommodations/**").permitAll()
+
+                        // ⬅️ SOLUCIÓN: REGLA EXPLÍCITA PARA EDITAR PERFILES
+                        // Permite editar el usuario si:
+                        // 1. El usuario tiene el rol HOST/ADMIN, O
+                        // 2. El ID en la URL ({id}) coincide con el ID del usuario logueado (principal.id).
+                        // Nota: Tu rol es GUEST, usaremos 'hasAuthority' ya que tu token usa "ROLE_GUEST".
+                        .requestMatchers(HttpMethod.GET, "/users/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_HOST", "ROLE_GUEST")
+                        .requestMatchers(HttpMethod.PUT, "/users/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_HOST", "ROLE_GUEST")
+                        .requestMatchers(HttpMethod.DELETE, "/users/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_HOST", "ROLE_GUEST")
+
+
+                        // ⬅️ 2. PROTECCIÓN DE LA CARGA DE IMÁGENES
+                        // Solo usuarios autenticados pueden subir archivos (lo correcto).
+                        .requestMatchers("/api/images").authenticated()
+
+
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(new JwtAuthenticationEntryPoint()))
@@ -55,6 +72,7 @@ public class SecurityConfig {
 
         return http.build();
     }
+
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {

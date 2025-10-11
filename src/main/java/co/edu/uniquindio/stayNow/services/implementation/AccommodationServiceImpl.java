@@ -14,6 +14,7 @@ import co.edu.uniquindio.stayNow.model.enums.Role;
 import co.edu.uniquindio.stayNow.repositories.*;
 import co.edu.uniquindio.stayNow.services.interfaces.AccommodationService;
 import co.edu.uniquindio.stayNow.services.interfaces.AuthService;
+import co.edu.uniquindio.stayNow.services.interfaces.ImageService;
 import co.edu.uniquindio.stayNow.services.interfaces.UserService;
 
 
@@ -21,13 +22,14 @@ import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Root;
 import jakarta.persistence.criteria.Subquery;
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-
+import org.springframework.beans.factory.annotation.Value;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -45,12 +47,17 @@ public class AccommodationServiceImpl implements AccommodationService {
     private final ReservationRepository reservationRepo;
     private final ReviewRepository reviewRepo;
     private final UserService userService;
+    private final ImageService imageService;
     private final AccommodationMapper accommodationMapper;
     private final UserRepository userRepository;
     private final ReservationMapper reservationMapper;
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE;
     private final AuthService authService;
+
+    @Value("${cloudinary.folderName}")
+    private String cloudinaryFolderName;
+
     @Override
     public AccommodationDTO create(CreateAccommodationDTO accommodationDTO) throws Exception {
 
@@ -103,18 +110,102 @@ public class AccommodationServiceImpl implements AccommodationService {
         return accommodationMapper.toAccommodationDTO(accommodation);
     }
 
+    // co.edu.uniquindio.stayNow.services.implementation.AccommodationServiceImpl
+
     @Override
     public AccommodationDTO edit(Long id, EditAccommodationDTO accommodationDTO) throws Exception {
 
-        Accommodation accommodation = accommodationRepo.findById(id).orElse(null);
-        if (accommodation == null) {
-            throw new Exception("Accommodation not found");
-        }
+        Accommodation accommodation = accommodationRepo.findById(id)
+                .orElseThrow(() -> new AccommodationNotFoundException("Accommodation not found"));
+
+        // 1. Guardar las URLs de imágenes anteriores (antes de la actualización del mapper)
+        // El campo mainImage ahora existe en la entidad.
+        List<String> oldImages = new ArrayList<>(accommodation.getImages());
+        String oldMainImage = accommodation.getMainImage();
+
+        // 2. Actualizar la entidad con los nuevos datos del DTO
+        // (Tu mapper debe mapear 'mainImage' e 'images' del DTO a la entidad)
         accommodationMapper.updateEntity(accommodationDTO, accommodation);
+
+        // 3. Lógica de limpieza en Cloudinary
+
+        // 3.1. Limpieza de la imagen principal antigua
+        if (oldMainImage != null && !oldMainImage.isBlank() && !oldMainImage.equals(accommodationDTO.mainImage())) {
+            String publicId = extractPublicId(oldMainImage);
+            if (publicId != null) {
+                imageService.delete(publicId);
+            }
+        }
+
+        // 3.2. Limpieza de las imágenes secundarias eliminadas
+        // Crear un Set con todas las nuevas URLs para una búsqueda eficiente
+        Set<String> newImagesAndMain = new java.util.HashSet<>(accommodationDTO.images());
+        newImagesAndMain.add(accommodationDTO.mainImage());
+
+        for (String oldUrl : oldImages) {
+            // Si la URL antigua no está en ninguna de las nuevas URLs (ni principal ni secundaria)
+            if (!newImagesAndMain.contains(oldUrl)) {
+                String publicId = extractPublicId(oldUrl);
+                if (publicId != null) {
+                    imageService.delete(publicId);
+                }
+            }
+        }
+
+        // 4. Guardar los cambios
         accommodationRepo.save(accommodation);
 
         return accommodationMapper.toAccommodationDTO(accommodation);
+    }
 
+    /**
+     * Método auxiliar para extraer el Public ID de Cloudinary desde la URL.
+     * El public ID es lo que Cloudinary necesita para eliminar el archivo.
+     * Se asume que la URL es del formato: .../v[timestamp]/folderName/public_id.[ext]
+     */
+    private String extractPublicId(String url) {
+        if (url == null || url.isBlank()) return null;
+        try {
+            // La URL de Cloudinary contiene típicamente el public ID después del 'upload/' o 'v[timestamp]/'
+            // Asumiremos que el public ID incluye el folderName (que es 'stayNow/' o lo que sea tu config)
+
+            String urlWithoutExtension = url.substring(0, url.lastIndexOf('.'));
+
+            // Buscar el patrón que precede al public ID, típicamente después del '/v' con números o 'upload/'
+            String pattern = "/upload/";
+            int uploadIndex = urlWithoutExtension.lastIndexOf(pattern);
+
+            if (uploadIndex == -1) {
+                // Intento alternativo para URLs con versión (e.g., /v123456789/)
+                int lastSlashBeforeFilename = urlWithoutExtension.lastIndexOf('/');
+                if (lastSlashBeforeFilename != -1) {
+                    String potentialPublicId = urlWithoutExtension.substring(lastSlashBeforeFilename + 1);
+                    // Si tienes un folderName definido en Cloudinary (e.g. "stayNow"), el public ID es: folderName/filename
+                    String folderName = "stayNow"; // Reemplaza esto con el valor real de tu propiedad 'cloudinary.folderName'
+                    return folderName + "/" + potentialPublicId;
+                }
+            } else {
+                // El public ID comienza justo después de '/upload/v[timestamp]/' o '/upload/'
+                // Buscar el último '/' después de '/upload/' para encontrar el inicio del public ID
+                String remainingUrl = urlWithoutExtension.substring(uploadIndex + pattern.length());
+                int versionIndex = remainingUrl.indexOf("/v"); // Buscar el indicador de versión
+
+                if (versionIndex != -1) {
+                    // Si hay indicador de versión (ej: /v123456789/folder/file)
+                    int nextSlash = remainingUrl.indexOf('/', versionIndex + 2); // Buscar '/' después de /v
+                    if (nextSlash != -1) {
+                        return remainingUrl.substring(nextSlash + 1); // El public ID es lo que sigue
+                    }
+                }
+            }
+
+            // Si no se encuentra un patrón claro, devuelve null
+            return null;
+
+        } catch (Exception e) {
+            // En caso de que la URL sea inválida
+            return null;
+        }
     }
 
     @Override

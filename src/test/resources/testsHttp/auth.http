@@ -1,13 +1,16 @@
+
+
 POST http://localhost:9090/api/auth/register
 Content-Type: application/json
 
 {
   "name" : "Willy",
   "phone" : "123123123",
-  "email" : "willy@gmail.com",
+  "email" : "willyr@gmail.com",
   "password" : "willy123",
   "dateBirth": "2000-05-20",
   "role": "GUEST"
+
 }
 
 ###
@@ -16,7 +19,7 @@ POST http://localhost:9090/api/auth/login
 Content-Type: application/json
 
 {
-  "email" : "willy@gmail.com",
+  "email" : "willyr@gmail.com",
   "password" : "willy123"
 }
 

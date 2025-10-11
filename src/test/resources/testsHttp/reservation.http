@@ -1,7 +1,20 @@
+##############################################################
+# 🌐 API RESERVAS - STAYNOW
+# Archivo unificado con todas las peticiones HTTP
+# Autor: Laura Valentina Gómez Alzate
+##############################################################
+
+### 🔑 TOKEN DEL USUARIO
+@token = eyJhbGciOiJIUzM4NCJ9.eyJuYW1lIjoiV2lsbHkiLCJyb2xlIjoiUk9MRV9HVUVTVCIsImVtYWlsIjoid2lsbHlAZ21haWwuY29tIiwic3ViIjoiMTQ0YjhkN2UtYzQyMi00N2VkLTk0ZTEtZGNlYWI5ODhiZGVhIiwiaWF0IjoxNzYwMTQwOTE5LCJleHAiOjE3NjAxNDQ1MTl9.1QpRI18JK1coIzCLVSuSG3x43XuyF2iPW0dJxozncbWGk3IBAyud2rc0DxLcI6AB
+
+##############################################################
+# 🏨 CREAR RESERVAS (10 ejemplos)
+##############################################################
+
 ### Reserva 1 - Alojamiento 1
 POST http://localhost:9090/reservations
+Authorization: Bearer {{token}}
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJuYW1lIjoidGVzdGVyIiwiZW1haWwiOiJyYW1pcmVzanVhbmRhMTIzQGdtYWlsLmNvbSIsInJvbGUiOiJST0xFX0dVRVNUIiwic3ViIjoiOWM5MjE2MDUtNmZhNC00MTlmLTllMGUtZTdjNTRlNmY5M2Q0IiwiaWF0IjoxNzYwMTMzMTUzLCJleHAiOjE3NjAxMzY3NTN9.PrXRQEzTcPaEPCdc2znyzn3yHa6wnQ1S-HJ8tz2BpYoRO9ellLfnZSKiJNnLCeOy
 
 {
   "accommodationId": 1,
@@ -12,8 +25,8 @@ Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJuYW1lIjoidGVzdGVyIiwiZW1haWwiOiJyY
 
 ### Reserva 2 - Alojamiento 1 (otra fecha)
 POST http://localhost:9090/reservations
+Authorization: Bearer {{token}}
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJuYW1lIjoidGVzdGVyIiwiZW1haWwiOiJyYW1pcmVzanVhbmRhMTIzQGdtYWlsLmNvbSIsInJvbGUiOiJST0xFX0dVRVNUIiwic3ViIjoiOWM5MjE2MDUtNmZhNC00MTlmLTllMGUtZTdjNTRlNmY5M2Q0IiwiaWF0IjoxNzYwMTMzMTUzLCJleHAiOjE3NjAxMzY3NTN9.PrXRQEzTcPaEPCdc2znyzn3yHa6wnQ1S-HJ8tz2BpYoRO9ellLfnZSKiJNnLCeOy
 
 {
   "accommodationId": 1,
@@ -22,12 +35,10 @@ Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJuYW1lIjoidGVzdGVyIiwiZW1haWwiOiJyY
   "guests": 3
 }
 
-
-
 ### Reserva 3 - Alojamiento 2
 POST http://localhost:9090/reservations
+Authorization: Bearer {{token}}
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJuYW1lIjoidGVzdGVyIiwiZW1haWwiOiJyYW1pcmVzanVhbmRhMTIzQGdtYWlsLmNvbSIsInJvbGUiOiJST0xFX0dVRVNUIiwic3ViIjoiOWM5MjE2MDUtNmZhNC00MTlmLTllMGUtZTdjNTRlNmY5M2Q0IiwiaWF0IjoxNzYwMTMzMTUzLCJleHAiOjE3NjAxMzY3NTN9.PrXRQEzTcPaEPCdc2znyzn3yHa6wnQ1S-HJ8tz2BpYoRO9ellLfnZSKiJNnLCeOy
 
 {
   "accommodationId": 2,
@@ -38,8 +49,8 @@ Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJuYW1lIjoidGVzdGVyIiwiZW1haWwiOiJyY
 
 ### Reserva 4 - Alojamiento 2 (otra fecha)
 POST http://localhost:9090/reservations
+Authorization: Bearer {{token}}
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJuYW1lIjoidGVzdGVyIiwiZW1haWwiOiJyYW1pcmVzanVhbmRhMTIzQGdtYWlsLmNvbSIsInJvbGUiOiJST0xFX0dVRVNUIiwic3ViIjoiOWM5MjE2MDUtNmZhNC00MTlmLTllMGUtZTdjNTRlNmY5M2Q0IiwiaWF0IjoxNzYwMTMzMTUzLCJleHAiOjE3NjAxMzY3NTN9.PrXRQEzTcPaEPCdc2znyzn3yHa6wnQ1S-HJ8tz2BpYoRO9ellLfnZSKiJNnLCeOy
 
 {
   "accommodationId": 2,
@@ -48,12 +59,10 @@ Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJuYW1lIjoidGVzdGVyIiwiZW1haWwiOiJyY
   "guests": 2
 }
 
-
-
 ### Reserva 5 - Alojamiento 3
 POST http://localhost:9090/reservations
+Authorization: Bearer {{token}}
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJuYW1lIjoidGVzdGVyIiwiZW1haWwiOiJyYW1pcmVzanVhbmRhMTIzQGdtYWlsLmNvbSIsInJvbGUiOiJST0xFX0dVRVNUIiwic3ViIjoiOWM5MjE2MDUtNmZhNC00MTlmLTllMGUtZTdjNTRlNmY5M2Q0IiwiaWF0IjoxNzYwMTMzMTUzLCJleHAiOjE3NjAxMzY3NTN9.PrXRQEzTcPaEPCdc2znyzn3yHa6wnQ1S-HJ8tz2BpYoRO9ellLfnZSKiJNnLCeOy
 
 {
   "accommodationId": 3,
@@ -64,8 +73,8 @@ Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJuYW1lIjoidGVzdGVyIiwiZW1haWwiOiJyY
 
 ### Reserva 6 - Alojamiento 3 (otra fecha)
 POST http://localhost:9090/reservations
+Authorization: Bearer {{token}}
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJuYW1lIjoidGVzdGVyIiwiZW1haWwiOiJyYW1pcmVzanVhbmRhMTIzQGdtYWlsLmNvbSIsInJvbGUiOiJST0xFX0dVRVNUIiwic3ViIjoiOWM5MjE2MDUtNmZhNC00MTlmLTllMGUtZTdjNTRlNmY5M2Q0IiwiaWF0IjoxNzYwMTMzMTUzLCJleHAiOjE3NjAxMzY3NTN9.PrXRQEzTcPaEPCdc2znyzn3yHa6wnQ1S-HJ8tz2BpYoRO9ellLfnZSKiJNnLCeOy
 
 {
   "accommodationId": 3,
@@ -74,12 +83,10 @@ Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJuYW1lIjoidGVzdGVyIiwiZW1haWwiOiJyY
   "guests": 2
 }
 
-
-
 ### Reserva 7 - Alojamiento 4
 POST http://localhost:9090/reservations
+Authorization: Bearer {{token}}
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJuYW1lIjoidGVzdGVyIiwiZW1haWwiOiJyYW1pcmVzanVhbmRhMTIzQGdtYWlsLmNvbSIsInJvbGUiOiJST0xFX0dVRVNUIiwic3ViIjoiOWM5MjE2MDUtNmZhNC00MTlmLTllMGUtZTdjNTRlNmY5M2Q0IiwiaWF0IjoxNzYwMTMzMTUzLCJleHAiOjE3NjAxMzY3NTN9.PrXRQEzTcPaEPCdc2znyzn3yHa6wnQ1S-HJ8tz2BpYoRO9ellLfnZSKiJNnLCeOy
 
 {
   "accommodationId": 4,
@@ -90,8 +97,8 @@ Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJuYW1lIjoidGVzdGVyIiwiZW1haWwiOiJyY
 
 ### Reserva 8 - Alojamiento 4 (otra fecha)
 POST http://localhost:9090/reservations
+Authorization: Bearer {{token}}
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJuYW1lIjoidGVzdGVyIiwiZW1haWwiOiJyYW1pcmVzanVhbmRhMTIzQGdtYWlsLmNvbSIsInJvbGUiOiJST0xFX0dVRVNUIiwic3ViIjoiOWM5MjE2MDUtNmZhNC00MTlmLTllMGUtZTdjNTRlNmY5M2Q0IiwiaWF0IjoxNzYwMTMzMTUzLCJleHAiOjE3NjAxMzY3NTN9.PrXRQEzTcPaEPCdc2znyzn3yHa6wnQ1S-HJ8tz2BpYoRO9ellLfnLfnLCeOy
 
 {
   "accommodationId": 4,
@@ -100,12 +107,10 @@ Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJuYW1lIjoidGVzdGVyIiwiZW1haWwiOiJyY
   "guests": 2
 }
 
-
-
 ### Reserva 9 - Alojamiento 5
 POST http://localhost:9090/reservations
+Authorization: Bearer {{token}}
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJuYW1lIjoidGVzdGVyIiwiZW1haWwiOiJyYW1pcmVzanVhbmRhMTIzQGdtYWlsLmNvbSIsInJvbGUiOiJST0xFX0dVRVNUIiwic3ViIjoiOWM5MjE2MDUtNmZhNC00MTlmLTllMGUtZTdjNTRlNmY5M2Q0IiwiaWF0IjoxNzYwMTMzMTUzLCJleHAiOjE3NjAxMzY3NTN9.PrXRQEzTcPaEPCdc2znyzn3yHa6wnQ1S-HJ8tz2BpYoRO9ellLfnZSKiJNnLCeOy
 
 {
   "accommodationId": 5,
@@ -116,8 +121,8 @@ Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJuYW1lIjoidGVzdGVyIiwiZW1haWwiOiJyY
 
 ### Reserva 10 - Alojamiento 5 (otra fecha)
 POST http://localhost:9090/reservations
+Authorization: Bearer {{token}}
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJuYW1lIjoidGVzdGVyIiwiZW1haWwiOiJyYW1pcmVzanVhbmRhMTIzQGdtYWlsLmNvbSIsInJvbGUiOiJST0xFX0dVRVNUIiwic3ViIjoiOWM5MjE2MDUtNmZhNC00MTlmLTllMGUtZTdjNTRlNmY5M2Q0IiwiaWF0IjoxNzYwMTMzMTUzLCJleHAiOjE3NjAxMzY3NTN9.PrXRQEzTcPaEPCdc2znyzn3yHa6wnQ1S-HJ8tz2BpYoRO9ellLfnZSKiJNnLCeOy
 
 {
   "accommodationId": 5,
@@ -126,6 +131,63 @@ Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJuYW1lIjoidGVzdGVyIiwiZW1haWwiOiJyY
   "guests": 3
 }
 
+##############################################################
+# 📋 CONSULTAR Y FILTRAR RESERVAS
+##############################################################
 
+### Obtener todas las reservas del usuario autenticado
+GET http://localhost:9090/reservations
+Authorization: Bearer {{token}}
+Accept: application/json
 
+### Filtrar por estado
+GET http://localhost:9090/reservations?status=CONFIRMED
+Authorization: Bearer {{token}}
+Accept: application/json
 
+### Filtrar por rango de creación
+GET http://localhost:9090/reservations?from=2025-01-01T00:00:00&to=2025-12-31T23:59:59
+Authorization: Bearer {{token}}
+Accept: application/json
+
+### Filtrar por fechas de check-in / check-out
+GET http://localhost:9090/reservations?checkIn=2025-10-01T14:00:00&checkOut=2025-10-10T12:00:00
+Authorization: Bearer {{token}}
+Accept: application/json
+
+### Filtrar combinado (estado + fechas)
+GET http://localhost:9090/reservations?status=CANCELED&from=2025-01-01T00:00:00&to=2025-12-31T23:59:59
+Authorization: Bearer {{token}}
+Accept: application/json
+
+### Obtener una reserva específica por ID
+GET http://localhost:9090/reservations/{{reservationId}}
+Authorization: Bearer {{token}}
+Accept: application/json
+
+##############################################################
+# 🔄 CANCELAR RESERVA Y VERIFICAR LÓGICA DE 48 HORAS
+##############################################################
+
+### Cancelar una reserva (por ID)
+PATCH http://localhost:9090/reservations/{{reservationIdToCancel}}/cancel
+Authorization: Bearer {{token}}
+Accept: application/json
+
+##############################################################
+# 🧩 PRUEBAS DE LA LÓGICA DE CANCELACIÓN (48 HORAS)
+##############################################################
+# 1️⃣ Caso OK — cancelar con más de 48h antes del check-in
+#    - Crear una reserva con checkIn = ahora + 5 días
+#    - Luego ejecutar PATCH /cancel
+#    - Esperado: 200 OK y status = CANCELED
+#
+# 2️⃣ Caso ERROR — cancelar dentro de 48h antes del check-in
+#    - Crear una reserva con checkIn = ahora + 24h
+#    - PATCH /cancel → 400 o 409 (según API)
+#    - Esperado: mensaje "Cannot cancel reservation within 48 hours"
+#
+# 3️⃣ Post-condición
+#    - Confirmar con GET /reservations/{{id}} que el estado cambió o no
+#    - Verificar que el alojamiento quedó disponible (si aplica)
+##############################################################

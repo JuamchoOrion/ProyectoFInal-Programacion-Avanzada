@@ -52,7 +52,8 @@ public class UserServiceImpTest {
                 "juan@example.com",
                 "password123",
                 LocalDate.of(2000, 1, 1),
-                Role.GUEST
+                Role.GUEST,
+                ""
         );
 
         user = User.builder()

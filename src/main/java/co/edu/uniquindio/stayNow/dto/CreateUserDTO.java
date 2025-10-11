@@ -14,6 +14,7 @@ public record CreateUserDTO(
         @NotBlank @Length(max = 50) @Email String email,
         @NotBlank @Length(min = 7, max = 20) String password,
         @NotNull @Past LocalDate dateBirth,
-        @NotNull Role role
+        @NotNull Role role,
+        @Length(max = 300) String photoUrl // ⬅️ CAMBIO: AGREGADO
 ) {
 }

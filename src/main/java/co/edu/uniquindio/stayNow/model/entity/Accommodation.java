@@ -34,6 +34,8 @@ public class Accommodation {
     @Enumerated(EnumType.STRING)
     private AccommodationStatus status;
 
+    private String mainImage;
+
     @ElementCollection
     @CollectionTable(name = "accommodation_images", joinColumns = @JoinColumn(name = "accommodation_id"))
     @Column(name = "image")

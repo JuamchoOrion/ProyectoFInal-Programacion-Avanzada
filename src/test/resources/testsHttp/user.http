@@ -1,0 +1,14 @@
+PUT http://localhost:9090/users/e0ed0696-f39b-48cc-b84a-7ff587e70d22
+Authorization: eyJhbGciOiJIUzM4NCJ9.eyJyb2xlIjoiUk9MRV9HVUVTVCIsImVtYWlsIjoicmFtaXJlc2p1YW5kYTEyM0BnbWFpbC5jb20iLCJuYW1lIjoidGVzdGVyIiwic3ViIjoiZTBlZDA2OTYtZjM5Yi00OGNjLWI4NGEtN2ZmNTg3ZTcwZDIyIiwiaWF0IjoxNzYwMTk1NDAxLCJleHAiOjE3NjAxOTkwMDF9.C-d5jqsUI7iWWoVXRa0OnJpJBM62prD0MYvL8NXkliSgM8ahr4gQlxrQ2vy7LBtI
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "Ramires Juanda Edición Exitosa",
+  "phone": "3009998877",
+  "email": "ramiresjuanda123@gmail.com",
+  "password": "",
+  "dateBirth": "2000-05-20",
+  "role": "GUEST",
+  "photoUrl": "http://res.cloudinary.com/dbeyylkba/image/upload/v1760190499/stayNow/pcgjygrpohzplcbxpmo0.jpg"
+}

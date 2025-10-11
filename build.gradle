@@ -69,6 +69,10 @@ dependencies {
     // Mockito (para simular repositorios y servicios)
     testImplementation 'org.mockito:mockito-core:5.11.0'
     testImplementation 'org.mockito:mockito-junit-jupiter:5.11.0'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    // 🚨 Asegura la compatibilidad de Mockito con JUnit 5
+    testImplementation 'org.mockito:mockito-junit-jupiter'
 
     // JUnit Jupiter
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.0'
