@@ -17,6 +17,7 @@ import co.edu.uniquindio.stayNow.repositories.UserRepository;
 import co.edu.uniquindio.stayNow.services.implementation.AccommodationServiceImpl;
 
 import co.edu.uniquindio.stayNow.services.interfaces.AuthService;
+import co.edu.uniquindio.stayNow.services.interfaces.ImageService;
 import co.edu.uniquindio.stayNow.services.interfaces.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -55,6 +56,8 @@ public class AccommodationServiceImplTest {
     private ReservationMapper reservationMapper;
     @Mock
     private AuthService authService;
+    @Mock
+    private ImageService imageService;
 
     @InjectMocks
     private AccommodationServiceImpl accommodationService;
@@ -145,6 +148,7 @@ public class AccommodationServiceImplTest {
         when(authService.getUserID()).thenReturn("HOST-001");
         when(userRepository.getUserById("HOST-001")).thenReturn(Optional.of(host));
         when(accommodationMapper.toEntity(createDTO)).thenReturn(accommodation);
+        when(imageService.uploadFromPath(anyString())).thenReturn(Map.of("url", "uploaded-image.png"));
         when(accommodationRepo.save(accommodation)).thenReturn(accommodation);
         when(accommodationMapper.toAccommodationDTO(accommodation)).thenReturn(accommodationDTO);
 
