@@ -30,7 +30,6 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
 
     private final UserMapper userMapper;
-    private final Map<String, User> userStore = new ConcurrentHashMap<>();
     //Esto se llama inyeccion de dependencias
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -61,7 +60,6 @@ public class UserServiceImpl implements UserService {
                 .build();
             //aca se debe guardar en la bd
         userRepository.save(newUser);
-        userStore.put(newUser.getId(), newUser);
     }
 
     @Override
@@ -115,8 +113,10 @@ public class UserServiceImpl implements UserService {
     }
 
     private boolean isEmailDuplicated(String email) {
-        return userStore.values().stream()
-                .anyMatch(u -> u.getEmail().equalsIgnoreCase(email));
+        if(userRepository.findByEmail(email).isPresent()){
+            return true;
+        }
+        return false;
     }
 
     private String encode(String password) {
