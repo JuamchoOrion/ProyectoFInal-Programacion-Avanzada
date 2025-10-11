@@ -1,0 +1,179 @@
+##############################################
+# 🔐 TOKENS DE AUTENTICACIÓN
+##############################################
+
+### 🔐 Token del host (ROLE_HOST)
+@tokenHost = eyJhbGciOiJIUzM4NCJ9.eyJuYW1lIjoiQWRtaW4iLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInJvbGUiOiJST0xFX0hPU1QiLCJzdWIiOiI3NDJmYTk4Yy05YzVlLTQ2NGItYmY1MC1mYWM2YjNkMzQ2ZmIiLCJpYXQiOjE3NjAxMzI5MTMsImV4cCI6MTc2MDEzNjUxM30.2yGIhEt0uCeEF7gDj-6SGRdx9_QJDeQ9G2z86QjNgPsrNRK4bgz6LAgzLOpzvESr
+
+### 🔐 Token del guest (ROLE_GUEST)
+@tokenGuest = eyJhbGciOiJIUzM4NCJ9.eyJuYW1lIjoidGVzdGVyIiwiZW1haWwiOiJyYW1pcmVzanVhbmRhMTIzQGdtYWlsLmNvbSIsInJvbGUiOiJST0xFX0dVRVNUIiwic3ViIjoiOWM5MjE2MDUtNmZhNC00MTlmLTllMGUtZTdjNTRlNmY5M2Q0IiwiaWF0IjoxNzYwMTMzMTUzLCJleHAiOjE3NjAxMzY3NTN9.PrXRQEzTcPaEPCdc2znyzn3yHa6wnQ1S-HJ8tz2BpYoRO9ellLfnZSKiJNnLCeOy
+
+
+##############################################
+# 🏠 CREAR ALOJAMIENTOS (ROLE_HOST)
+##############################################
+
+### 1️⃣ Alojamiento en Armenia
+POST http://localhost:9090/api/accommodations
+Content-Type: application/json
+Authorization: Bearer {{tokenHost}}
+
+{
+  "title": "Casa bonita en Armenia",
+  "description": "Hermosa casa familiar cerca del centro, perfecta para descansar.",
+  "city": "Armenia",
+  "address": "Calle 123 #45-67",
+  "latitude": 4.60971,
+  "longitude": -74.08175,
+  "pricePerNight": 150000,
+  "maxGuests": 4,
+  "services": ["WIFI"],
+  "images": ["img1.jpg", "img2.jpg"],
+  "mainImage": "img1.jpg"
+}
+
+### 2️⃣ Alojamiento en Medellín
+POST http://localhost:9090/api/accommodations
+Content-Type: application/json
+Authorization: Bearer {{tokenHost}}
+
+{
+  "title": "Apartamento moderno en el Poblado",
+  "description": "Apartamento con piscina y aire acondicionado, cerca del Parque Lleras.",
+  "city": "Medellín",
+  "address": "Carrera 43 #10-25",
+  "latitude": 6.2088,
+  "longitude": -75.5672,
+  "pricePerNight": 220000,
+  "maxGuests": 3,
+  "services": ["POOL", "AIR_CONDITIONING", "WIFI"],
+  "images": ["medellin1.jpg", "medellin2.jpg", "medellin3.jpg"],
+  "mainImage": "medellin1.jpg"
+}
+
+### 3️⃣ Alojamiento en Bogotá
+POST http://localhost:9090/api/accommodations
+Content-Type: application/json
+Authorization: Bearer {{tokenHost}}
+
+{
+  "title": "Estudio elegante en Chapinero",
+  "description": "Estudio completamente amoblado con WiFi y desayuno incluido.",
+  "city": "Bogotá",
+  "address": "Calle 60 #9-85",
+  "latitude": 4.6486,
+  "longitude": -74.0866,
+  "pricePerNight": 180000,
+  "maxGuests": 2,
+  "services": ["WIFI", "BREAKFAST", "PARKING"],
+  "images": ["bogota1.jpg", "bogota2.jpg"],
+  "mainImage": "bogota1.jpg"
+}
+
+### 4️⃣ Alojamiento en Cartagena
+POST http://localhost:9090/api/accommodations
+Content-Type: application/json
+Authorization: Bearer {{tokenHost}}
+
+{
+  "title": "Casa colonial en el centro histórico",
+  "description": "Casa con piscina privada, desayuno y aire acondicionado, perfecta para familias.",
+  "city": "Cartagena",
+  "address": "Calle de la Media Luna #36-20",
+  "latitude": 10.4237,
+  "longitude": -75.5475,
+  "pricePerNight": 480000,
+  "maxGuests": 6,
+  "services": ["POOL", "BREAKFAST", "AIR_CONDITIONING", "WIFI"],
+  "images": ["cartagena1.jpg", "cartagena2.jpg", "cartagena3.jpg"],
+  "mainImage": "cartagena1.jpg"
+}
+
+### 5️⃣ Alojamiento en Santa Marta
+POST http://localhost:9090/api/accommodations
+Content-Type: application/json
+Authorization: Bearer {{tokenHost}}
+
+{
+  "title": "Villa frente al mar en El Rodadero",
+  "description": "Villa con piscina, desayuno y parqueadero privado, con acceso directo a la playa.",
+  "city": "Santa Marta",
+  "address": "Carrera 2 #11-20 El Rodadero",
+  "latitude": 11.2419,
+  "longitude": -74.2053,
+  "pricePerNight": 400000,
+  "maxGuests": 5,
+  "services": ["POOL", "BREAKFAST", "PARKING", "WIFI"],
+  "images": ["santamarta1.jpg", "santamarta2.jpg", "santamarta3.jpg"],
+  "mainImage": "santamarta1.jpg"
+}
+
+
+##############################################
+# 🔍 BÚSQUEDA Y FILTROS
+##############################################
+
+### Buscar por ciudad
+GET http://localhost:9090/api/accommodations?city=Bogotá
+
+### Buscar por rango de precios
+GET http://localhost:9090/api/accommodations?minPrice=100000&maxPrice=300000
+
+### Buscar por servicios
+GET http://localhost:9090/api/accommodations?services=WIFI,POOL
+
+### Buscar por disponibilidad (sin reservas entre esas fechas)
+GET http://localhost:9090/api/accommodations?checkIn=2025-12-01T14:00:00&checkOut=2025-12-10T12:00:00
+
+
+##############################################
+# 📄 OBTENER Y EDITAR ALOJAMIENTO
+##############################################
+
+### Obtener alojamiento por ID
+GET http://localhost:9090/api/accommodations/1
+Authorization: Bearer {{tokenGuest}}
+
+### Editar alojamiento existente
+PUT http://localhost:9090/api/accommodations/1
+Content-Type: application/json
+Authorization: Bearer {{tokenHost}}
+
+{
+  "title": "Casa Familiar Armenia (actualizada)",
+  "description": "Casa cómoda con nuevos servicios y mejores espacios.",
+  "city": "Armenia",
+  "address": "Calle 10 #25-30",
+  "latitude": 4.534,
+  "longitude": -75.672,
+  "pricePerNight": 200000,
+  "maxGuests": 6,
+  "services": ["WIFI", "PARKING", "BREAKFAST"],
+  "images": ["casa1_1.jpg", "casa1_3.jpg"],
+  "mainImage": "casa1_3.jpg"
+}
+
+
+##############################################
+# ❌ ELIMINAR ALOJAMIENTO
+##############################################
+
+DELETE http://localhost:9090/api/accommodations/2
+Authorization: Bearer {{tokenHost}}
+
+
+##############################################
+# 🧾 RESERVAS POR ALOJAMIENTO
+##############################################
+
+### Listar todas las reservas
+GET http://localhost:9090/api/accommodations/1/reservations
+Authorization: Bearer {{tokenHost}}
+
+### Filtrar reservas por fechas
+GET http://localhost:9090/api/accommodations/1/reservations?from=2025-10-01T00:00:00&to=2025-12-01T00:00:00
+Authorization: Bearer {{tokenHost}}
+
+### Filtrar reservas por estado
+GET http://localhost:9090/api/accommodations/1/reservations?status=CONFIRMED,PENDING
+Authorization: Bearer {{tokenHost}}

@@ -25,8 +25,8 @@ public class AccommodationController {
     @GetMapping
     public ResponseEntity<ResponseDTO<Page<AccommodationDTO>>> getListOfAccomodation(
             @RequestParam(required = false) String city,
-            @RequestParam(required = false) String checkIn,
-            @RequestParam(required = false) String checkOut,
+            @RequestParam(required = false)@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime checkIn,
+            @RequestParam(required = false)@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime checkOut,
             @RequestParam(required = false) Double minPrice,
             @RequestParam(required = false) Double maxPrice,
             @RequestParam(required = false) String services, // lista separada por comas

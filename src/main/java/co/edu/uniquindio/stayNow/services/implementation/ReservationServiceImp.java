@@ -60,7 +60,7 @@ public class ReservationServiceImp implements ReservationService {
         Reservation reservation = reservationMapper.toEntity(dto);
         reservation.setGuest(user);
         reservation.setAccommodation(accommodation);
-
+        reservation.setTotalPrice(totalPrice);
         // guardar en BD
         Reservation saved = reservationRepository.save(reservation);
         // enviar email (antes del return)

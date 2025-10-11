@@ -1,0 +1,69 @@
+POST http://localhost:9090/api/auth/register
+Content-Type: application/json
+
+{
+  "name" : "Willy",
+  "phone" : "123123123",
+  "email" : "willy@gmail.com",
+  "password" : "willy123",
+  "dateBirth": "2000-05-20",
+  "role": "GUEST"
+}
+
+###
+
+POST http://localhost:9090/api/auth/login
+Content-Type: application/json
+
+{
+  "email" : "willy@gmail.com",
+  "password" : "willy123"
+}
+
+###
+
+POST http://localhost:9090/api/auth/register
+Content-Type: application/json
+
+{
+  "name" : "tester",
+  "phone" : "123123123",
+  "email" : "ramiresjuanda123@gmail.com",
+  "password" : "12345678",
+  "dateBirth": "2000-05-20",
+  "role": "GUEST"
+}
+
+###
+
+POST http://localhost:9090/api/auth/login
+Content-Type: application/json
+
+{
+  "email" : "ramiresjuanda123@gmail.com",
+  "password" : "12345678"
+}
+
+###
+
+POST http://localhost:9090/api/auth/register
+Content-Type: application/json
+
+{
+  "name" : "Admin",
+  "phone" : "123123123",
+  "email" : "admin@gmail.com",
+  "password" : "123juan",
+  "dateBirth": "2000-05-20",
+  "role": "HOST"
+}
+
+###
+
+POST http://localhost:9090/api/auth/login
+Content-Type: application/json
+
+{
+  "email" : "admin@gmail.com",
+  "password" : "123juan"
+}

@@ -21,8 +21,8 @@ public interface AccommodationService {
     Page<AccommodationDTO> listAll() throws Exception;
 
     Page<AccommodationDTO> search(String city,
-                                  String checkIn,
-                                  String checkOut,
+                                  LocalDateTime checkIn,
+                                  LocalDateTime checkOut,
                                   Double minPrice,
                                   Double maxPrice,
                                   List<String> services,

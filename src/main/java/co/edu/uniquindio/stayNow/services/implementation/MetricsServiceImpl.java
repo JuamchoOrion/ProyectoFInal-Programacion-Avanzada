@@ -27,7 +27,7 @@ public class MetricsServiceImpl implements MetricsService {
     private final ReservationRepository reservationRepository;
     private final ReviewRepository reviewRepository;
     @Override
-    public MetricsResponseDTO getAccommodationMetrics(Long accommodationId, LocalDateTime from, LocalDateTime to) throws Exception {
+    public MetricsResponseDTO getAccommodationMetrics (Long accommodationId, LocalDateTime from, LocalDateTime to) throws Exception {
         Accommodation accommodation = accommodationRepository.findById(accommodationId)
                 .orElseThrow(() -> new AccommodationNotFoundException("Accommodation not found"));
 
@@ -76,4 +76,5 @@ public class MetricsServiceImpl implements MetricsService {
                 to
         );
     }
+
 }

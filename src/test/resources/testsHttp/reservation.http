@@ -1,0 +1,131 @@
+### Reserva 1 - Alojamiento 1
+POST http://localhost:9090/reservations
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJuYW1lIjoidGVzdGVyIiwiZW1haWwiOiJyYW1pcmVzanVhbmRhMTIzQGdtYWlsLmNvbSIsInJvbGUiOiJST0xFX0dVRVNUIiwic3ViIjoiOWM5MjE2MDUtNmZhNC00MTlmLTllMGUtZTdjNTRlNmY5M2Q0IiwiaWF0IjoxNzYwMTMzMTUzLCJleHAiOjE3NjAxMzY3NTN9.PrXRQEzTcPaEPCdc2znyzn3yHa6wnQ1S-HJ8tz2BpYoRO9ellLfnZSKiJNnLCeOy
+
+{
+  "accommodationId": 1,
+  "checkIn": "2025-10-15T14:00:00",
+  "checkOut": "2025-10-20T12:00:00",
+  "guests": 2
+}
+
+### Reserva 2 - Alojamiento 1 (otra fecha)
+POST http://localhost:9090/reservations
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJuYW1lIjoidGVzdGVyIiwiZW1haWwiOiJyYW1pcmVzanVhbmRhMTIzQGdtYWlsLmNvbSIsInJvbGUiOiJST0xFX0dVRVNUIiwic3ViIjoiOWM5MjE2MDUtNmZhNC00MTlmLTllMGUtZTdjNTRlNmY5M2Q0IiwiaWF0IjoxNzYwMTMzMTUzLCJleHAiOjE3NjAxMzY3NTN9.PrXRQEzTcPaEPCdc2znyzn3yHa6wnQ1S-HJ8tz2BpYoRO9ellLfnZSKiJNnLCeOy
+
+{
+  "accommodationId": 1,
+  "checkIn": "2025-11-05T14:00:00",
+  "checkOut": "2025-11-10T12:00:00",
+  "guests": 3
+}
+
+---
+
+### Reserva 3 - Alojamiento 2
+POST http://localhost:9090/reservations
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJuYW1lIjoidGVzdGVyIiwiZW1haWwiOiJyYW1pcmVzanVhbmRhMTIzQGdtYWlsLmNvbSIsInJvbGUiOiJST0xFX0dVRVNUIiwic3ViIjoiOWM5MjE2MDUtNmZhNC00MTlmLTllMGUtZTdjNTRlNmY5M2Q0IiwiaWF0IjoxNzYwMTMzMTUzLCJleHAiOjE3NjAxMzY3NTN9.PrXRQEzTcPaEPCdc2znyzn3yHa6wnQ1S-HJ8tz2BpYoRO9ellLfnZSKiJNnLCeOy
+
+{
+  "accommodationId": 2,
+  "checkIn": "2025-10-25T15:00:00",
+  "checkOut": "2025-10-30T11:00:00",
+  "guests": 3
+}
+
+### Reserva 4 - Alojamiento 2 (otra fecha)
+POST http://localhost:9090/reservations
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJuYW1lIjoidGVzdGVyIiwiZW1haWwiOiJyYW1pcmVzanVhbmRhMTIzQGdtYWlsLmNvbSIsInJvbGUiOiJST0xFX0dVRVNUIiwic3ViIjoiOWM5MjE2MDUtNmZhNC00MTlmLTllMGUtZTdjNTRlNmY5M2Q0IiwiaWF0IjoxNzYwMTMzMTUzLCJleHAiOjE3NjAxMzY3NTN9.PrXRQEzTcPaEPCdc2znyzn3yHa6wnQ1S-HJ8tz2BpYoRO9ellLfnZSKiJNnLCeOy
+
+{
+  "accommodationId": 2,
+  "checkIn": "2025-12-01T14:00:00",
+  "checkOut": "2025-12-10T12:00:00",
+  "guests": 2
+}
+
+---
+
+### Reserva 5 - Alojamiento 3
+POST http://localhost:9090/reservations
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJuYW1lIjoidGVzdGVyIiwiZW1haWwiOiJyYW1pcmVzanVhbmRhMTIzQGdtYWlsLmNvbSIsInJvbGUiOiJST0xFX0dVRVNUIiwic3ViIjoiOWM5MjE2MDUtNmZhNC00MTlmLTllMGUtZTdjNTRlNmY5M2Q0IiwiaWF0IjoxNzYwMTMzMTUzLCJleHAiOjE3NjAxMzY3NTN9.PrXRQEzTcPaEPCdc2znyzn3yHa6wnQ1S-HJ8tz2BpYoRO9ellLfnZSKiJNnLCeOy
+
+{
+  "accommodationId": 3,
+  "checkIn": "2025-11-01T13:00:00",
+  "checkOut": "2025-11-07T12:00:00",
+  "guests": 1
+}
+
+### Reserva 6 - Alojamiento 3 (otra fecha)
+POST http://localhost:9090/reservations
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJuYW1lIjoidGVzdGVyIiwiZW1haWwiOiJyYW1pcmVzanVhbmRhMTIzQGdtYWlsLmNvbSIsInJvbGUiOiJST0xFX0dVRVNUIiwic3ViIjoiOWM5MjE2MDUtNmZhNC00MTlmLTllMGUtZTdjNTRlNmY5M2Q0IiwiaWF0IjoxNzYwMTMzMTUzLCJleHAiOjE3NjAxMzY3NTN9.PrXRQEzTcPaEPCdc2znyzn3yHa6wnQ1S-HJ8tz2BpYoRO9ellLfnZSKiJNnLCeOy
+
+{
+  "accommodationId": 3,
+  "checkIn": "2025-12-15T14:00:00",
+  "checkOut": "2025-12-25T12:00:00",
+  "guests": 2
+}
+
+---
+
+### Reserva 7 - Alojamiento 4
+POST http://localhost:9090/reservations
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJuYW1lIjoidGVzdGVyIiwiZW1haWwiOiJyYW1pcmVzanVhbmRhMTIzQGdtYWlsLmNvbSIsInJvbGUiOiJST0xFX0dVRVNUIiwic3ViIjoiOWM5MjE2MDUtNmZhNC00MTlmLTllMGUtZTdjNTRlNmY5M2Q0IiwiaWF0IjoxNzYwMTMzMTUzLCJleHAiOjE3NjAxMzY3NTN9.PrXRQEzTcPaEPCdc2znyzn3yHa6wnQ1S-HJ8tz2BpYoRO9ellLfnZSKiJNnLCeOy
+
+{
+  "accommodationId": 4,
+  "checkIn": "2025-12-10T16:00:00",
+  "checkOut": "2025-12-20T10:00:00",
+  "guests": 4
+}
+
+### Reserva 8 - Alojamiento 4 (otra fecha)
+POST http://localhost:9090/reservations
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJuYW1lIjoidGVzdGVyIiwiZW1haWwiOiJyYW1pcmVzanVhbmRhMTIzQGdtYWlsLmNvbSIsInJvbGUiOiJST0xFX0dVRVNUIiwic3ViIjoiOWM5MjE2MDUtNmZhNC00MTlmLTllMGUtZTdjNTRlNmY5M2Q0IiwiaWF0IjoxNzYwMTMzMTUzLCJleHAiOjE3NjAxMzY3NTN9.PrXRQEzTcPaEPCdc2znyzn3yHa6wnQ1S-HJ8tz2BpYoRO9ellLfnLfnLCeOy
+
+{
+  "accommodationId": 4,
+  "checkIn": "2026-01-10T14:00:00",
+  "checkOut": "2026-01-18T12:00:00",
+  "guests": 2
+}
+
+---
+
+### Reserva 9 - Alojamiento 5
+POST http://localhost:9090/reservations
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJuYW1lIjoidGVzdGVyIiwiZW1haWwiOiJyYW1pcmVzanVhbmRhMTIzQGdtYWlsLmNvbSIsInJvbGUiOiJST0xFX0dVRVNUIiwic3ViIjoiOWM5MjE2MDUtNmZhNC00MTlmLTllMGUtZTdjNTRlNmY5M2Q0IiwiaWF0IjoxNzYwMTMzMTUzLCJleHAiOjE3NjAxMzY3NTN9.PrXRQEzTcPaEPCdc2znyzn3yHa6wnQ1S-HJ8tz2BpYoRO9ellLfnZSKiJNnLCeOy
+
+{
+  "accommodationId": 5,
+  "checkIn": "2026-01-05T14:00:00",
+  "checkOut": "2026-01-15T12:00:00",
+  "guests": 2
+}
+
+### Reserva 10 - Alojamiento 5 (otra fecha)
+POST http://localhost:9090/reservations
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJuYW1lIjoidGVzdGVyIiwiZW1haWwiOiJyYW1pcmVzanVhbmRhMTIzQGdtYWlsLmNvbSIsInJvbGUiOiJST0xFX0dVRVNUIiwic3ViIjoiOWM5MjE2MDUtNmZhNC00MTlmLTllMGUtZTdjNTRlNmY5M2Q0IiwiaWF0IjoxNzYwMTMzMTUzLCJleHAiOjE3NjAxMzY3NTN9.PrXRQEzTcPaEPCdc2znyzn3yHa6wnQ1S-HJ8tz2BpYoRO9ellLfnZSKiJNnLCeOy
+
+{
+  "accommodationId": 5,
+  "checkIn": "2026-02-01T14:00:00",
+  "checkOut": "2026-02-10T12:00:00",
+  "guests": 3
+}
+
+
+
+

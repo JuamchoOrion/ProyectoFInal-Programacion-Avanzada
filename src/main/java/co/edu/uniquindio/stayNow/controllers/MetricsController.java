@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 
 @RestController
@@ -20,8 +21,8 @@ public class MetricsController {
     @GetMapping("/{id}/metrics")
     public ResponseEntity<MetricsResponseDTO> getAccommodationMetrics(
             @PathVariable("id") Long accommodationId,
-            @RequestParam(value = "from", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
-            @RequestParam(value = "to", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) throws Exception {
+            @RequestParam(value = "from", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDateTime from,
+            @RequestParam(value = "to", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDateTime to) throws Exception {
 
         MetricsResponseDTO metrics = metricsService.getAccommodationMetrics(accommodationId, from, to);
         return ResponseEntity.ok(metrics);

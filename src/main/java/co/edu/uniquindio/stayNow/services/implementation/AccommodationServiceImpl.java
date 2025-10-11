@@ -18,6 +18,8 @@ import co.edu.uniquindio.stayNow.services.interfaces.UserService;
 
 
 import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.Subquery;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -130,12 +132,11 @@ public class AccommodationServiceImpl implements AccommodationService {
     @Override
     public Page<AccommodationDTO> listAll() throws Exception {
         return null;
-    }
-    @Override
+    }@Override
     public Page<AccommodationDTO> search(
             String city,
-            String checkIn,
-            String checkOut,
+            LocalDateTime checkIn,
+            LocalDateTime checkOut,
             Double minPrice,
             Double maxPrice,
             List<String> services,
@@ -161,10 +162,25 @@ public class AccommodationServiceImpl implements AccommodationService {
                     cb.lessThanOrEqualTo(root.get("pricePerNight"), maxPrice));
         }
 
+        // 🔹 Filtrar por disponibilidad
+        if (checkIn != null && checkOut != null) {
+            filters.add((root, query, cb) -> {
+                Subquery<Long> subquery = query.subquery(Long.class);
+                Root<Reservation> reservationRoot = subquery.from(Reservation.class);
+                subquery.select(reservationRoot.get("accommodation").get("id"))
+                        .where(
+                                cb.and(
+                                        cb.equal(reservationRoot.get("accommodation").get("id"), root.get("id")),
+                                        cb.lessThan(reservationRoot.get("checkIn"), checkOut),
+                                        cb.greaterThan(reservationRoot.get("checkOut"), checkIn)
+                                )
+                        );
+                return cb.not(root.get("id").in(subquery));
+            });
+        }
+
         // Filtrar por servicios (enum)
         if (services != null && !services.isEmpty()) {
-
-            // Convertir los strings del request a enums
             Set<AccommodationServiceType> enumServices = services.stream()
                     .map(String::toUpperCase)
                     .map(AccommodationServiceType::valueOf)
@@ -177,7 +193,7 @@ public class AccommodationServiceImpl implements AccommodationService {
             });
         }
 
-        // Combinar todos los filtros dinámicamente
+        // Combinar filtros dinámicos
         Specification<Accommodation> spec = Specification.allOf(filters);
 
         if (pageable.getSort().isUnsorted()) {
@@ -188,11 +204,11 @@ public class AccommodationServiceImpl implements AccommodationService {
             );
         }
 
-        // Ejecutar la consulta con paginación
         Page<Accommodation> page = accommodationRepo.findAll(spec, pageable);
 
         return page.map(accommodationMapper::toAccommodationDTO);
     }
+
 
 
     @Override

@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 @Entity
 public class PasswordResetCode {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String code;
     private LocalDateTime createdAt;
