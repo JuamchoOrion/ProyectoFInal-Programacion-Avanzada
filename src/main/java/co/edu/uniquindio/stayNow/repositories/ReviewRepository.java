@@ -14,8 +14,10 @@ import java.util.List;
 import java.util.List;
 
 public interface ReviewRepository extends JpaRepository<Review, Long> {
+    // Get all reviews for an accommodation
     List<Review> findAllByAccommodation(Accommodation accommodation);
-    // Obtiene todas las reviews de un alojamiento, más recientes primero
+
+    // Get all reviews for an accommodation, newest first
     Page<Review> findByAccommodation_IdOrderByCreatedAtDesc(Long accommodationId, Pageable pageable);
 
     @Query("SELECT AVG(r.rating) FROM Review r WHERE r.accommodation.id = :accommodationId " +
@@ -27,13 +29,13 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
             @Param("to") LocalDate to
     );
 
-    // Revisar si ya existe una review para una reserva
+    // Check if a review already exists for a reservation
     boolean existsByReservation_Id(Long reservationId);
 
-    // Todas las reviews de un usuario por su id
+    // Get all reviews by user ID
     List<Review> findByUser_Id(String userId);
 
-    // Promedio de calificaciones de un alojamiento
+    // Get average rating of an accommodation
     @Query("SELECT AVG(r.rating) FROM Review r WHERE r.accommodation.id = :accommodationId")
     Double getAverageRatingByAccommodation(Long accommodationId);
 }

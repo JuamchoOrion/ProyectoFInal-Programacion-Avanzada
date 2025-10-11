@@ -26,23 +26,23 @@ public class AuthServiceImp implements AuthService {
     public TokenDTO login(LoginRequestDTO loginDTO) throws Exception {
         Optional<User> optionalUser = userRepository.findByEmail(loginDTO.email());
 
-        if(optionalUser.isEmpty()){
-            throw new UserNotFoundException("El usuario no existe");
+        if (optionalUser.isEmpty()) {
+            throw new UserNotFoundException("User does not exist");
         }
 
         User user = optionalUser.get();
 
-        // Verificar si la contraseña es correcta
-        if(!passwordEncoder.matches(loginDTO.password(), user.getPassword())){
-            throw new UserNotFoundException("El usuario no existe");
+        // Verify if the password is correct
+        if (!passwordEncoder.matches(loginDTO.password(), user.getPassword())) {
+            throw new UserNotFoundException("User does not exist");
         }
 
-        // Generar token con claims
+        // Generate token with claims
         String token = jwtUtils.generateToken(user.getId(), createClaims(user));
         return new TokenDTO(token);
     }
 
-    private Map<String, String> createClaims(User user){
+    private Map<String, String> createClaims(User user) {
         return Map.of(
                 "email", user.getEmail(),
                 "name", user.getName(),
@@ -51,15 +51,15 @@ public class AuthServiceImp implements AuthService {
     }
 
     /**
-     * Devuelve el ID del usuario autenticado
-     * (el subject "sub" que se guardó en el JWT al generarlo).
+     * Returns the ID of the authenticated user
+     * (the "sub" subject stored in the JWT when it was generated).
      */
-    public String getUserID(){
+    public String getUserID() {
         return SecurityContextHolder.getContext().getAuthentication().getName();
     }
 
     /**
-     * Devuelve la entidad User completa del usuario autenticado
+     * Returns the complete User entity of the authenticated user
      */
     @Override
     public User getCurrentUser() throws Exception {

@@ -1,0 +1,154 @@
+### 🟢 1️⃣ Define token manually
+@token = eyJhbGciOiJIUzM4NCJ9.eyJuYW1lIjoidGVzdGVyIiwiZW1haWwiOiJ0ZXN0QGVtYWlsLmNvbSIsInJvbGUiOiJST0xFX0dVRVNUIiwic3ViIjoiMTIzIn0.fakeToken
+
+### ✏️ 2️⃣ Create Review 1 - Reservation 1
+POST http://localhost:9090/api/reviews
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "reservationId": 1,
+  "text": "Amazing stay, very clean and comfortable.",
+  "rating": 5
+}
+
+### ✏️ 3️⃣ Create Review 2 - Reservation 2
+POST http://localhost:9090/api/reviews
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "reservationId": 2,
+  "text": "Good location, but a bit noisy.",
+  "rating": 4
+}
+
+### ✏️ 4️⃣ Create Review 3 - Reservation 3
+POST http://localhost:9090/api/reviews
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "reservationId": 3,
+  "text": "Host was friendly and helpful.",
+  "rating": 5
+}
+
+### ✏️ 5️⃣ Create Review 4 - Reservation 4
+POST http://localhost:9090/api/reviews
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "reservationId": 4,
+  "text": "Nice apartment, would stay again.",
+  "rating": 4
+}
+
+### ✏️ 6️⃣ Create Review 5 - Reservation 5
+POST http://localhost:9090/api/reviews
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "reservationId": 5,
+  "text": "Cozy and quiet place.",
+  "rating": 5
+}
+
+### ✏️ 7️⃣ Create Review 6 - Reservation 6
+POST http://localhost:9090/api/reviews
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "reservationId": 6,
+  "text": "Decent stay but had some issues with check-in.",
+  "rating": 3
+}
+
+### ✏️ 8️⃣ Create Review 7 - Reservation 7
+POST http://localhost:9090/api/reviews
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "reservationId": 7,
+  "text": "Excellent host, very responsive.",
+  "rating": 5
+}
+
+### ✏️ 9️⃣ Create Review 8 - Reservation 8
+POST http://localhost:9090/api/reviews
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "reservationId": 8,
+  "text": "Nice view, apartment was clean.",
+  "rating": 4
+}
+
+### ✏️ 10️⃣ Create Review 9 - Reservation 9
+POST http://localhost:9090/api/reviews
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "reservationId": 9,
+  "text": "Comfortable and well-located.",
+  "rating": 5
+}
+
+### ✏️ 11️⃣ Create Review 10 - Reservation 10
+POST http://localhost:9090/api/reviews
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "reservationId": 10,
+  "text": "Good stay, but internet was slow.",
+  "rating": 3
+}
+
+### 📄 12️⃣ Get reviews for accommodation 1 (page 0, size 5)
+GET http://localhost:9090/api/reviews/accommodation/1?page=0&size=5
+Authorization: Bearer {{token}}
+
+### 📄 13️⃣ Get reviews for accommodation 2 (page 0, size 5)
+GET http://localhost:9090/api/reviews/accommodation/2?page=0&size=5
+Authorization: Bearer {{token}}
+
+### 📄 14️⃣ Filter reviews by rating >= 4 for accommodation 1
+GET http://localhost:9090/api/reviews/accommodation/1?page=0&size=5&minRating=4
+Authorization: Bearer {{token}}
+
+### 📄 15️⃣ Filter reviews by rating = 5 for accommodation 3
+GET http://localhost:9090/api/reviews/accommodation/3?page=0&size=5&rating=5
+Authorization: Bearer {{token}}
+
+### 💬 16️⃣ Reply to review 1
+POST http://localhost:9090/api/reviews/1/reply
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "message": "Thank you for your feedback! We're glad you enjoyed your stay."
+}
+
+### 💬 17️⃣ Reply to review 3
+POST http://localhost:9090/api/reviews/3/reply
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "message": "We appreciate your kind words and hope to host you again!"
+}
+
+### ❌ 18️⃣ Delete review 2
+DELETE http://localhost:9090/api/reviews/2
+Authorization: Bearer {{token}}
+
+### ❌ 19️⃣ Delete review 6
+DELETE http://localhost:9090/api/reviews/6
+Authorization: Bearer {{token}}

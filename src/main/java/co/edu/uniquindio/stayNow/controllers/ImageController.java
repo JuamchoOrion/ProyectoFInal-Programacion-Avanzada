@@ -26,7 +26,7 @@ public class ImageController {
     @DeleteMapping
     public ResponseEntity<ResponseDTO<String>> delete(@RequestParam("id") String id) throws Exception{
         imageService.delete(id);
-        return ResponseEntity.ok( new ResponseDTO<>(false, "Imagen eliminada exitosamente") );
+        return ResponseEntity.ok( new ResponseDTO<>(false, "Image successfully deleted") );
     }
 
 }

@@ -20,13 +20,13 @@ public class AuthController {
     private final UserServiceImpl userService;
     private final AuthService authService;
 
-    //Inyeccion de dependencias
+    // Inyeccion de dependencias
     @PostMapping("/register")
-    public ResponseEntity<ResponseDTO<String>> register(@Valid @RequestBody CreateUserDTO userDTO) throws Exception{
+    public ResponseEntity<ResponseDTO<String>> register(@Valid @RequestBody CreateUserDTO userDTO) throws Exception {
         userService.create(userDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO<>(false, "El registro ha sido exitoso"));
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new ResponseDTO<>(false, "Registration successful"));
     }
-
 
     @PostMapping("/login")
     public ResponseEntity<ResponseDTO<TokenDTO>> login(@RequestBody LoginRequestDTO loginDTO) throws Exception {
@@ -35,13 +35,14 @@ public class AuthController {
     }
 
     @PostMapping("/password/reset")
-    public ResponseEntity<ResponseDTO<String>> resetPasswordRequest(@RequestBody ResetPasswordRequestDTO resetPasswordRequestDTO){
-        return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO<>(false, "Codigo enviado con exito"));
+    public ResponseEntity<ResponseDTO<String>> resetPasswordRequest(@RequestBody ResetPasswordRequestDTO resetPasswordRequestDTO) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new ResponseDTO<>(false, "Code sent successfully"));
     }
 
     @PatchMapping("/password/confirm")
-    public ResponseEntity<ResponseDTO<String>> confirmPassword(@RequestBody EditPasswordRequestDTO editPasswordRequestDTO){
-        return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO<>(false, "Contraseña actualizada con exito"));
+    public ResponseEntity<ResponseDTO<String>> confirmPassword(@RequestBody EditPasswordRequestDTO editPasswordRequestDTO) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new ResponseDTO<>(false, "Password updated successfully"));
     }
-
 }

@@ -38,12 +38,11 @@ public class UserServiceImpl implements UserService {
     public void create(CreateUserDTO userDTO) throws Exception {
 
         if (isEmailDuplicated(userDTO.email())) {
-            throw new EmailAlreadyInUseException("El correo electrónico ya está en uso.");
+            throw new EmailAlreadyInUseException("Email is already in use.");
         }
-        //Con bd se llama al metodo para obtener el optional del usuario, hace la consulta si el email exist
-        //si no existe se crea, de lo contrario se lanza exception
-        if(userRepository.findByEmail(userDTO.email()).isPresent()){
-            throw new EmailAlreadyInUseException("El correo electrónico ya está en uso.");
+
+        if (userRepository.findByEmail(userDTO.email()).isPresent()) {
+            throw new EmailAlreadyInUseException("Email is already in use.");
         }
 
         User newUser = User.builder()
@@ -54,11 +53,11 @@ public class UserServiceImpl implements UserService {
                 .role(userDTO.role())
                 .dateBirth(userDTO.dateBirth())
                 //.photoUrl(userDTO.photoUrl())
-                .password(passwordEncoder.encode(userDTO.password())) // 🔑 cifrado
+                .password(passwordEncoder.encode(userDTO.password())) // 🔑 encrypted
                 .createdAt(LocalDateTime.now())
                 .status(UserStatus.ACTIVE)
                 .build();
-            //aca se debe guardar en la bd
+
         userRepository.save(newUser);
     }
 
@@ -67,7 +66,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(id).orElse(null);
 
         if (user == null) {
-            throw new UserNotFoundException("Usuario no encontrado.");
+            throw new UserNotFoundException("User not found.");
         }
 
         return userMapper.toUserDTO(user);
@@ -78,14 +77,16 @@ public class UserServiceImpl implements UserService {
         User removedUser = userRepository.findById(id).orElse(null);
 
         if (removedUser == null) {
-            throw new UserNotFoundException("Usuario no encontrado.");
+            throw new UserNotFoundException("User not found.");
         }
         userRepository.delete(removedUser);
     }
 
     @Override
     public List<UserDTO> listAll() {
-        return userRepository.findAll().stream().map(userMapper::toUserDTO).collect(Collectors.toList());
+        return userRepository.findAll().stream()
+                .map(userMapper::toUserDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -93,12 +94,12 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(id).orElse(null);
 
         if (user == null) {
-            throw new UserNotFoundException("Usuario no encontrado.");
+            throw new UserNotFoundException("User not found.");
         }
 
         if (!user.getEmail().equalsIgnoreCase(userDTO.email())
                 && isEmailDuplicated(userDTO.email())) {
-            throw new EmailAlreadyInUseException("El correo electrónico ya está en uso.");
+            throw new EmailAlreadyInUseException("Email is already in use.");
         }
 
         user.setName(userDTO.name());
@@ -113,10 +114,7 @@ public class UserServiceImpl implements UserService {
     }
 
     private boolean isEmailDuplicated(String email) {
-        if(userRepository.findByEmail(email).isPresent()){
-            return true;
-        }
-        return false;
+        return userRepository.findByEmail(email).isPresent();
     }
 
     private String encode(String password) {
@@ -127,10 +125,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean isHost(Long userId) {
-        // 1. Busca el usuario en la DB por ID.
-        return userRepository.findById(String.valueOf(userId)) // Ajusta a tu tipo de ID
-                .map(user -> user.getRole() == Role.HOST) // Si lo encuentra, chequea el rol
-                .orElse(false); // Si no lo encuentra, no es anfitrión
+        return userRepository.findById(String.valueOf(userId))
+                .map(user -> user.getRole() == Role.HOST)
+                .orElse(false);
     }
-
 }

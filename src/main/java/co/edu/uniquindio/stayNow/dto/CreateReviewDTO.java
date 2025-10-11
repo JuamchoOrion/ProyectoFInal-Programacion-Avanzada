@@ -7,16 +7,16 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public record CreateReviewDTO(
-        // El userID se saca del token.
-        @NotNull(message = "El ID de la reserva es obligatorio")
+        // The userID is extracted from the token.
+        @NotNull(message = "The reservation ID is required")
         Long reservationId,
 
-        @NotNull(message = "La calificación es obligatoria")
-        @Min(value = 1, message = "La calificación mínima es 1")
-        @Max(value = 5, message = "La calificación máxima es 5")
+        @NotNull(message = "The rating is required")
+        @Min(value = 1, message = "The minimum rating is 1")
+        @Max(value = 5, message = "The maximum rating is 5")
         Integer rating,
 
-        @NotBlank(message = "El comentario no puede estar vacío")
-        @Size(max = 500, message = "El comentario no puede tener más de 500 caracteres")
+        @NotBlank(message = "The comment cannot be empty")
+        @Size(max = 500, message = "The comment cannot exceed 500 characters")
         String text
 ) {}

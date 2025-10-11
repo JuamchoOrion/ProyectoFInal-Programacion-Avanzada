@@ -7,9 +7,9 @@ import java.util.Optional;
 
 public interface ReplyRepository extends JpaRepository<Reply, Long> {
 
-    // Saber si ya existe la respuesta en un review
+    // Check if a reply already exists for a given review
     boolean existsByReview_Id(Long reviewId);
 
-    // Obtener la reply de una review
+    // Retrieve the reply associated with a given review
     Optional<Reply> findByReview_Id(Long reviewId);
 }

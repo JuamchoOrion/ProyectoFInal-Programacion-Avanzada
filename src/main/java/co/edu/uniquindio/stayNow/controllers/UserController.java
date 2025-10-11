@@ -23,20 +23,20 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ResponseDTO<String>> delete(@PathVariable String id) throws Exception{
+    public ResponseEntity<ResponseDTO<String>> delete(@PathVariable String id) throws Exception {
         userService.delete(id);
-        return ResponseEntity.ok(new ResponseDTO<>(false, "El usuario ha sido eliminado"));
+        return ResponseEntity.ok(new ResponseDTO<>(false, "The user has been deleted"));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ResponseDTO<String>> edit(@PathVariable String id, @Valid @RequestBody EditUserDTO userDTO) throws Exception{
+    public ResponseEntity<ResponseDTO<String>> edit(@PathVariable String id, @Valid @RequestBody EditUserDTO userDTO) throws Exception {
         userService.edit(id, userDTO);
-        return ResponseEntity.ok(new ResponseDTO<>(false, "El usuario ha sido actualizado"));
+        return ResponseEntity.ok(new ResponseDTO<>(false, "The user has been updated"));
     }
 
     @PatchMapping("/{id}/password")
-    public ResponseEntity<ResponseDTO<String>> changePassword(@PathVariable String id, @RequestBody ChangePasswordRequestDTO changePasswordRequestDTO){
-        return ResponseEntity.ok(new ResponseDTO<>(false, "Contraseña actualizada"));
+    public ResponseEntity<ResponseDTO<String>> changePassword(@PathVariable String id, @RequestBody ChangePasswordRequestDTO changePasswordRequestDTO) {
+        return ResponseEntity.ok(new ResponseDTO<>(false, "Password updated"));
     }
 
 

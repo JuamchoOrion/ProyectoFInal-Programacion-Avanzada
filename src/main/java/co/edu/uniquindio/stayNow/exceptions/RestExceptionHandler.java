@@ -18,127 +18,127 @@ public class RestExceptionHandler {
 
     @ExceptionHandler(NoResourceFoundException.class)
     public ResponseEntity<ResponseDTO<String>> noResourceFoundExceptionHandler(NoResourceFoundException ex){
-        return ResponseEntity.status(404).body( new ResponseDTO<>(true, "El recurso solicitado no existe"));
+        return ResponseEntity.status(404).body(new ResponseDTO<>(true, "The requested resource does not exist."));
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ResponseDTO<String>> generalExceptionHandler (Exception e){
-        return ResponseEntity.internalServerError().body( new ResponseDTO<>(true, e.getMessage()));
+    public ResponseEntity<ResponseDTO<String>> generalExceptionHandler(Exception e){
+        return ResponseEntity.internalServerError().body(new ResponseDTO<>(true, e.getMessage()));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ResponseDTO<List<ValidationDTO>>> validationExceptionHandler ( MethodArgumentNotValidException ex ) {
+    public ResponseEntity<ResponseDTO<List<ValidationDTO>>> validationExceptionHandler(MethodArgumentNotValidException ex) {
         List<ValidationDTO> errors = new ArrayList<>();
         BindingResult results = ex.getBindingResult();
-        for (FieldError e: results.getFieldErrors()) {
-            errors.add( new ValidationDTO(e.getField(), e.getDefaultMessage()) );
+        for (FieldError e : results.getFieldErrors()) {
+            errors.add(new ValidationDTO(e.getField(), e.getDefaultMessage()));
         }
-        return ResponseEntity.badRequest().body( new ResponseDTO<>(true, errors));
+        return ResponseEntity.badRequest().body(new ResponseDTO<>(true, errors));
     }
 
-    // Autenticación / Usuarios
+    // Authentication / Users
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<ResponseDTO<String>> userNotFoundExceptionHandler(UserNotFoundException ex){
-        return ResponseEntity.status(404).body( new ResponseDTO<>(true, "El Usuario no existe."));
+        return ResponseEntity.status(404).body(new ResponseDTO<>(true, "The user does not exist."));
     }
 
     @ExceptionHandler(InvalidCredentialsException.class)
     public ResponseEntity<ResponseDTO<String>> invalidCredentialsExceptionHandler(InvalidCredentialsException ex){
-        return ResponseEntity.status(401).body( new ResponseDTO<>(true, "Credenciales inválidas."));
+        return ResponseEntity.status(401).body(new ResponseDTO<>(true, "Invalid credentials."));
     }
 
     @ExceptionHandler(EmailAlreadyExistsException.class)
     public ResponseEntity<ResponseDTO<String>> emailAlreadyExistsExceptionHandler(EmailAlreadyExistsException ex){
-        return ResponseEntity.status(409).body( new ResponseDTO<>(true, "Este email ya está registrado."));
+        return ResponseEntity.status(409).body(new ResponseDTO<>(true, "This email is already registered."));
     }
 
     @ExceptionHandler(UnauthorizedActionException.class)
     public ResponseEntity<ResponseDTO<String>> unauthorizedActionExceptionHandler(UnauthorizedActionException ex){
-        return ResponseEntity.status(403).body( new ResponseDTO<>(true, "Accion no permitida."));
+        return ResponseEntity.status(403).body(new ResponseDTO<>(true, "Action not allowed."));
     }
 
     @ExceptionHandler(AccountDisabledException.class)
     public ResponseEntity<ResponseDTO<String>> accountDisabledExceptionHandler(AccountDisabledException ex){
-        return ResponseEntity.status(403).body( new ResponseDTO<>(true, "Esta cuenta está suspendida o inactiva."));
+        return ResponseEntity.status(403).body(new ResponseDTO<>(true, "This account is suspended or inactive."));
     }
 
-    // Alojamientos
+    // Accommodations
     @ExceptionHandler(AccommodationNotFoundException.class)
     public ResponseEntity<ResponseDTO<String>> accommodationNotFoundExceptionHandler(AccommodationNotFoundException ex){
-        return ResponseEntity.status(404).body( new ResponseDTO<>(true, "El Alojamiento no existe."));
+        return ResponseEntity.status(404).body(new ResponseDTO<>(true, "The accommodation does not exist."));
     }
 
     @ExceptionHandler(AccommodationUnavailableException.class)
     public ResponseEntity<ResponseDTO<String>> accommodationUnavailableExceptionHandler(AccommodationUnavailableException ex){
-        return ResponseEntity.status(409).body( new ResponseDTO<>(true, "El alojamiento no está disponible, es posible que esté ocupado."));
+        return ResponseEntity.status(409).body(new ResponseDTO<>(true, "The accommodation is not available. It may be occupied."));
     }
 
     @ExceptionHandler(InvalidAccommodationDataException.class)
     public ResponseEntity<ResponseDTO<String>> invalidAccommodationDataException(InvalidAccommodationDataException ex){
-        return ResponseEntity.status(401).body( new ResponseDTO<>(true, "Datos inválidos para el alojamiento."));
+        return ResponseEntity.status(401).body(new ResponseDTO<>(true, "Invalid accommodation data."));
     }
 
     @ExceptionHandler(MaxGuestsExceededException.class)
     public ResponseEntity<ResponseDTO<String>> maxGuestsExceededException(MaxGuestsExceededException ex){
-        return ResponseEntity.status(422).body( new ResponseDTO<>(true, "La cantidad de huéspedes excede el máximo permitido para el alojamiento."));
+        return ResponseEntity.status(422).body(new ResponseDTO<>(true, "The number of guests exceeds the maximum allowed for this accommodation."));
     }
 
-    // Reservas
+    // Reservations
     @ExceptionHandler(ReservationNotFoundException.class)
     public ResponseEntity<ResponseDTO<String>> reservationNotFoundExceptionHandler(ReservationNotFoundException ex){
-        return ResponseEntity.status(404).body( new ResponseDTO<>(true, "La reserva no existe."));
+        return ResponseEntity.status(404).body(new ResponseDTO<>(true, "The reservation does not exist."));
     }
 
     @ExceptionHandler(ReservationConflictException.class)
     public ResponseEntity<ResponseDTO<String>> reservationConflictExceptionHandler(ReservationConflictException ex){
-        return ResponseEntity.status(422).body( new ResponseDTO<>(true, "Ya hay una reserva en esas fechas. Intente nuevamente con fechas distintas."));
+        return ResponseEntity.status(422).body(new ResponseDTO<>(true, "There is already a reservation for those dates. Please try again with different dates."));
     }
 
     @ExceptionHandler(InvalidReservationDateException.class)
     public ResponseEntity<ResponseDTO<String>> invalidReservationDateException(InvalidReservationDateException ex){
-        return ResponseEntity.status(422).body( new ResponseDTO<>(true, "Fechas inválidas en la reserva. Revise el orden."));
+        return ResponseEntity.status(422).body(new ResponseDTO<>(true, "Invalid reservation dates. Please check the order."));
     }
 
     @ExceptionHandler(ReservationCancellationNotAllowedException.class)
     public ResponseEntity<ResponseDTO<String>> reservationCancellationNotAllowedException(ReservationCancellationNotAllowedException ex){
-        return ResponseEntity.status(409).body( new ResponseDTO<>(true, "No se puede cancelar la reserva, según la política."));
+        return ResponseEntity.status(409).body(new ResponseDTO<>(true, "Reservation cannot be canceled according to the policy."));
     }
 
-    // Reseñas
+    // Reviews
     @ExceptionHandler(ReviewNotFoundException.class)
     public ResponseEntity<ResponseDTO<String>> reviewNotFoundExceptionHandler(ReviewNotFoundException ex){
-        return ResponseEntity.status(404).body(new ResponseDTO<>(true, "La reseña no existe."));
+        return ResponseEntity.status(404).body(new ResponseDTO<>(true, "The review does not exist."));
     }
 
     @ExceptionHandler(DuplicateReviewException.class)
     public ResponseEntity<ResponseDTO<String>> duplicateReviewExceptionHandler(DuplicateReviewException ex){
-        return ResponseEntity.status(409).body(new ResponseDTO<>(true, "Usted ya realizó una reseña para esta reserva."));
+        return ResponseEntity.status(409).body(new ResponseDTO<>(true, "You have already submitted a review for this reservation."));
     }
 
     @ExceptionHandler(UnauthorizedReviewException.class)
     public ResponseEntity<ResponseDTO<String>> unauthorizedReviewExceptionHandler(UnauthorizedReviewException ex){
-        return ResponseEntity.status(403).body(new ResponseDTO<>(true, "No tiene permisos para dejar una reseña en este alojamiento. Es posible que no haya hecho una reserva."));
+        return ResponseEntity.status(403).body(new ResponseDTO<>(true, "You are not authorized to leave a review for this accommodation. You may not have made a reservation."));
     }
 
     @ExceptionHandler(ReplyAlreadyExistsException.class)
     public ResponseEntity<ResponseDTO<String>> replyAlreadyExistsExceptionHandler(ReplyAlreadyExistsException ex){
-        return ResponseEntity.status(409).body(new ResponseDTO<>(true, "Este comentario ya tiene una respuesta."));
+        return ResponseEntity.status(409).body(new ResponseDTO<>(true, "This review already has a reply."));
     }
 
-    // Generales
+    // General
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<ResponseDTO<String>> badRequestExceptionHandler(BadRequestException ex){
-        return ResponseEntity.status(400).body(new ResponseDTO<>(true, "La petición contiene datos inválidos."));
+        return ResponseEntity.status(400).body(new ResponseDTO<>(true, "The request contains invalid data."));
     }
 
     @ExceptionHandler(ResourceConflictException.class)
     public ResponseEntity<ResponseDTO<String>> resourceConflictExceptionHandler(ResourceConflictException ex){
-        return ResponseEntity.status(409).body(new ResponseDTO<>(true, "Conflicto con el estado actual del recurso."));
+        return ResponseEntity.status(409).body(new ResponseDTO<>(true, "Conflict with the current state of the resource."));
     }
 
     @ExceptionHandler(OperationNotAllowedException.class)
     public ResponseEntity<ResponseDTO<String>> operationNotAllowedExceptionHandler(OperationNotAllowedException ex){
-        return ResponseEntity.status(403).body(new ResponseDTO<>(true, "La operación no está permitida por las reglas de negocio."));
+        return ResponseEntity.status(403).body(new ResponseDTO<>(true, "Operation not allowed according to business rules."));
     }
 
 }

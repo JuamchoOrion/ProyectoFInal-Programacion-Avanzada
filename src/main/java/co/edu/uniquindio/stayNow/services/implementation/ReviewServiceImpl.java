@@ -27,25 +27,25 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public Review createReview(Long reservationId, String userId, String comment, Integer rating) throws Exception {
         var user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         var reservation = reservationRepository.findById(reservationId)
-                .orElseThrow(() -> new ReservationNotFoundException("Reserva no encontrada"));
+                .orElseThrow(() -> new ReservationNotFoundException("Reservation not found"));
 
         if (!reservation.getGuest().getId().equals(userId))
-            throw new UnauthorizedReviewException("La reserva no pertenece al usuario");
+            throw new UnauthorizedReviewException("The reservation does not belong to the user");
 
         if (reservation.getCheckOut().isAfter(LocalDateTime.now()))
-            throw new Exception("La reserva aún no ha finalizado");
+            throw new Exception("The reservation has not yet finished");
 
         if (reviewRepository.existsByReservation_Id(reservationId))
-            throw new DuplicateReviewException("Ya existe un comentario para esta reserva");
+            throw new DuplicateReviewException("A review already exists for this reservation");
 
         if (rating < 1 || rating > 5)
-            throw new OperationNotAllowedException("La calificación debe estar entre 1 y 5");
+            throw new OperationNotAllowedException("The rating must be between 1 and 5");
 
         if (comment != null && comment.length() > 500)
-            throw new OperationNotAllowedException("El comentario no puede superar los 500 caracteres");
+            throw new OperationNotAllowedException("The comment cannot exceed 500 characters");
 
         Review review = new Review();
         review.setUser(user);
@@ -58,47 +58,48 @@ public class ReviewServiceImpl implements ReviewService {
         return reviewRepository.save(review);
     }
 
-    // Obtener todas las reviews por fecha de creación más reciente.
+    // Get all reviews sorted by most recent creation date.
     @Override
     public Page<Review> getReviewsByAccommodation(Long accommodationId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
         return reviewRepository.findByAccommodation_IdOrderByCreatedAtDesc(accommodationId, pageable);
     }
 
-    // Para calcular el promedio de calificaciones del alojamiento.
+    // Calculate the average rating for the accommodation.
     @Override
     public Double getAverageRating(Long accommodationId) {
         return reviewRepository.getAverageRatingByAccommodation(accommodationId);
     }
 
-    // Eliminar review
+    // Delete a review
     @Override
     public void deleteReview(Long reviewId, String userId) throws Exception {
-        var review = reviewRepository.findById(reviewId).orElseThrow(() -> new ReviewNotFoundException("Review no encontrada"));
+        var review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new ReviewNotFoundException("Review not found"));
 
-        // Solo el que hizo la review la puede borrar
+        // Only the user who created the review can delete it
         if (!review.getUser().getId().equals(userId)) {
-            throw new UnauthorizedActionException("No autorizado para eliminar este comentario");
+            throw new UnauthorizedActionException("Not authorized to delete this review");
         }
 
         reviewRepository.delete(review);
     }
 
-    // Responder a la review. Solo el host del alojamiento puede responder.
+    // Reply to a review. Only the host of the accommodation can reply.
     @Override
     public Reply replyToReview(Long reviewId, String hostId, String message) throws Exception {
         var review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new ReviewNotFoundException("Review no encontrada"));
+                .orElseThrow(() -> new ReviewNotFoundException("Review not found"));
 
         var host = userRepository.findById(hostId)
-                .orElseThrow(() -> new UserNotFoundException("Host no encontrado"));
+                .orElseThrow(() -> new UserNotFoundException("Host not found"));
 
         if (!review.getAccommodation().getHost().getId().equals(hostId)) {
-            throw new UnauthorizedActionException("No autorizado para responder a este comentario");
+            throw new UnauthorizedActionException("Not authorized to reply to this review");
         }
 
         if (review.getReply() != null) {
-            throw new ReplyAlreadyExistsException("Ya existe una respuesta a este comentario");
+            throw new ReplyAlreadyExistsException("A reply already exists for this review");
         }
 
         Reply reply = new Reply();

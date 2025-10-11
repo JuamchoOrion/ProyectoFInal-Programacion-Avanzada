@@ -22,7 +22,7 @@ Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJuYW1lIjoidGVzdGVyIiwiZW1haWwiOiJyY
   "guests": 3
 }
 
----
+
 
 ### Reserva 3 - Alojamiento 2
 POST http://localhost:9090/reservations
@@ -48,7 +48,7 @@ Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJuYW1lIjoidGVzdGVyIiwiZW1haWwiOiJyY
   "guests": 2
 }
 
----
+
 
 ### Reserva 5 - Alojamiento 3
 POST http://localhost:9090/reservations
@@ -74,7 +74,7 @@ Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJuYW1lIjoidGVzdGVyIiwiZW1haWwiOiJyY
   "guests": 2
 }
 
----
+
 
 ### Reserva 7 - Alojamiento 4
 POST http://localhost:9090/reservations
@@ -100,7 +100,7 @@ Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJuYW1lIjoidGVzdGVyIiwiZW1haWwiOiJyY
   "guests": 2
 }
 
----
+
 
 ### Reserva 9 - Alojamiento 5
 POST http://localhost:9090/reservations

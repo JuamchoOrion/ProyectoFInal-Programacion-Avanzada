@@ -17,7 +17,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/accommodations")
-//faltan los de comments
+// faltan los de comments
 @RequiredArgsConstructor
 public class AccommodationController {
     private final AccommodationService accommodationService;
@@ -25,11 +25,11 @@ public class AccommodationController {
     @GetMapping
     public ResponseEntity<ResponseDTO<Page<AccommodationDTO>>> getListOfAccomodation(
             @RequestParam(required = false) String city,
-            @RequestParam(required = false)@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime checkIn,
-            @RequestParam(required = false)@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime checkOut,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime checkIn,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime checkOut,
             @RequestParam(required = false) Double minPrice,
             @RequestParam(required = false) Double maxPrice,
-            @RequestParam(required = false) String services, // lista separada por comas
+            @RequestParam(required = false) String services, // comma-separated list
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) throws Exception {
@@ -81,7 +81,7 @@ public class AccommodationController {
     @PostMapping("")
     public ResponseEntity<ResponseDTO<AccommodationDTO>> createAccommodation(@RequestBody CreateAccommodationDTO accommodationDTO) throws Exception {
         AccommodationDTO dto = accommodationService.create(accommodationDTO);
-        return ResponseEntity.ok(new ResponseDTO<>(false,dto));
+        return ResponseEntity.ok(new ResponseDTO<>(false, dto));
     }
 
     @GetMapping("/{id}")
@@ -98,18 +98,18 @@ public class AccommodationController {
     @DeleteMapping("/{id}")
     public ResponseEntity<ResponseDTO<String>> deleteAccommodation(@PathVariable long id) throws Exception {
         accommodationService.delete(id);
-        return ResponseEntity.ok(new ResponseDTO<>(false, "El alojamiento con id: "+ id +" fue eliminado exitosamente"));
+        return ResponseEntity.ok(new ResponseDTO<>(false, "The accommodation with id: " + id + " was successfully deleted"));
     }
+
     // esto lo hace cardenas
     @GetMapping("/{id}/review")
-    public ResponseEntity<ResponseDTO<List<ReviewDTO>>> getReviews(@PathVariable long id){
+    public ResponseEntity<ResponseDTO<List<ReviewDTO>>> getReviews(@PathVariable long id) {
         List<ReviewDTO> list = new ArrayList<ReviewDTO>();
-
         return ResponseEntity.ok(new ResponseDTO<>(false, list));
     }
-    @PostMapping("/{id}/review")
-    public ResponseEntity<ResponseDTO<String>> createReview(@PathVariable long id, @RequestBody CreateReviewDTO reviewDTO){
-        return ResponseEntity.ok(new ResponseDTO<>(false, "Reseña creada con exito"));
-    }
 
+    @PostMapping("/{id}/review")
+    public ResponseEntity<ResponseDTO<String>> createReview(@PathVariable long id, @RequestBody CreateReviewDTO reviewDTO) {
+        return ResponseEntity.ok(new ResponseDTO<>(false, "Review created successfully"));
+    }
 }
