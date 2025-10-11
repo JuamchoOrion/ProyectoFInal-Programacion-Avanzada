@@ -1,6 +1,5 @@
 package co.edu.uniquindio.stayNow.services;
 
-
 import co.edu.uniquindio.stayNow.exceptions.*;
 import co.edu.uniquindio.stayNow.model.entity.*;
 import co.edu.uniquindio.stayNow.model.entity.Accommodation;
@@ -26,8 +25,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-
-class ReviewServiceImplTest {
+public class ReviewServiceImplTest {
 
     @Mock
     private ReviewRepository reviewRepository;

@@ -1,7 +1,6 @@
 package co.edu.uniquindio.stayNow.services;
 
 import co.edu.uniquindio.stayNow.dto.CreateUserDTO;
-import co.edu.uniquindio.stayNow.dto.EditUserDTO;
 import co.edu.uniquindio.stayNow.dto.UserDTO;
 import co.edu.uniquindio.stayNow.exceptions.EmailAlreadyInUseException;
 import co.edu.uniquindio.stayNow.exceptions.UserNotFoundException;
