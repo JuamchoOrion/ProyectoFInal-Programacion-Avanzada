@@ -27,5 +27,9 @@ public class ChatMessage {
     private LocalDateTime timestamp;
 
     @Enumerated(EnumType.STRING)
-    private MessageStatus status; // SENT, DELIVERED, READ
+    private MessageStatus status;
+    @PrePersist
+    public void prePersist() {
+        this.timestamp = LocalDateTime.now();
+    }// SENT, DELIVERED, READ
 }

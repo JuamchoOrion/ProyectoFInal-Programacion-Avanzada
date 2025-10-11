@@ -23,25 +23,35 @@ public class AuthController {
     //Inyeccion de dependencias
     @PostMapping("/register")
     public ResponseEntity<ResponseDTO<String>> register(@Valid @RequestBody CreateUserDTO userDTO) throws Exception{
+
         userService.create(userDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO<>(false, "El registro ha sido exitoso"));
+
     }
 
 
     @PostMapping("/login")
     public ResponseEntity<ResponseDTO<TokenDTO>> login(@RequestBody LoginRequestDTO loginDTO) throws Exception {
+
         TokenDTO token = authService.login(loginDTO);
         return ResponseEntity.ok(new ResponseDTO<>(false, token));
+
     }
 
     @PostMapping("/password/reset")
-    public ResponseEntity<ResponseDTO<String>> resetPasswordRequest(@RequestBody ResetPasswordRequestDTO resetPasswordRequestDTO){
+    public ResponseEntity<ResponseDTO<String>> resetPasswordRequest(@RequestBody ResetPasswordRequestDTO resetPasswordRequestDTO) throws Exception {
+
+        authService.resetPasswordRequest(resetPasswordRequestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO<>(false, "Codigo enviado con exito"));
+
     }
 
     @PatchMapping("/password/confirm")
-    public ResponseEntity<ResponseDTO<String>> confirmPassword(@RequestBody EditPasswordRequestDTO editPasswordRequestDTO){
+    public ResponseEntity<ResponseDTO<String>> confirmPassword(@RequestBody EditPasswordRequestDTO editPasswordRequestDTO) throws Exception {
+
+        authService.confirmPassword(editPasswordRequestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO<>(false, "Contraseña actualizada con exito"));
+
     }
 
 }
