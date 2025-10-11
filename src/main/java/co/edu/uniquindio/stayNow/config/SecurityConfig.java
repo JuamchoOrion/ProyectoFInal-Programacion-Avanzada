@@ -38,6 +38,15 @@ public class SecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(req -> req
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/ws-chat/**").permitAll()
+                        .requestMatchers("/api/auth/**",   // login, register, etc.
+                                "/ws-chat/**",    // ✅ WebSocket handshake
+                                "/chat.html",
+                                "/chatMultiusuario.html",// ✅ archivo HTML de prueba
+                                "/app/**",        // ✅ prefijos STOMP de envío
+                                "/topic/**",      // ✅ prefijos STOMP de recepción
+                                "/queue/**").permitAll()
+                        .requestMatchers("/chat-websocket/**", "/topic/**").permitAll()
                         .requestMatchers(HttpMethod.GET,"/api/accommodations/**").permitAll()
                         .anyRequest().authenticated()
                 )

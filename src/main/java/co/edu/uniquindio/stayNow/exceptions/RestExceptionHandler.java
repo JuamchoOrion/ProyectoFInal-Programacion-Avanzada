@@ -140,5 +140,9 @@ public class RestExceptionHandler {
     public ResponseEntity<ResponseDTO<String>> operationNotAllowedExceptionHandler(OperationNotAllowedException ex){
         return ResponseEntity.status(403).body(new ResponseDTO<>(true, "Operation not allowed according to business rules."));
     }
+    @ExceptionHandler(PasswordResetCodeNotFoundException.class)
+    public ResponseEntity<ResponseDTO<String>> passwordResetCodeNotAllowedExceptionHandler(PasswordResetCodeNotFoundException ex){
+        return ResponseEntity.status(404).body(new ResponseDTO<>(true, "PasswordResetCode not found"));
+    }
 
 }

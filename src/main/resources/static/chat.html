@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Chat Test</title>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+    <style>
+        body { font-family: Arial; margin: 20px; }
+        input, button { margin: 5px; }
+        ul { list-style-type: none; padding: 0; }
+        li { margin: 5px 0; padding: 5px; background: #f0f0f0; border-radius: 5px; }
+    </style>
+</head>
+<body>
+<h1>Chat Test</h1>
+
+<label>Receptor ID (UUID):</label><br>
+<input type="text" id="receiverId" style="width:400px"><br>
+
+<label>Mensaje:</label><br>
+<input type="text" id="message" style="width:400px"><br>
+
+<button onclick="sendMessage()">Enviar Mensaje</button>
+<h3>Mensajes:</h3>
+<ul id="messages"></ul>
+
+<script>
+    let stompClient = null;
+
+    // ✅ Aquí pones tu token directamente
+    const token = "eyJhbGciOiJIUzM4NCJ9.eyJyb2xlIjoiUk9MRV9HVUVTVCIsIm5hbWUiOiJ0ZXN0ZXIiLCJlbWFpbCI6InJhbWlyZXNqdWFuZGExMjNAZ21haWwuY29tIiwic3ViIjoiOWM5MjE2MDUtNmZhNC00MTlmLTllMGUtZTdjNTRlNmY5M2Q0IiwiaWF0IjoxNzYwMTk5MzQ4LCJleHAiOjE3NjAyMDI5NDh9.G0ERNiNEpvCGe9I1_HsIEZOYHWQG-Z9DxmxikR60IoFsIpYC2aZa4QJNlqF44BFl";
+
+    // Extraemos el UUID del usuario del JWT
+    function parseJwt(token) {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        return payload.sub; // UUID guardado en el subject del JWT
+    }
+
+    const myUserId = parseJwt(token);
+
+    // Conectar al WebSocket automáticamente al cargar la página
+    function connect() {
+        const socket = new SockJS('http://localhost:9090/chat-websocket');
+        stompClient = Stomp.over(socket);
+
+        stompClient.connect({ 'Authorization': 'Bearer ' + token }, function(frame) {
+            console.log("Conectado: " + frame);
+
+            // Suscribirse automáticamente a mensajes dirigidos a este usuario
+            stompClient.subscribe('/topic/chat/' + myUserId, function(message) {
+                const msg = JSON.parse(message.body);
+                const li = document.createElement("li");
+                li.textContent = "De " + msg.senderId + ": " + msg.content;
+                document.getElementById("messages").appendChild(li);
+            });
+        }, function(error) {
+            console.error("Error al conectar:", error);
+        });
+    }
+
+    // Llamamos a connect al cargar la página
+    connect();
+
+    function sendMessage() {
+        const receiverId = document.getElementById("receiverId").value.trim();
+        const content = document.getElementById("message").value.trim();
+        if (!receiverId || !content) { alert("Receptor y mensaje son obligatorios"); return; }
+
+        const mensaje = { receiverId, content };
+        stompClient.send("/app/send", {}, JSON.stringify(mensaje));
+
+        const li = document.createElement("li");
+        li.textContent = "Tú → " + receiverId + ": " + content;
+        li.style.background = "#d1ffd1";
+        document.getElementById("messages").appendChild(li);
+
+        document.getElementById("message").value = "";
+    }
+</script>
+</body>
+</html>
