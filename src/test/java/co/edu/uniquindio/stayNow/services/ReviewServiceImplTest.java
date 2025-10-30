@@ -1,6 +1,12 @@
 package co.edu.uniquindio.stayNow.services;
 
+import co.edu.uniquindio.stayNow.dto.CreateReviewDTO;
+import co.edu.uniquindio.stayNow.dto.ReplyDTO;
+import co.edu.uniquindio.stayNow.dto.ReplyReviewDTO;
+import co.edu.uniquindio.stayNow.dto.ReviewDTO;
 import co.edu.uniquindio.stayNow.exceptions.*;
+import co.edu.uniquindio.stayNow.mappers.ReplyMapper;
+import co.edu.uniquindio.stayNow.mappers.ReviewMapper;
 import co.edu.uniquindio.stayNow.model.entity.*;
 import co.edu.uniquindio.stayNow.model.entity.Accommodation;
 import co.edu.uniquindio.stayNow.model.entity.Reservation;
@@ -9,6 +15,7 @@ import co.edu.uniquindio.stayNow.model.entity.User;
 import co.edu.uniquindio.stayNow.repositories.*;
 import co.edu.uniquindio.stayNow.services.implementation.ReviewServiceImpl;
 
+import co.edu.uniquindio.stayNow.services.interfaces.AuthService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -27,23 +34,16 @@ import static org.mockito.Mockito.*;
 
 public class ReviewServiceImplTest {
 
-    @Mock
-    private ReviewRepository reviewRepository;
+    @Mock private ReviewRepository reviewRepository;
+    @Mock private ReservationRepository reservationRepository;
+    @Mock private UserRepository userRepository;
+    @Mock private AccommodationRepository accommodationRepository;
+    @Mock private ReplyRepository replyRepository;
+    @Mock private AuthService authService;
+    @Mock private ReviewMapper reviewMapper;
+    @Mock private ReplyMapper replyMapper;
 
-    @Mock
-    private ReservationRepository reservationRepository;
-
-    @Mock
-    private UserRepository userRepository;
-
-    @Mock
-    private AccommodationRepository accommodationRepository;
-
-    @Mock
-    private ReplyRepository replyRepository;
-
-    @InjectMocks
-    private ReviewServiceImpl reviewService;
+    @InjectMocks private ReviewServiceImpl reviewService;
 
     private User user;
     private User host;
@@ -51,10 +51,19 @@ public class ReviewServiceImplTest {
     private Reservation reservation;
     private Review review;
 
+    // Common DTOs used in multiple tests
+    private CreateReviewDTO validCreateReviewDTO;
+    private CreateReviewDTO invalidRatingLowDTO;
+    private CreateReviewDTO invalidRatingHighDTO;
+    private CreateReviewDTO longCommentDTO;
+    private ReplyReviewDTO validReplyDTO;
+    private ReplyReviewDTO simpleReplyDTO;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
+        // --- Users ---
         user = new User();
         user.setId("USER-001");
         user.setName("John Doe");
@@ -63,17 +72,20 @@ public class ReviewServiceImplTest {
         host.setId("HOST-001");
         host.setName("Alice Host");
 
+        // --- Accommodation ---
         accommodation = new Accommodation();
         accommodation.setId(1L);
         accommodation.setTitle("Forest Cabin");
         accommodation.setHost(host);
 
+        // --- Reservation ---
         reservation = new Reservation();
         reservation.setId(1L);
         reservation.setGuest(user);
         reservation.setAccommodation(accommodation);
-        reservation.setCheckOut(LocalDateTime.now().minusDays(2)); // Checkout passed
+        reservation.setCheckOut(LocalDateTime.now().minusDays(2)); // Checkout completed
 
+        // --- Review ---
         review = new Review();
         review.setId(10L);
         review.setUser(user);
@@ -81,58 +93,92 @@ public class ReviewServiceImplTest {
         review.setAccommodation(accommodation);
         review.setRating(5);
         review.setComment("Great place!");
+        review.setCreatedAt(LocalDateTime.now().minusDays(1));
+
+        // --- Common DTOs ---
+        validCreateReviewDTO = new CreateReviewDTO(reservation.getId(), 5, "Excellent stay");
+        invalidRatingLowDTO = new CreateReviewDTO(reservation.getId(), 0, "Invalid rating low");
+        invalidRatingHighDTO = new CreateReviewDTO(reservation.getId(), 6, "Invalid rating high");
+        longCommentDTO = new CreateReviewDTO(reservation.getId(), 5, "a".repeat(501));
+        validReplyDTO = new ReplyReviewDTO("Thanks for your feedback!", 10L);
+        simpleReplyDTO = new ReplyReviewDTO("Hi!", 10L);
     }
 
     // ✅ Successful creation
     @Test
     void createReview_Success() throws Exception {
-        when(userRepository.findById("USER-001")).thenReturn(Optional.of(user));
-        when(reservationRepository.findById(1L)).thenReturn(Optional.of(reservation));
-        when(reviewRepository.existsByReservation_Id(1L)).thenReturn(false);
-        when(reviewRepository.save(any(Review.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(authService.getUserID()).thenReturn(user.getId());
+        when(userRepository.getUserById(user.getId())).thenReturn(Optional.of(user));
+        when(reservationRepository.findById(reservation.getId())).thenReturn(Optional.of(reservation));
+        when(reviewRepository.existsByReservation_Id(reservation.getId())).thenReturn(false);
 
-        Review result = reviewService.createReview(1L, "USER-001", "Excellent stay", 5);
+        when(reviewMapper.toEntity(any(CreateReviewDTO.class))).thenReturn(new Review());
+        when(reviewRepository.save(any(Review.class))).thenAnswer(inv -> {
+            Review saved = inv.getArgument(0);
+            saved.setId(10L);
+            saved.setUser(user);
+            saved.setAccommodation(accommodation);
+            saved.setRating(5);
+            saved.setComment("Excellent stay");
+            return saved;
+        });
+
+        when(reviewMapper.toDTO(any(Review.class))).thenAnswer(inv -> {
+            Review r = inv.getArgument(0);
+            return new ReviewDTO(
+                    r.getId(),
+                    r.getUser().getId(),
+                    r.getUser().getName(),
+                    r.getRating(),
+                    r.getComment(),
+                    r.getCreatedAt(),
+                    null,
+                    r.getAccommodation().getId()
+            );
+        });
+
+        ReviewDTO result = reviewService.createReview(validCreateReviewDTO);
 
         assertNotNull(result);
-        assertEquals(5, result.getRating());
-        assertEquals("Excellent stay", result.getComment());
+        assertEquals(5, result.rating());
+        assertEquals("Excellent stay", result.text());
         verify(reviewRepository, times(1)).save(any(Review.class));
     }
 
     // ❌ User not found
     @Test
     void createReview_Fails_WhenUserNotFound() {
-        when(userRepository.findById("USER-001")).thenReturn(Optional.empty());
+        when(authService.getUserID()).thenReturn(user.getId());
+        when(userRepository.getUserById(user.getId())).thenReturn(Optional.empty());
 
-        assertThrows(UserNotFoundException.class, () ->
-                reviewService.createReview(1L, "USER-001", "Text", 4)
-        );
+        assertThrows(UserNotFoundException.class,
+                () -> reviewService.createReview(validCreateReviewDTO));
     }
 
     // ❌ Reservation not found
     @Test
     void createReview_Fails_WhenReservationNotFound() {
-        when(userRepository.findById("USER-001")).thenReturn(Optional.of(user));
-        when(reservationRepository.findById(1L)).thenReturn(Optional.empty());
+        when(authService.getUserID()).thenReturn(user.getId());
+        when(userRepository.getUserById(user.getId())).thenReturn(Optional.of(user));
+        when(reservationRepository.findById(reservation.getId())).thenReturn(Optional.empty());
 
-        assertThrows(ReservationNotFoundException.class, () ->
-                reviewService.createReview(1L, "USER-001", "Text", 4)
-        );
+        assertThrows(ReservationNotFoundException.class,
+                () -> reviewService.createReview(validCreateReviewDTO));
     }
 
-    // ❌ Reservation does not belong to user
+    // ❌ Reservation not owned by user
     @Test
     void createReview_Fails_WhenReservationNotOwnedByUser() {
         User otherUser = new User();
         otherUser.setId("USER-999");
         reservation.setGuest(otherUser);
 
-        when(userRepository.findById("USER-001")).thenReturn(Optional.of(user));
-        when(reservationRepository.findById(1L)).thenReturn(Optional.of(reservation));
+        when(authService.getUserID()).thenReturn(user.getId());
+        when(userRepository.getUserById(user.getId())).thenReturn(Optional.of(user));
+        when(reservationRepository.findById(reservation.getId())).thenReturn(Optional.of(reservation));
 
-        assertThrows(UnauthorizedReviewException.class, () ->
-                reviewService.createReview(1L, "USER-001", "Text", 4)
-        );
+        assertThrows(UnauthorizedReviewException.class,
+                () -> reviewService.createReview(validCreateReviewDTO));
     }
 
     // ❌ Reservation not yet finished
@@ -140,62 +186,75 @@ public class ReviewServiceImplTest {
     void createReview_Fails_WhenReservationNotFinished() {
         reservation.setCheckOut(LocalDateTime.now().plusDays(1));
 
-        when(userRepository.findById("USER-001")).thenReturn(Optional.of(user));
-        when(reservationRepository.findById(1L)).thenReturn(Optional.of(reservation));
+        when(authService.getUserID()).thenReturn(user.getId());
+        when(userRepository.getUserById(user.getId())).thenReturn(Optional.of(user));
+        when(reservationRepository.findById(reservation.getId())).thenReturn(Optional.of(reservation));
 
-        Exception ex = assertThrows(Exception.class, () ->
-                reviewService.createReview(1L, "USER-001", "Text", 4)
-        );
-        assertTrue(ex.getMessage().contains("not yet finished"));
+        Exception ex = assertThrows(Exception.class,
+                () -> reviewService.createReview(validCreateReviewDTO));
+
+        assertTrue(ex.getMessage().toLowerCase().contains("not yet"));
     }
 
     // ❌ Review already exists
     @Test
     void createReview_Fails_WhenReviewAlreadyExists() {
-        when(userRepository.findById("USER-001")).thenReturn(Optional.of(user));
-        when(reservationRepository.findById(1L)).thenReturn(Optional.of(reservation));
-        when(reviewRepository.existsByReservation_Id(1L)).thenReturn(true);
+        when(authService.getUserID()).thenReturn(user.getId());
+        when(userRepository.getUserById(user.getId())).thenReturn(Optional.of(user));
+        when(reservationRepository.findById(reservation.getId())).thenReturn(Optional.of(reservation));
+        when(reviewRepository.existsByReservation_Id(reservation.getId())).thenReturn(true);
 
-        assertThrows(DuplicateReviewException.class, () ->
-                reviewService.createReview(1L, "USER-001", "Text", 4)
-        );
+        assertThrows(DuplicateReviewException.class,
+                () -> reviewService.createReview(validCreateReviewDTO));
     }
 
     // ❌ Rating out of bounds
     @Test
     void createReview_Fails_WhenRatingOutOfBounds() {
-        when(userRepository.findById("USER-001")).thenReturn(Optional.of(user));
-        when(reservationRepository.findById(1L)).thenReturn(Optional.of(reservation));
+        when(authService.getUserID()).thenReturn(user.getId());
+        when(userRepository.getUserById(user.getId())).thenReturn(Optional.of(user));
+        when(reservationRepository.findById(reservation.getId())).thenReturn(Optional.of(reservation));
 
-        assertThrows(OperationNotAllowedException.class, () ->
-                reviewService.createReview(1L, "USER-001", "Text", 0)
-        );
+        assertThrows(OperationNotAllowedException.class,
+                () -> reviewService.createReview(invalidRatingLowDTO));
 
-        assertThrows(OperationNotAllowedException.class, () ->
-                reviewService.createReview(1L, "USER-001", "Text", 6)
-        );
+        assertThrows(OperationNotAllowedException.class,
+                () -> reviewService.createReview(invalidRatingHighDTO));
     }
 
     // ❌ Comment too long
     @Test
     void createReview_Fails_WhenCommentTooLong() {
-        String longComment = "a".repeat(501);
-        when(userRepository.findById("USER-001")).thenReturn(Optional.of(user));
-        when(reservationRepository.findById(1L)).thenReturn(Optional.of(reservation));
+        when(authService.getUserID()).thenReturn(user.getId());
+        when(userRepository.getUserById(user.getId())).thenReturn(Optional.of(user));
+        when(reservationRepository.findById(reservation.getId())).thenReturn(Optional.of(reservation));
 
-        assertThrows(OperationNotAllowedException.class, () ->
-                reviewService.createReview(1L, "USER-001", longComment, 5)
-        );
+        assertThrows(OperationNotAllowedException.class,
+                () -> reviewService.createReview(longCommentDTO));
     }
 
     // ✅ Get reviews by accommodation
     @Test
-    void getReviewsByAccommodation_ReturnsPagedResult() {
+    void getReviewsByAccommodation_ReturnsPagedResult() throws Exception {
         Page<Review> page = new PageImpl<>(List.of(review));
         when(reviewRepository.findByAccommodation_IdOrderByCreatedAtDesc(eq(1L), any(Pageable.class)))
                 .thenReturn(page);
 
-        Page<Review> result = reviewService.getReviewsByAccommodation(1L, 0, 10);
+        when(reviewMapper.toDTO(any(Review.class))).thenAnswer(inv -> {
+            Review r = inv.getArgument(0);
+            return new ReviewDTO(
+                    r.getId(),
+                    r.getUser().getId(),
+                    r.getUser().getName(),
+                    r.getRating(),
+                    r.getComment(),
+                    r.getCreatedAt(),
+                    null,
+                    r.getAccommodation().getId()
+            );
+        });
+
+        Page<ReviewDTO> result = reviewService.getReviewsByAccommodation(1L, 0, 10);
 
         assertEquals(1, result.getContent().size());
         verify(reviewRepository, times(1))
@@ -206,9 +265,7 @@ public class ReviewServiceImplTest {
     @Test
     void getAverageRating_ReturnsValue() {
         when(reviewRepository.getAverageRatingByAccommodation(1L)).thenReturn(4.7);
-
         Double avg = reviewService.getAverageRating(1L);
-
         assertEquals(4.7, avg);
     }
 
@@ -218,7 +275,7 @@ public class ReviewServiceImplTest {
         review.setUser(user);
         when(reviewRepository.findById(10L)).thenReturn(Optional.of(review));
 
-        reviewService.deleteReview(10L, "USER-001");
+        reviewService.deleteReview(10L, user.getId());
 
         verify(reviewRepository, times(1)).delete(review);
     }
@@ -228,12 +285,11 @@ public class ReviewServiceImplTest {
     void deleteReview_Fails_WhenReviewNotFound() {
         when(reviewRepository.findById(10L)).thenReturn(Optional.empty());
 
-        assertThrows(ReviewNotFoundException.class, () ->
-                reviewService.deleteReview(10L, "USER-001")
-        );
+        assertThrows(ReviewNotFoundException.class,
+                () -> reviewService.deleteReview(10L, user.getId()));
     }
 
-    // ❌ Delete review by different user
+    // ❌ Delete review by unauthorized user
     @Test
     void deleteReview_Fails_WhenUnauthorized() {
         User other = new User();
@@ -242,72 +298,68 @@ public class ReviewServiceImplTest {
 
         when(reviewRepository.findById(10L)).thenReturn(Optional.of(review));
 
-        assertThrows(UnauthorizedActionException.class, () ->
-                reviewService.deleteReview(10L, "USER-001")
-        );
+        assertThrows(UnauthorizedActionException.class,
+                () -> reviewService.deleteReview(10L, user.getId()));
     }
 
-    // ✅ Reply to review successfully
+    // ✅ Reply successfully
     @Test
     void replyToReview_Success() throws Exception {
         when(reviewRepository.findById(10L)).thenReturn(Optional.of(review));
-        when(userRepository.findById("HOST-001")).thenReturn(Optional.of(host));
-        when(replyRepository.save(any(Reply.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(userRepository.findById(review.getUser().getId())).thenReturn(Optional.of(host));
+        when(replyMapper.toEntity(any(ReplyReviewDTO.class))).thenReturn(new Reply());
+        when(replyRepository.save(any(Reply.class))).thenAnswer(inv -> inv.getArgument(0));
+        when(replyMapper.toDTO(any(Reply.class))).thenAnswer(inv -> {
+            Reply r = inv.getArgument(0);
+            return new ReplyDTO(r.getId(), r.getMessage(), r.getRepliedAt());
+        });
 
-        Reply reply = reviewService.replyToReview(10L, "HOST-001", "Thanks for your feedback!");
+        ReplyDTO reply = reviewService.replyToReview(validReplyDTO);
 
         assertNotNull(reply);
-        assertEquals("Thanks for your feedback!", reply.getMessage());
+        assertEquals("Thanks for your feedback!", reply.message());
         verify(replyRepository, times(1)).save(any(Reply.class));
-        verify(reviewRepository, times(1)).save(any(Review.class));
-    }
-
-    // ❌ Reply fails if host not found
-    @Test
-    void replyToReview_Fails_WhenHostNotFound() {
-        when(reviewRepository.findById(10L)).thenReturn(Optional.of(review));
-        when(userRepository.findById("HOST-001")).thenReturn(Optional.empty());
-
-        assertThrows(UserNotFoundException.class, () ->
-                reviewService.replyToReview(10L, "HOST-001", "Hi!")
-        );
     }
 
     // ❌ Reply fails if review not found
     @Test
     void replyToReview_Fails_WhenReviewNotFound() {
         when(reviewRepository.findById(10L)).thenReturn(Optional.empty());
+        assertThrows(ReviewNotFoundException.class,
+                () -> reviewService.replyToReview(simpleReplyDTO));
+    }
 
-        assertThrows(ReviewNotFoundException.class, () ->
-                reviewService.replyToReview(10L, "HOST-001", "Hi!")
-        );
+    // ❌ Reply fails if host not found
+    @Test
+    void replyToReview_Fails_WhenHostNotFound() {
+        when(reviewRepository.findById(10L)).thenReturn(Optional.of(review));
+        when(userRepository.findById(review.getUser().getId())).thenReturn(Optional.empty());
+
+        assertThrows(UserNotFoundException.class,
+                () -> reviewService.replyToReview(simpleReplyDTO));
     }
 
     // ❌ Reply fails if already exists
     @Test
     void replyToReview_Fails_WhenReplyAlreadyExists() {
-        Reply existingReply = new Reply();
-        review.setReply(existingReply);
-
+        review.setReply(new Reply());
         when(reviewRepository.findById(10L)).thenReturn(Optional.of(review));
-        when(userRepository.findById("HOST-001")).thenReturn(Optional.of(host));
+        when(userRepository.findById(review.getUser().getId())).thenReturn(Optional.of(host));
 
-        assertThrows(ReplyAlreadyExistsException.class, () ->
-                reviewService.replyToReview(10L, "HOST-001", "Hi!")
-        );
+        assertThrows(ReplyAlreadyExistsException.class,
+                () -> reviewService.replyToReview(simpleReplyDTO));
     }
 
-    // ❌ Reply fails if wrong host
+    // ❌ Reply fails if unauthorized host
     @Test
     void replyToReview_Fails_WhenUnauthorizedHost() {
         User anotherHost = new User();
         anotherHost.setId("HOST-999");
 
         when(reviewRepository.findById(10L)).thenReturn(Optional.of(review));
-        when(userRepository.findById("HOST-999")).thenReturn(Optional.of(anotherHost));
+        when(userRepository.findById(review.getUser().getId())).thenReturn(Optional.of(anotherHost));
 
-        assertThrows(UnauthorizedActionException.class, () ->
-                reviewService.replyToReview(10L, "HOST-999", "Hi!")
-        );
+        assertThrows(UnauthorizedActionException.class,
+                () -> reviewService.replyToReview(simpleReplyDTO));
     }
 }

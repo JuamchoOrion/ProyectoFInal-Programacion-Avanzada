@@ -1,19 +1,22 @@
 package co.edu.uniquindio.stayNow.services.interfaces;
 
-import co.edu.uniquindio.stayNow.model.entity.Reply;
-import co.edu.uniquindio.stayNow.model.entity.Review;
+import co.edu.uniquindio.stayNow.dto.CreateReviewDTO;
+import co.edu.uniquindio.stayNow.dto.ReplyDTO;
+import co.edu.uniquindio.stayNow.dto.ReplyReviewDTO;
+import co.edu.uniquindio.stayNow.dto.ReviewDTO;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 
 public interface ReviewService {
 
-    Review createReview(Long reservationId, String userId, String comment, Integer rating) throws Exception;
+    ReviewDTO createReview(CreateReviewDTO reviewDTO) throws Exception;
 
-    Page<Review> getReviewsByAccommodation(Long accommodationId, int page, int size);
+    Page<ReviewDTO> getReviewsByAccommodation(Long accommodationId, int page, int size) throws Exception;
 
     Double getAverageRating(Long accommodationId);
 
     void deleteReview(Long reviewId, String userId) throws Exception;
 
-    Reply replyToReview(Long reviewId, String hostId, String message) throws Exception;
+    ReplyDTO replyToReview(ReplyReviewDTO replyDTO) throws Exception;
 }

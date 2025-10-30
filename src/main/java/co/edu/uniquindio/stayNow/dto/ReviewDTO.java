@@ -9,5 +9,6 @@ public record ReviewDTO(
         int rating,
         String text,
         LocalDateTime createdAt,
-        String reply
+        String reply,
+        Long accommodationId
 ) {}

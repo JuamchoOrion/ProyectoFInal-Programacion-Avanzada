@@ -6,5 +6,7 @@ import jakarta.validation.constraints.Size;
 public record ReplyReviewDTO(
         @NotBlank(message = "The reply cannot be empty")
         @Size(max = 500, message = "The reply cannot exceed 500 characters")
-        String message
+        String message,
+
+        Long reviewId
 ) {}
