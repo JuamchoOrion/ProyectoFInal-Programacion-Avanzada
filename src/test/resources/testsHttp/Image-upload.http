@@ -1,6 +1,6 @@
 ### Variables
 # Token JWT del usuario 'tester' (ya logueado)
-@token =
+@token = eyJhbGciOiJIUzM4NCJ9.eyJuYW1lIjoiV2lsbHkiLCJlbWFpbCI6IndpbGx5QGdtYWlsLmNvbSIsInJvbGUiOiJST0xFX0dVRVNUIiwic3ViIjoiMTQ0YjhkN2UtYzQyMi00N2VkLTk0ZTEtZGNlYWI5ODhiZGVhIiwiaWF0IjoxNzYwMjE4NTM4LCJleHAiOjE3NjAyMjIxMzh9.RI6Uaaj0fuJ_i8r1YM3aYaCmmtq9oaPlBYL9wWEYulhHAdexuj1wVwchVMSllA75
 @baseUrl = http://localhost:9090/api/images
 
 ---
@@ -11,10 +11,10 @@ Content-Type: multipart/form-data; boundary=WebAppBoundary
 Authorization: Bearer {{token}}
 
 --WebAppBoundary
-Content-Disposition: form-data; name="file"; filename="snoopy.png"
+Content-Disposition: form-data; name="file"; filename="Kaladin_Lyon.png"
 Content-Type: image/png
 
-< /Users/lala/Downloads/snoopy.jpg
+< /Users/lala/Downloads/Kaladin_Lyon.png.5c0b30937c260bf7f14bde7c50a5f8b0.png
 
 --WebAppBoundary--
 
@@ -32,3 +32,8 @@ Content-Type: image/jpeg ⬅️ Nota: Se recomienda 'image/jpeg' o 'image/jpg'
 < /Users/lala/Downloads/xd.jpg
 
 --WebAppBoundary2--
+### P2: Eliminar Imagen de Cloudinary (DELETE /api/images)
+# Usa el ID que obtuviste en la respuesta de P1.
+DELETE http://localhost:9090/api/images?id=stayNow/xumw2ahp0lqobhi9f3ne
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJuYW1lIjoiV2lsbHkiLCJlbWFpbCI6IndpbGx5QGdtYWlsLmNvbSIsInJvbGUiOiJST0xFX0dVRVNUIiwic3ViIjoiMTQ0YjhkN2UtYzQyMi00N2VkLTk0ZTEtZGNlYWI5ODhiZGVhIiwiaWF0IjoxNzYwMjE4NTM4LCJleHAiOjE3NjAyMjIxMzh9.RI6Uaaj0fuJ_i8r1YM3aYaCmmtq9oaPlBYL9wWEYulhHAdexuj1wVwchVMSllA75

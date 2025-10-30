@@ -58,7 +58,7 @@ public class AccommodationServiceImplTest {
     private AuthService authService;
     @Mock
     private ImageService imageService;
-    // <-- este faltaba
+
     @InjectMocks
     private AccommodationServiceImpl accommodationService;
 
@@ -148,6 +148,7 @@ public class AccommodationServiceImplTest {
         when(authService.getUserID()).thenReturn("HOST-001");
         when(userRepository.getUserById("HOST-001")).thenReturn(Optional.of(host));
         when(accommodationMapper.toEntity(createDTO)).thenReturn(accommodation);
+        when(imageService.uploadFromPath(anyString())).thenReturn(Map.of("url", "uploaded-image.png"));
         when(accommodationRepo.save(accommodation)).thenReturn(accommodation);
         when(accommodationMapper.toAccommodationDTO(accommodation)).thenReturn(accommodationDTO);
 

@@ -28,9 +28,9 @@ public class ReviewController {
     private final AuthService authService;
 
     @PostMapping
-    public ResponseEntity<ReviewDTO> createReview(@Valid @RequestBody CreateReviewDTO dto) throws Exception {
+    public ResponseEntity<ResponseDTO<ReviewDTO>> createReview(@Valid @RequestBody CreateReviewDTO reviewDto) throws Exception {
         String userId = SecurityContextHolder.getContext().getAuthentication().getName();
-        Review review = reviewService.createReview(dto.reservationId(), userId, dto.text(), dto.rating());
+        ReviewDTO dto = reviewService.createReview(reviewDto);
         return ResponseEntity.ok(reviewMapper.toDTO(review));
     }
 //encapsular en dto

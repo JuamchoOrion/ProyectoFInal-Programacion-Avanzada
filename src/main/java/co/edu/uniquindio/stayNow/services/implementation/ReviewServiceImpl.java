@@ -1,9 +1,18 @@
 package co.edu.uniquindio.stayNow.services.implementation;
 
+import co.edu.uniquindio.stayNow.dto.CreateReviewDTO;
+import co.edu.uniquindio.stayNow.dto.ReplyDTO;
+import co.edu.uniquindio.stayNow.dto.ReplyReviewDTO;
+import co.edu.uniquindio.stayNow.dto.ReviewDTO;
 import co.edu.uniquindio.stayNow.exceptions.*;
+import co.edu.uniquindio.stayNow.mappers.ReplyMapper;
+import co.edu.uniquindio.stayNow.mappers.ReviewMapper;
 import co.edu.uniquindio.stayNow.model.entity.Reply;
+import co.edu.uniquindio.stayNow.model.entity.Reservation;
 import co.edu.uniquindio.stayNow.model.entity.Review;
+import co.edu.uniquindio.stayNow.model.entity.User;
 import co.edu.uniquindio.stayNow.repositories.*;
+import co.edu.uniquindio.stayNow.services.interfaces.AuthService;
 import co.edu.uniquindio.stayNow.services.interfaces.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -23,46 +32,58 @@ public class ReviewServiceImpl implements ReviewService {
     private final AccommodationRepository accommodationRepository;
     private final ReplyRepository replyRepository;
     private final UserRepository userRepository;
+    private final AuthService authService;
+    private final ReviewMapper reviewMapper;
+    private final ReplyMapper replyMapper;
 
     @Override
-    public Review createReview(Long reservationId, String userId, String comment, Integer rating) throws Exception {
-        var user = userRepository.findById(userId)
+    public ReviewDTO createReview(CreateReviewDTO createReviewDTO) throws Exception {
+        User user = userRepository.getUserById(authService.getUserID())
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
-        var reservation = reservationRepository.findById(reservationId)
+        var reservation = reservationRepository.findById(createReviewDTO.reservationId())
                 .orElseThrow(() -> new ReservationNotFoundException("Reservation not found"));
 
-        if (!reservation.getGuest().getId().equals(userId))
+        if (!reservation.getGuest().getId().equals(user.getId()))
             throw new UnauthorizedReviewException("The reservation does not belong to the user");
 
         if (reservation.getCheckOut().isAfter(LocalDateTime.now()))
             throw new Exception("The reservation has not yet finished");
 
-        if (reviewRepository.existsByReservation_Id(reservationId))
+        if (reviewRepository.existsByReservation_Id(createReviewDTO.reservationId()))
             throw new DuplicateReviewException("A review already exists for this reservation");
 
-        if (rating < 1 || rating > 5)
+        if (createReviewDTO.rating() < 1 || createReviewDTO.rating() > 5)
             throw new OperationNotAllowedException("The rating must be between 1 and 5");
 
-        if (comment != null && comment.length() > 500)
+        if (createReviewDTO.text() != null && createReviewDTO.text().length() > 500)
             throw new OperationNotAllowedException("The comment cannot exceed 500 characters");
 
-        Review review = new Review();
+        Review review = reviewMapper.toEntity(createReviewDTO);
         review.setUser(user);
         review.setReservation(reservation);
         review.setAccommodation(reservation.getAccommodation());
-        review.setComment(comment);
-        review.setRating(rating);
+        review.setComment(createReviewDTO.text());
+        review.setRating(createReviewDTO.rating());
         review.setCreatedAt(LocalDateTime.now());
-
-        return reviewRepository.save(review);
+        return reviewMapper.toDTO(reviewRepository.save(review));
     }
 
     // Get all reviews sorted by most recent creation date.
     @Override
-    public Page<Review> getReviewsByAccommodation(Long accommodationId, int page, int size) {
+    public Page<ReviewDTO> getReviewsByAccommodation(Long accommodationId, int page, int size) throws Exception {
+        // Find the accommodation and throw an exception if it doesn't exist
+        var accommodation = accommodationRepository.findById(accommodationId)
+                .orElseThrow(() -> new AccommodationNotFoundException("Accommodation not found"));
+
+        // Create pageable object with descending order by creation date
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-        return reviewRepository.findByAccommodation_IdOrderByCreatedAtDesc(accommodationId, pageable);
+
+        // Retrieve paginated reviews for the given accommodation
+        Page<Review> reviewsPage = reviewRepository.findByAccommodation_IdOrderByCreatedAtDesc(accommodationId, pageable);
+
+        // Convert Review entities to ReviewDTO using the mapper
+        return reviewsPage.map(reviewMapper::toDTO);
     }
 
     // Calculate the average rating for the accommodation.
@@ -87,14 +108,14 @@ public class ReviewServiceImpl implements ReviewService {
 
     // Reply to a review. Only the host of the accommodation can reply.
     @Override
-    public Reply replyToReview(Long reviewId, String hostId, String message) throws Exception {
-        var review = reviewRepository.findById(reviewId)
+    public ReplyDTO replyToReview(ReplyReviewDTO dto) throws Exception {
+        var review = reviewRepository.findById(dto.reviewId())
                 .orElseThrow(() -> new ReviewNotFoundException("Review not found"));
 
-        var host = userRepository.findById(hostId)
+        var host = userRepository.findById(review.getUser().getId())
                 .orElseThrow(() -> new UserNotFoundException("Host not found"));
 
-        if (!review.getAccommodation().getHost().getId().equals(hostId)) {
+        if (!review.getAccommodation().getHost().getId().equals(host.getId())) {
             throw new UnauthorizedActionException("Not authorized to reply to this review");
         }
 
@@ -102,16 +123,11 @@ public class ReviewServiceImpl implements ReviewService {
             throw new ReplyAlreadyExistsException("A reply already exists for this review");
         }
 
-        Reply reply = new Reply();
-        reply.setMessage(message);
+        Reply reply = replyMapper.toEntity(dto);
+        reply.setMessage(dto.message());
         reply.setRepliedAt(LocalDateTime.now());
         reply.setReview(review);
-
-        reply = replyRepository.save(reply);
-
         review.setReply(reply);
-        reviewRepository.save(review);
-
-        return reply;
+        return replyMapper.toDTO(replyRepository.save(reply));
     }
 }
