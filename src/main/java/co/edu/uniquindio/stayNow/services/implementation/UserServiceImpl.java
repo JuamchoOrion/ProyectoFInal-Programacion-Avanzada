@@ -1,10 +1,9 @@
 package co.edu.uniquindio.stayNow.services.implementation;
 
 
-import co.edu.uniquindio.stayNow.dto.CreateUserDTO;
-import co.edu.uniquindio.stayNow.dto.EditUserDTO;
-import co.edu.uniquindio.stayNow.dto.UserDTO;
+import co.edu.uniquindio.stayNow.dto.*;
 import co.edu.uniquindio.stayNow.exceptions.EmailAlreadyInUseException;
+import co.edu.uniquindio.stayNow.exceptions.PasswordNotMatchException;
 import co.edu.uniquindio.stayNow.exceptions.UserNotFoundException;
 import co.edu.uniquindio.stayNow.mappers.UserMapper;
 import co.edu.uniquindio.stayNow.model.entity.User;
@@ -71,14 +70,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO get(String id) throws Exception {
+    public UserProfileDTO get(String id) throws Exception {
+
         User user = userRepository.findById(id).orElse(null);
 
         if (user == null) {
             throw new UserNotFoundException("Usuario no encontrado.");
         }
 
-        return userMapper.toUserDTO(user);
+        return new UserProfileDTO(
+                user.getId(),
+                user.getEmail(),
+                user.getName()
+        );
     }
 
     @Override
@@ -196,6 +200,19 @@ public class UserServiceImpl implements UserService {
 
         } catch (Exception e) {
             return null;
+        }
+    }
+
+    @Override
+    public void changePassword (ChangePasswordRequestDTO newPasswordRequest) throws Exception{
+        String id = authService.getUserID();
+        User user = userRepository.getUserById(id)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+        if(passwordEncoder.matches(newPasswordRequest.currentPassword(), user.getPassword())){
+            user.setPassword(passwordEncoder.encode(newPasswordRequest.newPassword()));
+            userRepository.save(user);
+        }else {
+            throw new PasswordNotMatchException("The given password does not match");
         }
     }
 }

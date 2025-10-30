@@ -2,9 +2,7 @@ package co.edu.uniquindio.stayNow.services.interfaces;
 
 
 
-import co.edu.uniquindio.stayNow.dto.CreateUserDTO;
-import co.edu.uniquindio.stayNow.dto.UserDTO;
-import co.edu.uniquindio.stayNow.dto.EditUserDTO;
+import co.edu.uniquindio.stayNow.dto.*;
 
 import java.util.List;
 
@@ -14,12 +12,14 @@ public interface UserService {
 
     boolean isHost(Long userId);
 
-    UserDTO get(String id) throws Exception;
+    UserProfileDTO get(String id) throws Exception;
 
     void delete(String id) throws Exception;
 
     List<UserDTO> listAll();
 
     void edit( EditUserDTO userDTO) throws Exception;
+
+    void changePassword(ChangePasswordRequestDTO newPasswordRequest) throws Exception;
 
 }

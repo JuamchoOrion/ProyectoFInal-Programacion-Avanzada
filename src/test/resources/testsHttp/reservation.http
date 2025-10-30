@@ -1,11 +1,6 @@
-##############################################################
-# 🌐 API RESERVAS - STAYNOW
-# Archivo unificado con todas las peticiones HTTP
-# Autor: Laura Valentina Gómez Alzate
-##############################################################
 
 ### 🔑 TOKEN DEL USUARIO
-@token = eyJhbGciOiJIUzM4NCJ9.eyJuYW1lIjoiV2lsbHkiLCJyb2xlIjoiUk9MRV9HVUVTVCIsImVtYWlsIjoid2lsbHlAZ21haWwuY29tIiwic3ViIjoiMTQ0YjhkN2UtYzQyMi00N2VkLTk0ZTEtZGNlYWI5ODhiZGVhIiwiaWF0IjoxNzYwMTQwOTE5LCJleHAiOjE3NjAxNDQ1MTl9.1QpRI18JK1coIzCLVSuSG3x43XuyF2iPW0dJxozncbWGk3IBAyud2rc0DxLcI6AB
+@token = eyJhbGciOiJIUzM4NCJ9.eyJyb2xlIjoiUk9MRV9HVUVTVCIsIm5hbWUiOiJSb2ppdG8iLCJlbWFpbCI6Imx2Z29tZXphMjkwNUBnbWFpbC5jb20iLCJzdWIiOiIyMGVhNzhkMS1iZDg3LTQwMGEtOTA3OS1lN2E0OWM0YzA1ODIiLCJpYXQiOjE3NjAyMjk3NDQsImV4cCI6MTc2MDIzMzM0NH0.9Li2_EYPH75P1bjrMlgiQc-wNCwdAUNrom9b8-PX3X1HiE-3zmsz0JyLfWH6uSWj
 
 ##############################################################
 # 🏨 CREAR RESERVAS (10 ejemplos)
@@ -17,7 +12,7 @@ Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-  "accommodationId": 1,
+  "accommodationId": 3,
   "checkIn": "2025-10-15T14:00:00",
   "checkOut": "2025-10-20T12:00:00",
   "guests": 2
@@ -42,8 +37,8 @@ Content-Type: application/json
 
 {
   "accommodationId": 2,
-  "checkIn": "2025-10-25T15:00:00",
-  "checkOut": "2025-10-30T11:00:00",
+  "checkIn": "2025-10-11T15:00:00",
+  "checkOut": "2025-10-15T11:00:00",
   "guests": 3
 }
 
@@ -146,22 +141,22 @@ Authorization: Bearer {{token}}
 Accept: application/json
 
 ### Filtrar por rango de creación
-GET http://localhost:9090/reservations?from=2025-01-01T00:00:00&to=2025-12-31T23:59:59
+GET http://localhost:9090/reservations?from=2025-11-01T00:00:00&to=2025-12-31T23:59:59
 Authorization: Bearer {{token}}
 Accept: application/json
 
 ### Filtrar por fechas de check-in / check-out
-GET http://localhost:9090/reservations?checkIn=2025-10-01T14:00:00&checkOut=2025-10-10T12:00:00
+GET http://localhost:9090/reservations?checkIn=2025-10-15T14:00:00&checkOut=2025-10-30T12:00:00
 Authorization: Bearer {{token}}
 Accept: application/json
 
 ### Filtrar combinado (estado + fechas)
-GET http://localhost:9090/reservations?status=CANCELED&from=2025-01-01T00:00:00&to=2025-12-31T23:59:59
+GET http://localhost:9090/reservations?status=PENDING&from=2025-10-01T00:00:00&to=2025-12-31T23:59:59
 Authorization: Bearer {{token}}
 Accept: application/json
 
 ### Obtener una reserva específica por ID
-GET http://localhost:9090/reservations/{{reservationId}}
+GET http://localhost:9090/reservations/2
 Authorization: Bearer {{token}}
 Accept: application/json
 
@@ -170,24 +165,12 @@ Accept: application/json
 ##############################################################
 
 ### Cancelar una reserva (por ID)
-PATCH http://localhost:9090/reservations/{{reservationIdToCancel}}/cancel
+PATCH http://localhost:9090/reservations/5/cancel
 Authorization: Bearer {{token}}
 Accept: application/json
 
 ##############################################################
 # 🧩 PRUEBAS DE LA LÓGICA DE CANCELACIÓN (48 HORAS)
 ##############################################################
-# 1️⃣ Caso OK — cancelar con más de 48h antes del check-in
-#    - Crear una reserva con checkIn = ahora + 5 días
-#    - Luego ejecutar PATCH /cancel
-#    - Esperado: 200 OK y status = CANCELED
-#
-# 2️⃣ Caso ERROR — cancelar dentro de 48h antes del check-in
-#    - Crear una reserva con checkIn = ahora + 24h
-#    - PATCH /cancel → 400 o 409 (según API)
-#    - Esperado: mensaje "Cannot cancel reservation within 48 hours"
-#
-# 3️⃣ Post-condición
-#    - Confirmar con GET /reservations/{{id}} que el estado cambió o no
-#    - Verificar que el alojamiento quedó disponible (si aplica)
+
 ##############################################################

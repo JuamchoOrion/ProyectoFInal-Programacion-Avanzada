@@ -2,6 +2,7 @@ package co.edu.uniquindio.stayNow.controllers;
 import java.util.*;
 
 import co.edu.uniquindio.stayNow.dto.*;
+import co.edu.uniquindio.stayNow.model.entity.User;
 import co.edu.uniquindio.stayNow.services.interfaces.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,8 +18,8 @@ public class UserController {
 
 
     @GetMapping("/{id}")
-    public ResponseEntity<ResponseDTO<UserDTO>> get(@PathVariable String id) throws Exception{
-        UserDTO userDTO = userService.get(id);
+    public ResponseEntity<ResponseDTO<UserProfileDTO>> get(@PathVariable String id) throws Exception{
+        UserProfileDTO userDTO = userService.get(id);
         return ResponseEntity.ok(new ResponseDTO<>(false, userDTO));
     }
 
@@ -34,8 +35,9 @@ public class UserController {
         return ResponseEntity.ok(new ResponseDTO<>(false, "The user has been updated"));
     }
 
-    @PatchMapping("/{id}/password")
-    public ResponseEntity<ResponseDTO<String>> changePassword(@PathVariable String id, @RequestBody ChangePasswordRequestDTO changePasswordRequestDTO) {
+    @PatchMapping("/password")
+    public ResponseEntity<ResponseDTO<String>> changePassword(@RequestBody ChangePasswordRequestDTO newPasswordRequest) throws Exception {
+        userService.changePassword(newPasswordRequest);
         return ResponseEntity.ok(new ResponseDTO<>(false, "Password updated"));
     }
 

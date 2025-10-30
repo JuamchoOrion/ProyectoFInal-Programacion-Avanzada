@@ -1,13 +1,11 @@
 package co.edu.uniquindio.stayNow.controllers;
 
-import co.edu.uniquindio.stayNow.dto.CreateReviewDTO;
-import co.edu.uniquindio.stayNow.dto.ReplyDTO;
-import co.edu.uniquindio.stayNow.dto.ReplyReviewDTO;
-import co.edu.uniquindio.stayNow.dto.ReviewDTO;
+import co.edu.uniquindio.stayNow.dto.*;
 import co.edu.uniquindio.stayNow.mappers.ReplyMapper;
 import co.edu.uniquindio.stayNow.mappers.ReviewMapper;
 import co.edu.uniquindio.stayNow.model.entity.Reply;
 import co.edu.uniquindio.stayNow.model.entity.Review;
+import co.edu.uniquindio.stayNow.services.interfaces.AuthService;
 import co.edu.uniquindio.stayNow.services.interfaces.ReviewService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +25,7 @@ public class ReviewController {
     private final ReviewService reviewService;
     private final ReviewMapper reviewMapper;
     private final ReplyMapper replyMapper;
+    private final AuthService authService;
 
     @PostMapping
     public ResponseEntity<ReviewDTO> createReview(@Valid @RequestBody CreateReviewDTO dto) throws Exception {
@@ -34,7 +33,7 @@ public class ReviewController {
         Review review = reviewService.createReview(dto.reservationId(), userId, dto.text(), dto.rating());
         return ResponseEntity.ok(reviewMapper.toDTO(review));
     }
-
+//encapsular en dto
     @GetMapping("/accommodation/{id}")
     public ResponseEntity<Map<String, Object>> getReviews(
             @PathVariable Long id,
@@ -56,15 +55,15 @@ public class ReviewController {
     @PostMapping("/{reviewId}/reply")
     public ResponseEntity<ReplyDTO> replyToReview(@PathVariable Long reviewId,
                                                   @Valid @RequestBody ReplyReviewDTO dto) throws Exception {
-        String hostId = SecurityContextHolder.getContext().getAuthentication().getName();
+        String hostId = authService.getUserID();
         Reply reply = reviewService.replyToReview(reviewId, hostId, dto.message());
         return ResponseEntity.ok(replyMapper.toDTO(reply));
     }
 
     @DeleteMapping("/{reviewId}")
-    public ResponseEntity<Void> deleteReview(@PathVariable Long reviewId) throws Exception {
+    public ResponseEntity<ResponseDTO<String>> deleteReview(@PathVariable Long reviewId) throws Exception {
         String userId = SecurityContextHolder.getContext().getAuthentication().getName();
         reviewService.deleteReview(reviewId, userId);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(new ResponseDTO<>(false,"Review deleted"));
     }
 }

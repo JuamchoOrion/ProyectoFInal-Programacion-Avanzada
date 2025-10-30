@@ -35,14 +35,17 @@ public class AuthController {
     }
 
     @PostMapping("/password/reset")
-    public ResponseEntity<ResponseDTO<String>> resetPasswordRequest(@RequestBody ResetPasswordRequestDTO resetPasswordRequestDTO) {
+    public ResponseEntity<ResponseDTO<String>> resetPasswordRequest(@RequestBody ResetPasswordRequestDTO resetPasswordRequestDTO) throws Exception {
+        authService.resetPasswordRequest(resetPasswordRequestDTO);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new ResponseDTO<>(false, "Code sent successfully"));
     }
 
     @PatchMapping("/password/confirm")
-    public ResponseEntity<ResponseDTO<String>> confirmPassword(@RequestBody EditPasswordRequestDTO editPasswordRequestDTO) {
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new ResponseDTO<>(false, "Password updated successfully"));
+    public ResponseEntity<ResponseDTO<String>> confirmPassword(@RequestBody EditPasswordRequestDTO editPasswordRequestDTO) throws Exception {
+            authService.confirmPassword(editPasswordRequestDTO);
+            return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new ResponseDTO<>(false, "Password sent successfully"));
     }
+
 }

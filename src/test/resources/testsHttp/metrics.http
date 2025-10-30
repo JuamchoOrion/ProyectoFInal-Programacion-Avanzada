@@ -1,0 +1,27 @@
+@token = Bearer eyJhbGciOiJIUzM4NCJ9.eyJyb2xlIjoiUk9MRV9IT1NUIiwibmFtZSI6IkFkbWluIiwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJzdWIiOiI4ZWQ3MzFiNS0wZGQ2LTQ3MzEtYTRlOC0wNWYwMWMxMDIzNTYiLCJpYXQiOjE3NjAyMzMzNjAsImV4cCI6MTc2MDIzNjk2MH0.yueeLCsrVYOBK3vvVj11MILrUKX9lQlPhtoS8XkJ4RwwjAnKd_2r2v5dkepbu8iX
+
+### Obtener métricas sin filtros de fecha
+GET http://localhost:9090/accommodation/3/metrics
+Accept: application/json
+Authorization: {{token}}
+
+###
+
+### Obtener métricas con rango de fechas
+GET http://localhost:9090/accommodation/1/metrics?from=2025-01-01T00:00:00&to=2025-10-11T23:59:59
+Accept: application/json
+Authorization: {{token}}
+
+###
+
+### Probar solo desde una fecha
+GET http://localhost:9090/accommodation/1/metrics?from=2025-09-01T00:00:00
+Accept: application/json
+Authorization: {{token}}
+
+###
+
+### Probar solo hasta una fecha
+GET http://localhost:9090/accommodation/1/metrics?to=2025-10-01T23:59:59
+Accept: application/json
+Authorization: {{token}}

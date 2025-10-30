@@ -1,0 +1,47 @@
+### Variables Globales
+# NOTA: El ID no se usa en la URL, pero es el valor que el backend extrae del token
+@userId = bfb87eab-36bf-4da0-b937-07ecd8ed2913
+
+# Token Activo del usuario 'tester'
+@token = eyJhbGciOiJIUzM4NCJ9.eyJyb2xlIjoiUk9MRV9HVUVTVCIsIm5hbWUiOiJ0ZXN0ZXIiLCJlbWFpbCI6InJhbWlyZXNqdWFuZGExMjNAZ21haWwuY29tIiwic3ViIjoiMjJmYWNmMTktZmRhNi00OTdjLWFhMTQtZTZkOTA0NDMyNWI4IiwiaWF0IjoxNzYwMjM0NjAxLCJleHAiOjE3NjAyMzgyMDF9.cInoFgAr7k0rOUVhi0FJAP6Bk6xGuFVlLH2C_WCcyo1fdS_Qqt4KfbEL3K7idBco
+
+
+---
+### P1: Obtener el perfil del usuario logueado (GET /users)
+GET http://localhost:9090/users/{{userId}}
+Authorization: Bearer {{token}}
+
+---
+### P2: Editar Perfil (PUT /users) - SIN ID EN LA RUTA
+# CRÍTICO: El servicio debe usar el ID del token para saber a quién actualizar.
+PUT http://localhost:9090/users
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Ramires Juanda ",
+  "phone": "3009998877",
+  "email": "ramiresjuanda123@gmail.com",
+  "password": "juandavid12345678",
+  "dateBirth": "2000-05-20",
+  "role": "GUEST",
+  "photoUrl": "C:\\Users\\ramir\\Downloads\\roblox.jpg"
+}
+
+
+### P3: Cambiar Contraseña (PATCH /users/password) - SIN ID EN LA RUTA
+# El servicio debe obtener el ID del token para saber a quién cambiar la contraseña.
+PATCH http://localhost:9090/users/password
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "currentPassword": "juandavid12345678",
+  "newPassword": "NewSecurePassword123"
+}
+
+
+### P4: Eliminar Usuario (DELETE /users) -
+
+DELETE http://localhost:9090/users/{{userId}}
+Authorization: Bearer {{token}}

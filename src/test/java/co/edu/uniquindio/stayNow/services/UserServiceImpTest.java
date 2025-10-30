@@ -2,6 +2,7 @@ package co.edu.uniquindio.stayNow.services;
 
 import co.edu.uniquindio.stayNow.dto.CreateUserDTO;
 import co.edu.uniquindio.stayNow.dto.UserDTO;
+import co.edu.uniquindio.stayNow.dto.UserProfileDTO;
 import co.edu.uniquindio.stayNow.exceptions.EmailAlreadyInUseException;
 import co.edu.uniquindio.stayNow.exceptions.UserNotFoundException;
 import co.edu.uniquindio.stayNow.model.enums.Role;
@@ -107,7 +108,7 @@ public class UserServiceImpTest {
                 user.getRole()
         ));
 
-        UserDTO result = userService.get(user.getId());
+        UserProfileDTO result = userService.get(user.getId());
 
         assertNotNull(result);
         assertEquals(user.getEmail(), result.email());

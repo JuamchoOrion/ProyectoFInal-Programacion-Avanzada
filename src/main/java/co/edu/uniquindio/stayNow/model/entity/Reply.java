@@ -14,10 +14,12 @@ import java.time.LocalDateTime;
 @Entity
 public class Reply {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String message;
     private LocalDateTime repliedAt;
     @OneToOne
+    @JoinColumn(name = "review_id")
     private Review review;
 
 }

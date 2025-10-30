@@ -144,5 +144,9 @@ public class RestExceptionHandler {
     public ResponseEntity<ResponseDTO<String>> passwordResetCodeNotAllowedExceptionHandler(PasswordResetCodeNotFoundException ex){
         return ResponseEntity.status(404).body(new ResponseDTO<>(true, "PasswordResetCode not found"));
     }
+    @ExceptionHandler(PasswordNotMatchException.class)
+    public ResponseEntity<ResponseDTO<String>> passwordNotMatchException(PasswordNotMatchException ex){
+        return ResponseEntity.status(404).body(new ResponseDTO<>(true, "PasswordResetCode not found"));
+    }
 
 }

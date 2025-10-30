@@ -20,10 +20,11 @@ import jakarta.persistence.*;
 @Entity
 public class Review {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne
     private User user;
-    @OneToOne
+    @OneToOne(mappedBy = "review", cascade = CascadeType.ALL)
     private Reply reply;
     @ManyToOne
     private Accommodation accommodation;

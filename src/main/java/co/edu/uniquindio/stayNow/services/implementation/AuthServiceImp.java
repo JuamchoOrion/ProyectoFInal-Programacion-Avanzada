@@ -39,6 +39,10 @@ public class AuthServiceImp implements AuthService {
 
         User user = optionalUser.get();
 
+        if(!user.getStatus().equals("ACTIVE")){
+            throw new UserNotFoundException("User is not active");
+        }
+
         // Verify if the password is correct
         if (!passwordEncoder.matches(loginDTO.password(), user.getPassword())) {
             throw new UserNotFoundException("User does not exist");

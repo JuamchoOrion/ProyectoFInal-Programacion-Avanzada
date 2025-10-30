@@ -49,6 +49,7 @@ public class SecurityConfig {
                                 "/topic/**",      // ✅ prefijos STOMP de recepción
                                 "/queue/**").permitAll()
                         .requestMatchers("/chat-websocket/**", "/topic/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/accommodations/").hasAnyAuthority("ROLE_HOST")
                         .requestMatchers(HttpMethod.PUT, "/users").hasAnyAuthority("ROLE_ADMIN", "ROLE_HOST", "ROLE_GUEST")
                         .requestMatchers(HttpMethod.GET,"/api/accommodations/**").permitAll()
                         .requestMatchers("/api/images").authenticated()

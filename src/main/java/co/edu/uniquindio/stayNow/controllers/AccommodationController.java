@@ -101,15 +101,4 @@ public class AccommodationController {
         return ResponseEntity.ok(new ResponseDTO<>(false, "The accommodation with id: " + id + " was successfully deleted"));
     }
 
-    // esto lo hace cardenas
-    @GetMapping("/{id}/review")
-    public ResponseEntity<ResponseDTO<List<ReviewDTO>>> getReviews(@PathVariable long id) {
-        List<ReviewDTO> list = new ArrayList<ReviewDTO>();
-        return ResponseEntity.ok(new ResponseDTO<>(false, list));
-    }
-
-    @PostMapping("/{id}/review")
-    public ResponseEntity<ResponseDTO<String>> createReview(@PathVariable long id, @RequestBody CreateReviewDTO reviewDTO) {
-        return ResponseEntity.ok(new ResponseDTO<>(false, "Review created successfully"));
-    }
 }

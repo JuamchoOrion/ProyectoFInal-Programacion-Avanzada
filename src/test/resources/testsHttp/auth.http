@@ -1,5 +1,51 @@
+########################################
+# Registro y login de usuarios
+########################################
 
 
+### Registro de guest email (rol guest)
+POST http://localhost:9090/api/auth/register
+Content-Type: application/json
+
+{
+  "name" : "Rojito",
+  "phone" : "12323123",
+  "email" : "lvgomeza2905@gmail.com",
+  "password" : "12345678",
+  "dateBirth": "2000-05-20",
+  "role": "GUEST"
+}
+
+### Login de guest
+POST http://localhost:9090/api/auth/login
+Content-Type: application/json
+
+{
+  "email" : "lvgomeza2905@gmail.com",
+  "password" : "12345678"
+}
+
+### Login de guest ERROR
+POST http://localhost:9090/api/auth/login
+Content-Type: application/json
+
+{
+  "email" : "lvgomzza2905@gmail.com",
+  "password" : "12345678"
+}
+
+### Login de guest ERROR
+POST http://localhost:9090/api/auth/login
+Content-Type: application/json
+
+{
+  "email" : "lvgomeza2905@gmail.com",
+  "password" : "12345"
+}
+
+
+
+### Registro de Willy (rol GUEST)
 POST http://localhost:9090/api/auth/register
 Content-Type: application/json
 
@@ -10,11 +56,9 @@ Content-Type: application/json
   "password" : "willy123",
   "dateBirth": "2000-05-20",
   "role": "GUEST"
-
 }
 
-###
-
+### Login de Willy
 POST http://localhost:9090/api/auth/login
 Content-Type: application/json
 
@@ -23,8 +67,7 @@ Content-Type: application/json
   "password" : "willy123"
 }
 
-###
-
+### Registro de tester (rol GUEST)
 POST http://localhost:9090/api/auth/register
 Content-Type: application/json
 
@@ -37,8 +80,7 @@ Content-Type: application/json
   "role": "GUEST"
 }
 
-###
-
+### Login de tester
 POST http://localhost:9090/api/auth/login
 Content-Type: application/json
 
@@ -47,22 +89,21 @@ Content-Type: application/json
   "password" : "juandavid12345678"
 }
 
-###
-
+### Registro de Admin (rol HOST)
 POST http://localhost:9090/api/auth/register
 Content-Type: application/json
 
 {
   "name" : "Admin",
   "phone" : "123123123",
-  "email" : "admin@gmail.com",
+  "email" : "admin2@gmail.com",
   "password" : "123juan",
   "dateBirth": "2000-05-20",
   "role": "HOST"
 }
 
-###
 
+### Login de Admin
 POST http://localhost:9090/api/auth/login
 Content-Type: application/json
 
@@ -71,23 +112,24 @@ Content-Type: application/json
   "password" : "123juan"
 }
 
-###
+########################################
+# Recuperación de contraseña
+########################################
 
+### Solicitar código de recuperación por correo
 POST http://localhost:9090/api/auth/password/reset
 Content-Type: application/json
 
 {
-"email": "ramiresjuanda123@gmail.com"
+  "email": "ramiresjuanda123@gmail.com"
 }
 
-###
-# 🔐 Confirmación del cambio de contraseña con el código recibido por correo
-
+### Confirmación del cambio de contraseña con código recibido
 PATCH http://localhost:9090/api/auth/password/confirm
 Content-Type: application/json
 
 {
   "email": "ramiresjuanda123@gmail.com",
-  "code": "974434",
+  "code": "440691",
   "newPassword": "juandavid12345678"
 }

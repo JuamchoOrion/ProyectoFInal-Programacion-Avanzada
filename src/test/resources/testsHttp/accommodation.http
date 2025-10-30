@@ -1,4 +1,12 @@
-@tokenHost = eyJhbGciOiJIUzM4NCJ9.eyJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsIm5hbWUiOiJBZG1pbiIsInJvbGUiOiJST0xFX0hPU1QiLCJzdWIiOiI3NDJmYTk4Yy05YzVlLTQ2NGItYmY1MC1mYWM2YjNkMzQ2ZmIiLCJpYXQiOjE3NjAyMTIyNTksImV4cCI6MTc2MDIxNTg1OX0.L9pOn1wJVNxpcVzwkdkeGD8o5f1sH-t3n8yqDOv014wyb-pnQ7T-Yynr_iYNlMvt
+##############################################
+# 🔐 TOKENS DE AUTENTICACIÓN
+##############################################
+### Token del host (ROLE_HOST)
+@tokenHost = eyJhbGciOiJIUzM4NCJ9.eyJuYW1lIjoiQWRtaW4iLCJyb2xlIjoiUk9MRV9IT1NUIiwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJzdWIiOiI4ZWQ3MzFiNS0wZGQ2LTQ3MzEtYTRlOC0wNWYwMWMxMDIzNTYiLCJpYXQiOjE3NjAyMjU5NTYsImV4cCI6MTc2MDIyOTU1Nn0.IsNJnjbFZv9hZQIEeDqdiuDhl1YdZjOWlS7yEADWRZa7m2b9vwUiwuU24ODLYlId
+
+### Token del guest (ROLE_GUEST)
+@tokenGuest = eyJhbGciOiJIUzM4NCJ9.eyJuYW1lIjoidGVzdGVyIiwicm9sZSI6IlJPTEVfR1VFU1QiLCJlbWFpbCI6InJhbWlyZXNqdWFuZGExMjNAZ21haWwuY29tIiwic3ViIjoiMjJmYWNmMTktZmRhNi00OTdjLWFhMTQtZTZkOTA0NDMyNWI4IiwiaWF0IjoxNzYwMjIzNjEwLCJleHAiOjE3NjAyMjcyMTB9.gemamjVaMwiWzWGUNQdHjdPoqJXY6rKeLXjHD7tbdUfJuVYDmF1ia4jofo9IjP5e
+
 ##############################################
 # 🏠 CREAR ALOJAMIENTO CON IMÁGENES LOCALES
 ##############################################
@@ -19,18 +27,12 @@ Authorization: Bearer {{tokenHost}}
   "services": ["WIFI", "POOL"],
   "images": [
     "C:\\Users\\ramir\\Downloads\\gato.jpg",
-    "C:\\Users\\ramir\\Downloads\\foto2.jpg"
+    "C:\\Users\\ramir\\Downloads\\roblox.jpg"
   ],
   "mainImage": "C:\\Users\\ramir\\Downloads\\gato.jpg",
   "minImage": 1,
   "maxImages": 5
 }
-##############################################
-# 🔐 TOKENS DE AUTENTICACIÓN
-##############################################
-
-### 🔐 Token del guest (ROLE_GUEST)
-@tokenGuest = eyJhbGciOiJIUzM4NCJ9.eyJyb2xlIjoiUk9MRV9HVUVTVCIsIm5hbWUiOiJ0ZXN0ZXIiLCJlbWFpbCI6InJhbWlyZXNqdWFuZGExMjNAZ21haWwuY29tIiwic3ViIjoiOWM5MjE2MDUtNmZhNC00MTlmLTllMGUtZTdjNTRlNmY5M2Q0IiwiaWF0IjoxNzYwMTk5MzQ4LCJleHAiOjE3NjAyMDI5NDh9.G0ERNiNEpvCGe9I1_HsIEZOYHWQG-Z9DxmxikR60IoFsIpYC2aZa4QJNlqF44BFl
 
 ##############################################
 # 🏠 CREAR ALOJAMIENTOS (ROLE_HOST)
@@ -51,8 +53,8 @@ Authorization: Bearer {{tokenHost}}
   "pricePerNight": 150000,
   "maxGuests": 4,
   "services": ["WIFI"],
-  "images": ["img1.jpg", "img2.jpg"],
-  "mainImage": "img1.jpg"
+  "images": ["C:\\Users\\ramir\\Downloads\\gato.jpg", "C:\\Users\\ramir\\Downloads\\roblox.jpg"],
+  "mainImage": "C:\\Users\\ramir\\Downloads\\gato.jpg"
 }
 
 ### 2️⃣ Alojamiento en Medellín
@@ -70,8 +72,8 @@ Authorization: Bearer {{tokenHost}}
   "pricePerNight": 220000,
   "maxGuests": 3,
   "services": ["POOL", "AIR_CONDITIONING", "WIFI"],
-  "images": ["medellin1.jpg", "medellin2.jpg", "medellin3.jpg"],
-  "mainImage": "medellin1.jpg"
+  "images": ["C:\\Users\\ramir\\Downloads\\gato.jpg", "C:\\Users\\ramir\\Downloads\\roblox.jpg"],
+  "mainImage": "C:\\Users\\ramir\\Downloads\\gato.jpg"
 }
 
 ### 3️⃣ Alojamiento en Bogotá
@@ -89,8 +91,8 @@ Authorization: Bearer {{tokenHost}}
   "pricePerNight": 180000,
   "maxGuests": 2,
   "services": ["WIFI", "BREAKFAST", "PARKING"],
-  "images": ["bogota1.jpg", "bogota2.jpg"],
-  "mainImage": "bogota1.jpg"
+  "images": ["C:\\Users\\ramir\\Downloads\\gato.jpg", "C:\\Users\\ramir\\Downloads\\roblox.jpg"],
+  "mainImage": "C:\\Users\\ramir\\Downloads\\gato.jpg"
 }
 
 ### 4️⃣ Alojamiento en Cartagena
@@ -108,8 +110,8 @@ Authorization: Bearer {{tokenHost}}
   "pricePerNight": 480000,
   "maxGuests": 6,
   "services": ["POOL", "BREAKFAST", "AIR_CONDITIONING", "WIFI"],
-  "images": ["cartagena1.jpg", "cartagena2.jpg", "cartagena3.jpg"],
-  "mainImage": "cartagena1.jpg"
+  "images": ["C:\\Users\\ramir\\Downloads\\gato.jpg", "C:\\Users\\ramir\\Downloads\\roblox.jpg"],
+  "mainImage": "C:\\Users\\ramir\\Downloads\\gato.jpg"
 }
 
 ### 5️⃣ Alojamiento en Santa Marta
@@ -127,35 +129,30 @@ Authorization: Bearer {{tokenHost}}
   "pricePerNight": 400000,
   "maxGuests": 5,
   "services": ["POOL", "BREAKFAST", "PARKING", "WIFI"],
-  "images": ["santamarta1.jpg", "santamarta2.jpg", "santamarta3.jpg"],
-  "mainImage": "santamarta1.jpg"
+  "images": ["C:\\Users\\ramir\\Downloads\\gato.jpg", "C:\\Users\\ramir\\Downloads\\roblox.jpg"],
+  "mainImage": "C:\\Users\\ramir\\Downloads\\gato.jpg"
 }
-
 
 ##############################################
 # 🔍 BÚSQUEDA Y FILTROS
 ##############################################
 
-### Buscar por ciudad
 GET http://localhost:9090/api/accommodations
-
-### Buscar por rango de precios
+###
 GET http://localhost:9090/api/accommodations?minPrice=100000&maxPrice=300000
-
-### Buscar por servicios
-GET http://localhost:9090/api/accommodations?services=WIFI,POOL
-
-### Buscar por disponibilidad (sin reservas entre esas fechas)
-GET http://localhost:9090/api/accommodations?checkIn=2025-12-01T14:00:00&checkOut=2025-12-10T12:00:00
+###
+GET http://localhost:9090/api/accommodations?services=POOL
+###
+GET http://localhost:9090/api/accommodations?checkIn=2025-10-01T14:00:00&checkOut=2025-12-10T12:00:00
 
 
 ##############################################
-# 📄 OBTENER Y EDITAR ALOJAMIENTO
+# 📄 OBTENER, EDITAR Y ELIMINAR ALOJAMIENTO
 ##############################################
 
 ### Obtener alojamiento por ID
 GET http://localhost:9090/api/accommodations/1
-Authorization: Bearer {{tokenGuest}}
+Authorization: Bearer {{tokenHost}}
 
 ### Editar alojamiento existente
 PUT http://localhost:9090/api/accommodations/1
@@ -163,7 +160,7 @@ Content-Type: application/json
 Authorization: Bearer {{tokenHost}}
 
 {
-  "title": "Casa Familiar Armenia (actualizada)",
+  "title": "Apartamento",
   "description": "Casa cómoda con nuevos servicios y mejores espacios.",
   "city": "Armenia",
   "address": "Calle 10 #25-30",
@@ -172,9 +169,12 @@ Authorization: Bearer {{tokenHost}}
   "pricePerNight": 200000,
   "maxGuests": 6,
   "services": ["WIFI", "PARKING", "BREAKFAST"],
-  "images": ["casa1_1.jpg", "casa1_3.jpg"],
-  "mainImage": "casa1_3.jpg"
+  "images": ["C:\\Users\\ramir\\Downloads\\gato.jpg", "C:\\Users\\ramir\\Downloads\\roblox.jpg"],
+  "mainImage": "C:\\Users\\ramir\\Downloads\\gato.jpg"
 }
 
-
-
+### Eliminar alojamiento
+DELETE http://localhost:9090/api/accommodations/2
+Authorization: Bearer {{tokenHost}}
+###
+GET http://localhost:9090/api/accommodations/1/reservations

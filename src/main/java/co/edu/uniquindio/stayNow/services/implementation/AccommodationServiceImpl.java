@@ -125,22 +125,22 @@ public class AccommodationServiceImpl implements AccommodationService {
 
     @Override
     public AccommodationDTO edit(Long id, EditAccommodationDTO accommodationDTO) throws Exception {
+        //era esto de la validacion lo que faltaba xd como se nos va a pasar
+
+        User user = userRepository.getUserById(authService.getUserID())
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         Accommodation accommodation = accommodationRepo.findById(id)
                 .orElseThrow(() -> new AccommodationNotFoundException("Accommodation not found"));
 
-        // 1. Guardar las URLs de imágenes anteriores (antes de la actualización del mapper)
-        // El campo mainImage ahora existe en la entidad.
+        if(!accommodation.getHost().equals(user)) {
+            throw new UnauthorizedActionException("User is not a valid host");
+        }
         List<String> oldImages = new ArrayList<>(accommodation.getImages());
         String oldMainImage = accommodation.getMainImage();
 
-        // 2. Actualizar la entidad con los nuevos datos del DTO
-        // (Tu mapper debe mapear 'mainImage' e 'images' del DTO a la entidad)
         accommodationMapper.updateEntity(accommodationDTO, accommodation);
 
-        // 3. Lógica de limpieza en Cloudinary
-
-        // 3.1. Limpieza de la imagen principal antigua
         if (oldMainImage != null && !oldMainImage.isBlank() && !oldMainImage.equals(accommodationDTO.mainImage())) {
             String publicId = extractPublicId(oldMainImage);
             if (publicId != null) {
@@ -316,28 +316,30 @@ public class AccommodationServiceImpl implements AccommodationService {
     @Override
     public Page<ReservationDTO> getReservations(Long accommodationId, LocalDateTime from, LocalDateTime to, List<String> status, Pageable pageable) throws Exception {
         List<Specification<Reservation>> filters = new ArrayList<>();
-        //SPECIFICATION ES BASICAMENTE CONSTRUIR FILTROS EN CONSULTAS SQL CON WHERE (AND)
-        filters.add((root,query,cb)->cb.equal(root.get("accommodation").get("id"), accommodationId));
-        if(from != null ) {
-            filters.add((root,query,cb)->cb.greaterThanOrEqualTo(root.get("checkIn"), from));
+
+        filters.add((root, query, cb) -> cb.equal(root.get("accommodation").get("id"), accommodationId));
+
+        if (from != null) {
+            filters.add((root, query, cb) -> cb.greaterThanOrEqualTo(root.get("checkIn"), from));
         }
-        if(to != null ) {
-            filters.add((root, query, cb)-> cb.lessThanOrEqualTo(root.get("checkOut"), to));
+
+        if (to != null) {
+            filters.add((root, query, cb) -> cb.lessThanOrEqualTo(root.get("checkOut"), to));
         }
-        if(status != null) {
+
+        if (status != null && !status.isEmpty()) {
             Set<ReservationStatus> enumStatus = status.stream()
                     .map(String::toUpperCase)
                     .map(ReservationStatus::valueOf)
                     .collect(Collectors.toSet());
-            filters.add((root, query, cb) -> {
-                Join<Reservation, ReservationStatus> join = root.joinSet("reservationStatus");
-                query.distinct(true);
-                return join.in(enumStatus);
-            });
+
+            filters.add((root, query, cb) -> root.get("reservationStatus").in(enumStatus));
         }
+
         Specification<Reservation> spec = Specification.allOf(filters);
-        Page<Reservation> page = reservationRepo.findAll(spec,pageable );
+        Page<Reservation> page = reservationRepo.findAll(spec, pageable);
         return page.map(reservationMapper::toReservationDTO);
     }
+
 
 }

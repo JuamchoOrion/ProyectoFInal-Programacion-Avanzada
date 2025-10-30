@@ -17,6 +17,7 @@ import co.edu.uniquindio.stayNow.repositories.UserRepository;
 import co.edu.uniquindio.stayNow.services.implementation.AccommodationServiceImpl;
 
 import co.edu.uniquindio.stayNow.services.interfaces.AuthService;
+import co.edu.uniquindio.stayNow.services.interfaces.ImageService;
 import co.edu.uniquindio.stayNow.services.interfaces.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -55,7 +56,9 @@ public class AccommodationServiceImplTest {
     private ReservationMapper reservationMapper;
     @Mock
     private AuthService authService;
-
+    @Mock
+    private ImageService imageService;
+    // <-- este faltaba
     @InjectMocks
     private AccommodationServiceImpl accommodationService;
 

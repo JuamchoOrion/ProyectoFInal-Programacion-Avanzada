@@ -1,5 +1,6 @@
 ### 🟢 1️⃣ Define token manually
-@token = eyJhbGciOiJIUzM4NCJ9.eyJuYW1lIjoidGVzdGVyIiwiZW1haWwiOiJ0ZXN0QGVtYWlsLmNvbSIsInJvbGUiOiJST0xFX0dVRVNUIiwic3ViIjoiMTIzIn0.fakeToken
+@token = eyJhbGciOiJIUzM4NCJ9.eyJlbWFpbCI6Imx2Z29tZXphMjkwNUBnbWFpbC5jb20iLCJuYW1lIjoiUm9qaXRvIiwicm9sZSI6IlJPTEVfR1VFU1QiLCJzdWIiOiIyMGVhNzhkMS1iZDg3LTQwMGEtOTA3OS1lN2E0OWM0YzA1ODIiLCJpYXQiOjE3NjAyMzEzMTIsImV4cCI6MTc2MDIzNDkxMn0._8Xq31xtmFbObdL8Nf-04w643Yx7KeffLL1diX1AWu3iDU-iXuorw85kSZmDyZZ1
+@hostToken = eyJhbGciOiJIUzM4NCJ9.eyJyb2xlIjoiUk9MRV9IT1NUIiwibmFtZSI6IkFkbWluIiwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJzdWIiOiI4ZWQ3MzFiNS0wZGQ2LTQ3MzEtYTRlOC0wNWYwMWMxMDIzNTYiLCJpYXQiOjE3NjAyMzIzODEsImV4cCI6MTc2MDIzNTk4MX0.-iErmkX5XVSaGRvikPGsMkcaI5PzPJs4xtrJliEfFLLGvFi_jlr7kPqdM0eefhC1
 
 ### ✏️ 2️⃣ Create Review 1 - Reservation 1
 POST http://localhost:9090/api/reviews
@@ -7,7 +8,7 @@ Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "reservationId": 1,
+  "reservationId": 3,
   "text": "Amazing stay, very clean and comfortable.",
   "rating": 5
 }
@@ -128,16 +129,16 @@ GET http://localhost:9090/api/reviews/accommodation/3?page=0&size=5&rating=5
 Authorization: Bearer {{token}}
 
 ### 💬 16️⃣ Reply to review 1
-POST http://localhost:9090/api/reviews/1/reply
+POST http://localhost:9090/api/reviews/3/reply
 Content-Type: application/json
-Authorization: Bearer {{token}}
+Authorization: Bearer {{hostToken}}
 
 {
   "message": "Thank you for your feedback! We're glad you enjoyed your stay."
 }
 
 ### 💬 17️⃣ Reply to review 3
-POST http://localhost:9090/api/reviews/3/reply
+POST http://localhost:9090/api/reviews/2/reply
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
@@ -146,7 +147,7 @@ Authorization: Bearer {{token}}
 }
 
 ### ❌ 18️⃣ Delete review 2
-DELETE http://localhost:9090/api/reviews/2
+DELETE http://localhost:9090/api/reviews/5
 Authorization: Bearer {{token}}
 
 ### ❌ 19️⃣ Delete review 6

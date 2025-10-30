@@ -1,6 +1,6 @@
 ### Variables
 # Token JWT del usuario 'tester' (ya logueado)
-@token = eyJhbGciOiJIUzM4NCJ9.eyJuYW1lIjoiV2lsbHkiLCJlbWFpbCI6IndpbGx5QGdtYWlsLmNvbSIsInJvbGUiOiJST0xFX0dVRVNUIiwic3ViIjoiMDkzYWQwMzEtOGRmNC00YTdjLWI5MGEtZWM1MmMwYjNkNDY5IiwiaWF0IjoxNzYwMjA5NzYwLCJleHAiOjE3NjAyMTMzNjB9.J7EDbRml0h_NE_IyUo_H0cE-ai9i80_P7SJPey87V7miB5plQf7tZw-IyaYjSeap
+@token =
 @baseUrl = http://localhost:9090/api/images
 
 ---
@@ -11,10 +11,10 @@ Content-Type: multipart/form-data; boundary=WebAppBoundary
 Authorization: Bearer {{token}}
 
 --WebAppBoundary
-Content-Disposition: form-data; name="file"; filename="Kaladin_Lyon.png"
+Content-Disposition: form-data; name="file"; filename="snoopy.png"
 Content-Type: image/png
 
-< C:\\Users\\ramir\\Downloads\\gato.jpg
+< /Users/lala/Downloads/snoopy.jpg
 
 --WebAppBoundary--
 
