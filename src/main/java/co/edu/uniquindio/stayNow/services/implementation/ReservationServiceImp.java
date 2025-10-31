@@ -187,8 +187,9 @@ public class ReservationServiceImp implements ReservationService {
         Reservation reservation = reservationRepository.findById(reservationId).
                 orElseThrow(() -> new ReservationNotFoundException("Reserva no encontrada."));
 
-        if(!reservation.getGuest().getId().equals(currentUser.getId())){
-            throw new UnauthorizedActionException("No puede cancelar una reserva de otra persona.");
+        if (!reservation.getGuest().getId().equals(currentUser.getId()) &&
+                !reservation.getAccommodation().getHost().getId().equals(currentUser.getId())) {
+            throw new UnauthorizedActionException("Solo el huésped o el anfitrión pueden cancelar la reserva.");
         }
 
         if(reservation.getReservationStatus() == ReservationStatus.CANCELED){

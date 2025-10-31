@@ -1,9 +1,10 @@
 package co.edu.uniquindio.stayNow.services.implementation;
+
 import co.edu.uniquindio.stayNow.dto.*;
-import co.edu.uniquindio.stayNow.exceptions.PasswordResetCodeNotFoundException;
-import co.edu.uniquindio.stayNow.exceptions.UserNotFoundException;
+import co.edu.uniquindio.stayNow.exceptions.*;
 import co.edu.uniquindio.stayNow.model.entity.PasswordResetCode;
 import co.edu.uniquindio.stayNow.model.entity.User;
+import co.edu.uniquindio.stayNow.model.enums.UserStatus;
 import co.edu.uniquindio.stayNow.repositories.PasswordResetCodeRepository;
 import co.edu.uniquindio.stayNow.repositories.UserRepository;
 import co.edu.uniquindio.stayNow.security.JWTUtils;
@@ -17,7 +18,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
@@ -29,26 +29,25 @@ public class AuthServiceImp implements AuthService {
     private final PasswordResetCodeRepository passwordResetCodeRepository;
     private final JWTUtils jwtUtils;
 
+    // ======================================================
+    // LOGIN
+    // ======================================================
     @Override
     public TokenDTO login(LoginRequestDTO loginDTO) throws Exception {
-        Optional<User> optionalUser = userRepository.findByEmail(loginDTO.email());
+        User user = userRepository.findByEmail(loginDTO.email())
+                .orElseThrow(() -> new UserNotFoundException("El usuario no existe."));
 
-        if (optionalUser.isEmpty()) {
-            throw new UserNotFoundException("User does not exist");
+        // Solo cuentas activas pueden acceder
+        if (user.getStatus() != UserStatus.ACTIVE) {
+            throw new AccountDisabledException("La cuenta está inactiva o suspendida.");
         }
 
-        User user = optionalUser.get();
-
-        if(!user.getStatus().equals("ACTIVE")){
-            throw new UserNotFoundException("User is not active");
-        }
-
-        // Verify if the password is correct
+        // Verificar contraseña
         if (!passwordEncoder.matches(loginDTO.password(), user.getPassword())) {
-            throw new UserNotFoundException("User does not exist");
+            throw new InvalidCredentialsException("Credenciales inválidas.");
         }
 
-        // Generate token with claims
+        // Generar token JWT con claims
         String token = jwtUtils.generateToken(user.getId(), createClaims(user));
         return new TokenDTO(token);
     }
@@ -61,62 +60,94 @@ public class AuthServiceImp implements AuthService {
         );
     }
 
-    /**
-     * Returns the ID of the authenticated user
-     * (the "sub" subject stored in the JWT when it was generated).
-     */
+    // ======================================================
+    // OBTENER ID DE USUARIO AUTENTICADO
+    // ======================================================
+    @Override
     public String getUserID() {
         return SecurityContextHolder.getContext().getAuthentication().getName();
     }
 
+    // ======================================================
+    // SOLICITAR RESTABLECIMIENTO DE CONTRASEÑA
+    // ======================================================
     @Override
     public void resetPasswordRequest(ResetPasswordRequestDTO resetPasswordRequestDTO) throws Exception {
         User user = userRepository.findByEmail(resetPasswordRequestDTO.email())
-                .orElseThrow(() -> new UserNotFoundException("The given email does not have a registered user"));
+                .orElseThrow(() -> new UserNotFoundException("El correo no está asociado a una cuenta registrada."));
+
+        if (user.getStatus() != UserStatus.ACTIVE) {
+            throw new AccountDisabledException("La cuenta está inactiva, no puede restablecer la contraseña.");
+        }
+
+        // Eliminar código anterior si existe
+        passwordResetCodeRepository.findByUser(user).ifPresent(passwordResetCodeRepository::delete);
+
+        // Generar un nuevo código de 6 dígitos
+        int code = (int) (Math.random() * 900000) + 100000;
+
         PasswordResetCode passwordResetCode = new PasswordResetCode();
         passwordResetCode.setUser(user);
-
-        // Genera un código aleatorio de 6 dígitos
-        int code = (int) (Math.random() * 900000) + 100000;
         passwordResetCode.setCode(String.valueOf(code));
         passwordResetCode.setCreatedAt(LocalDateTime.now());
+
         passwordResetCodeRepository.save(passwordResetCode);
-        // Envía correo con el código
+
+        // Enviar correo con el código
         emailService.sendMail(new EmailDTO(
-                "Password Reset Code",
-                "To change your password, please enter this code on the website: " + code,
+                "Código para restablecer contraseña",
+                "Hola " + user.getName() + ",\n\n" +
+                        "Tu código de restablecimiento de contraseña es: " + code + "\n" +
+                        "Este código expirará en 30 minutos.",
                 user.getEmail()
         ));
     }
 
+    // ======================================================
+    // CONFIRMAR CÓDIGO DE RESTABLECIMIENTO
+    // ======================================================
     @Override
     public void confirmPassword(EditPasswordRequestDTO editPasswordRequestDTO) throws Exception {
 
-        User user = userRepository.findByEmail(editPasswordRequestDTO.email()).orElseThrow(()-> new UserNotFoundException("The given email does not have a registered user"));
-        PasswordResetCode passwordResetCode = passwordResetCodeRepository.findByUser(user).orElseThrow(() -> new PasswordResetCodeNotFoundException("The given Password Reset code does not exist "));
+        User user = userRepository.findByEmail(editPasswordRequestDTO.email())
+                .orElseThrow(() -> new UserNotFoundException("El correo no está asociado a una cuenta registrada."));
 
+        PasswordResetCode passwordResetCode = passwordResetCodeRepository.findByUser(user)
+                .orElseThrow(() -> new PasswordResetCodeNotFoundException("No existe un código de recuperación activo."));
+
+        // Validar código
         if (!passwordResetCode.getCode().equals(editPasswordRequestDTO.code())) {
-            throw new Exception("Invalid reset code");
+            throw new InvalidResetCodeException("El código ingresado no es válido.");
         }
 
+        // Validar expiración (30 minutos)
         if (passwordResetCode.getCreatedAt().isBefore(LocalDateTime.now().minusMinutes(30))) {
-            throw new Exception("Reset code has expired");
+            throw new ExpiredResetCodeException("El código de recuperación ha expirado.");
         }
 
+        // Cambiar contraseña
         String encodedPassword = passwordEncoder.encode(editPasswordRequestDTO.newPassword());
         user.setPassword(encodedPassword);
         userRepository.save(user);
+
+        // Eliminar el código usado
         passwordResetCodeRepository.delete(passwordResetCode);
     }
 
-    /**
-     * Returns the complete User entity of the authenticated user
-     */
+    // ======================================================
+    // OBTENER USUARIO AUTENTICADO
+    // ======================================================
     @Override
     public User getCurrentUser() throws Exception {
         String userId = getUserID();
 
-        return userRepository.getUserById(userId)
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
+        User user = userRepository.getUserById(userId)
+                .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado."));
+
+        if (user.getStatus() != UserStatus.ACTIVE) {
+            throw new AccountDisabledException("La cuenta está inactiva o suspendida.");
+        }
+
+        return user;
     }
 }

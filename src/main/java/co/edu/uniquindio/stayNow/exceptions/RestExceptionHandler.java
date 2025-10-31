@@ -1,7 +1,7 @@
 package co.edu.uniquindio.stayNow.exceptions;
+
 import co.edu.uniquindio.stayNow.dto.ResponseDTO;
 import co.edu.uniquindio.stayNow.dto.ValidationDTO;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -36,7 +36,10 @@ public class RestExceptionHandler {
         return ResponseEntity.badRequest().body(new ResponseDTO<>(true, errors));
     }
 
+    // ============================================================
     // Authentication / Users
+    // ============================================================
+
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<ResponseDTO<String>> userNotFoundExceptionHandler(UserNotFoundException ex){
         return ResponseEntity.status(404).body(new ResponseDTO<>(true, "The user does not exist."));
@@ -62,7 +65,32 @@ public class RestExceptionHandler {
         return ResponseEntity.status(403).body(new ResponseDTO<>(true, "This account is suspended or inactive."));
     }
 
+    // 🔹 NUEVO: Código de restablecimiento inválido
+    @ExceptionHandler(InvalidResetCodeException.class)
+    public ResponseEntity<ResponseDTO<String>> invalidResetCodeExceptionHandler(InvalidResetCodeException ex){
+        return ResponseEntity.status(400).body(new ResponseDTO<>(true, "The reset code is invalid."));
+    }
+
+    // 🔹 NUEVO: Código de restablecimiento expirado
+    @ExceptionHandler(ExpiredResetCodeException.class)
+    public ResponseEntity<ResponseDTO<String>> expiredResetCodeExceptionHandler(ExpiredResetCodeException ex){
+        return ResponseEntity.status(410).body(new ResponseDTO<>(true, "The reset code has expired."));
+    }
+
+    @ExceptionHandler(PasswordResetCodeNotFoundException.class)
+    public ResponseEntity<ResponseDTO<String>> passwordResetCodeNotAllowedExceptionHandler(PasswordResetCodeNotFoundException ex){
+        return ResponseEntity.status(404).body(new ResponseDTO<>(true, "Password reset code not found."));
+    }
+
+    // 🔹 CORREGIDO: Contraseña actual no coincide
+    @ExceptionHandler(PasswordNotMatchException.class)
+    public ResponseEntity<ResponseDTO<String>> passwordNotMatchException(PasswordNotMatchException ex){
+        return ResponseEntity.status(400).body(new ResponseDTO<>(true, "The current password does not match."));
+    }
+
+    // ============================================================
     // Accommodations
+    // ============================================================
     @ExceptionHandler(AccommodationNotFoundException.class)
     public ResponseEntity<ResponseDTO<String>> accommodationNotFoundExceptionHandler(AccommodationNotFoundException ex){
         return ResponseEntity.status(404).body(new ResponseDTO<>(true, "The accommodation does not exist."));
@@ -83,7 +111,9 @@ public class RestExceptionHandler {
         return ResponseEntity.status(422).body(new ResponseDTO<>(true, "The number of guests exceeds the maximum allowed for this accommodation."));
     }
 
+    // ============================================================
     // Reservations
+    // ============================================================
     @ExceptionHandler(ReservationNotFoundException.class)
     public ResponseEntity<ResponseDTO<String>> reservationNotFoundExceptionHandler(ReservationNotFoundException ex){
         return ResponseEntity.status(404).body(new ResponseDTO<>(true, "The reservation does not exist."));
@@ -104,7 +134,9 @@ public class RestExceptionHandler {
         return ResponseEntity.status(409).body(new ResponseDTO<>(true, "Reservation cannot be canceled according to the policy."));
     }
 
+    // ============================================================
     // Reviews
+    // ============================================================
     @ExceptionHandler(ReviewNotFoundException.class)
     public ResponseEntity<ResponseDTO<String>> reviewNotFoundExceptionHandler(ReviewNotFoundException ex){
         return ResponseEntity.status(404).body(new ResponseDTO<>(true, "The review does not exist."));
@@ -125,7 +157,9 @@ public class RestExceptionHandler {
         return ResponseEntity.status(409).body(new ResponseDTO<>(true, "This review already has a reply."));
     }
 
+    // ============================================================
     // General
+    // ============================================================
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<ResponseDTO<String>> badRequestExceptionHandler(BadRequestException ex){
         return ResponseEntity.status(400).body(new ResponseDTO<>(true, "The request contains invalid data."));
@@ -140,13 +174,4 @@ public class RestExceptionHandler {
     public ResponseEntity<ResponseDTO<String>> operationNotAllowedExceptionHandler(OperationNotAllowedException ex){
         return ResponseEntity.status(403).body(new ResponseDTO<>(true, "Operation not allowed according to business rules."));
     }
-    @ExceptionHandler(PasswordResetCodeNotFoundException.class)
-    public ResponseEntity<ResponseDTO<String>> passwordResetCodeNotAllowedExceptionHandler(PasswordResetCodeNotFoundException ex){
-        return ResponseEntity.status(404).body(new ResponseDTO<>(true, "PasswordResetCode not found"));
-    }
-    @ExceptionHandler(PasswordNotMatchException.class)
-    public ResponseEntity<ResponseDTO<String>> passwordNotMatchException(PasswordNotMatchException ex){
-        return ResponseEntity.status(404).body(new ResponseDTO<>(true, "PasswordResetCode not found"));
-    }
-
 }

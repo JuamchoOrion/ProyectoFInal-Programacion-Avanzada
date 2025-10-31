@@ -15,7 +15,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.expression.WebExpressionAuthorizationManager;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -27,34 +26,37 @@ import java.util.List;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-    private  final JWTFilter jwtFilter;
+
+    private final JWTFilter jwtFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        // Configura la seguridad HTTP para la aplicación
+
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(req -> req
+                        // ==== RUTAS PÚBLICAS ====
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/ws-chat/**").permitAll()
-                        .requestMatchers("/api/auth/**",   // login, register, etc.
-                                "/ws-chat/**",    // ✅ WebSocket handshake
-                                "/chat.html",
-                                "/chatMultiusuario.html",// ✅ archivo HTML de prueba
-                                "/app/**",        // ✅ prefijos STOMP de envío
-                                "/topic/**",      // ✅ prefijos STOMP de recepción
-                                "/queue/**").permitAll()
-                        .requestMatchers("/chat-websocket/**", "/topic/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/accommodations/").hasAnyAuthority("ROLE_HOST")
-                        .requestMatchers(HttpMethod.PUT, "/users").hasAnyAuthority("ROLE_ADMIN", "ROLE_HOST", "ROLE_GUEST")
-                        .requestMatchers(HttpMethod.GET,"/api/accommodations/**").permitAll()
-                        .requestMatchers("/api/images").authenticated()
+                        .requestMatchers("/ws-chat/**", "/chat-websocket/**",
+                                "/chat.html", "/chatMultiusuario.html",
+                                "/app/**", "/topic/**", "/queue/**").permitAll()
 
+                        // ==== ALOJAMIENTOS ====
+                        .requestMatchers(HttpMethod.GET, "/api/accommodations/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/accommodations/**").hasAuthority("ROLE_HOST")
+                        .requestMatchers(HttpMethod.PUT, "/api/accommodations/**").hasAuthority("ROLE_HOST")
+                        .requestMatchers(HttpMethod.DELETE, "/api/accommodations/**").hasAnyAuthority("ROLE_HOST", "ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/accommodations/*/reservations").hasAuthority("ROLE_HOST")
+                        .requestMatchers(HttpMethod.POST, "/api/accommodations/*/review").hasAuthority("ROLE_GUEST")
 
+                        // ==== IMÁGENES ====
+                        .requestMatchers("/api/images/**").authenticated()
+                        // metricas
+                        .requestMatchers(HttpMethod.GET, "accommodation/**").hasAuthority("ROLE_HOST")
+                        // ==== RESTO ====
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(new JwtAuthenticationEntryPoint()))
@@ -63,10 +65,8 @@ public class SecurityConfig {
         return http.build();
     }
 
-
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
-        // Configura las políticas de CORS para permitir solicitudes desde el frontend
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(List.of("*"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
@@ -80,14 +80,12 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        // Permite codificar y verificar contraseñas utilizando BCrypt
         return new BCryptPasswordEncoder();
     }
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration)
             throws Exception {
-        // Proporciona un AuthenticationManager para la autenticación de usuarios
         return configuration.getAuthenticationManager();
     }
 }

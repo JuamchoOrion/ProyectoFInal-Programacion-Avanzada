@@ -21,5 +21,5 @@ public interface UserService {
     void edit( EditUserDTO userDTO) throws Exception;
 
     void changePassword(ChangePasswordRequestDTO newPasswordRequest) throws Exception;
-
+    void becomeHost() throws Exception;
 }

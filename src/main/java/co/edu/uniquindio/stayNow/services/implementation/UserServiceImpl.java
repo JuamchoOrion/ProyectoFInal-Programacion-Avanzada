@@ -4,6 +4,7 @@ package co.edu.uniquindio.stayNow.services.implementation;
 import co.edu.uniquindio.stayNow.dto.*;
 import co.edu.uniquindio.stayNow.exceptions.EmailAlreadyInUseException;
 import co.edu.uniquindio.stayNow.exceptions.PasswordNotMatchException;
+import co.edu.uniquindio.stayNow.exceptions.UnauthorizedActionException;
 import co.edu.uniquindio.stayNow.exceptions.UserNotFoundException;
 import co.edu.uniquindio.stayNow.mappers.UserMapper;
 import co.edu.uniquindio.stayNow.model.entity.User;
@@ -45,12 +46,12 @@ public class UserServiceImpl implements UserService {
     public void create(CreateUserDTO userDTO) throws Exception {
 
         if (isEmailDuplicated(userDTO.email())) {
-            throw new EmailAlreadyInUseException("El correo electrónico ya está en uso.");
+            throw new EmailAlreadyInUseException("this email is already used.");
         }
         //Con bd se llama al metodo para obtener el optional del usuario, hace la consulta si el email exist
         //si no existe se crea, de lo contrario se lanza exception
         if(userRepository.findByEmail(userDTO.email()).isPresent()){
-            throw new EmailAlreadyInUseException("El correo electrónico ya está en uso.");
+            throw new EmailAlreadyInUseException("this email is already used.");
         }
 
         User newUser = User.builder()
@@ -71,17 +72,19 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserProfileDTO get(String id) throws Exception {
+        String currentUserId = authService.getUserID();
+        User currentUser = userRepository.getUserById(currentUserId)
+                .orElseThrow(() -> new UserNotFoundException("Unauthenticated user."));
 
-        User user = userRepository.findById(id).orElse(null);
-
-        if (user == null) {
-            throw new UserNotFoundException("Usuario no encontrado.");
+        // Si el usuario autenticado no es admin ni está pidiendo su propio perfil, denegar
+        if (!currentUserId.equals(id) && currentUser.getRole() != Role.ADMIN) {
+            throw new UnauthorizedActionException("can't get other's user profile.");
         }
 
         return new UserProfileDTO(
-                user.getId(),
-                user.getEmail(),
-                user.getName()
+                currentUser.getId(),
+                currentUser.getEmail(),
+                currentUser.getName()
         );
     }
 
@@ -90,7 +93,7 @@ public class UserServiceImpl implements UserService {
         User removedUser = userRepository.findById(id).orElse(null);
 
         if (removedUser == null) {
-            throw new UserNotFoundException("Usuario no encontrado.");
+            throw new UserNotFoundException("User not found.");
         }
         userRepository.delete(removedUser);
     }
@@ -104,16 +107,22 @@ public class UserServiceImpl implements UserService {
 
         String id = authService.getUserID();
         User user = userRepository.getUserById(id)
-                .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        User currentUser = userRepository.getUserById(id)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        if (!currentUser.getRole().equals(Role.ADMIN)) {
+            // Solo puede editar su propia cuenta
+            if (!currentUser.getId().equals(user.getId())) {
+                throw new UnauthorizedActionException("can't edit other's user profile.");
+            }
+        }
 
         // 1️⃣ Guardar URL antigua para borrado
         String oldPhotoUrl = user.getPhotoUrl();
 
-        // 2️⃣ Validar correo
-        if (!user.getEmail().equalsIgnoreCase(userDTO.email())
-                && isEmailDuplicated(userDTO.email())) {
-            throw new EmailAlreadyInUseException("El correo electrónico ya está en uso.");
-        }
+
 
         // 3️⃣ Subir nueva foto si userDTO.photoUrl es ruta local
         String newPhotoUrl = userDTO.photoUrl();
@@ -125,13 +134,10 @@ public class UserServiceImpl implements UserService {
         // 4️⃣ Actualizar campos manualmente
         user.setName(userDTO.name());
         user.setPhone(userDTO.phone());
-        user.setEmail(userDTO.email());
+
         user.setPhotoUrl(newPhotoUrl); // nueva URL de Cloudinary
         user.setRole(userDTO.role());
 
-        if (userDTO.password() != null && !userDTO.password().isBlank()) {
-            user.setPassword(encode(userDTO.password()));
-        }
 
         // 5️⃣ Eliminar foto antigua de Cloudinary si cambió
         if (oldPhotoUrl != null && !oldPhotoUrl.isBlank() && !oldPhotoUrl.equals(newPhotoUrl)) {
@@ -202,7 +208,6 @@ public class UserServiceImpl implements UserService {
             return null;
         }
     }
-
     @Override
     public void changePassword (ChangePasswordRequestDTO newPasswordRequest) throws Exception{
         String id = authService.getUserID();
@@ -214,5 +219,18 @@ public class UserServiceImpl implements UserService {
         }else {
             throw new PasswordNotMatchException("The given password does not match");
         }
+    }
+    @Override
+    public void becomeHost() throws Exception {
+        String userId = authService.getUserID();
+        User user = userRepository.getUserById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not found."));
+
+        if (user.getRole() != Role.GUEST) {
+            throw new UnauthorizedActionException("Only GUEST can become  HOST.");
+        }
+
+        user.setRole(Role.HOST);
+        userRepository.save(user);
     }
 }

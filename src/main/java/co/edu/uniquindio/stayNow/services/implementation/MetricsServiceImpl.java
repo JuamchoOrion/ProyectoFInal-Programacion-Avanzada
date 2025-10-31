@@ -9,7 +9,6 @@ import co.edu.uniquindio.stayNow.model.entity.Reservation;
 import co.edu.uniquindio.stayNow.model.entity.Review;
 import co.edu.uniquindio.stayNow.model.entity.User;
 import co.edu.uniquindio.stayNow.model.enums.ReservationStatus;
-import co.edu.uniquindio.stayNow.model.enums.Role;
 import co.edu.uniquindio.stayNow.repositories.AccommodationRepository;
 import co.edu.uniquindio.stayNow.repositories.ReservationRepository;
 import co.edu.uniquindio.stayNow.repositories.ReviewRepository;
@@ -18,6 +17,7 @@ import co.edu.uniquindio.stayNow.services.interfaces.AuthService;
 import co.edu.uniquindio.stayNow.services.interfaces.MetricsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -30,19 +30,21 @@ import java.util.List;
 public class MetricsServiceImpl implements MetricsService {
 
     private final AccommodationRepository accommodationRepository;
-    private final AuthService authService;
     private final ReservationRepository reservationRepository;
-    private final UserRepository userRepository;
     private final ReviewRepository reviewRepository;
+    private final AuthService authService;
+    private final UserRepository userRepository;
     @Override
     public MetricsResponseDTO getAccommodationMetrics (Long accommodationId, LocalDateTime from, LocalDateTime to) throws Exception {
-        String userId = authService.getUserID();
-        User user = userRepository.findById(userId).orElseThrow(()-> new UserNotFoundException("Unable to find user"));
-
         Accommodation accommodation = accommodationRepository.findById(accommodationId)
                 .orElseThrow(() -> new AccommodationNotFoundException("Accommodation not found"));
-        if(!accommodation.getHost().equals(user)){
-            throw  new Exception();
+
+        String userId = authService.getUserID();
+        User currentUser = userRepository.getUserById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        if (!accommodation.getHost().getId().equals(currentUser.getId())) {
+            throw new UnauthorizedActionException("You cannot view reservations for an accommodation that does not belong to you");
         }
 
         List<Specification<Reservation>> specifications = new ArrayList<>();
@@ -72,7 +74,7 @@ public class MetricsServiceImpl implements MetricsService {
         double averageRating = 0.0;
         if (!reviewsByAccommodation.isEmpty()) {
             averageRating = reviewsByAccommodation.stream()
-                    .mapToDouble(Review::getRating)
+                    .mapToDouble(Review::getRate)
                     .average()
                     .orElse(0.0);
         }
