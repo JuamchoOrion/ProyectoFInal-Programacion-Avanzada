@@ -8,7 +8,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.antlr.v4.runtime.Token;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 //TODAS LAS APIS LISTAS PARA ESTA SEMANA (28 DE SEPTIEMBRE)
@@ -31,7 +33,20 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<ResponseDTO<TokenDTO>> login(@RequestBody LoginRequestDTO loginDTO) throws Exception {
         TokenDTO token = authService.login(loginDTO);
-        return ResponseEntity.ok(new ResponseDTO<>(false, token));
+        String tokenstr = token.token();
+        ResponseCookie cookie = ResponseCookie.from("jwt", tokenstr)
+                .httpOnly(true)          // No accesible desde JS
+                .secure(false)           // true si usas HTTPS
+                .path("/")               // accesible en toda la app
+                .maxAge(24 * 60 * 60)    // 1 día
+                .sameSite("Lax")         // o "Strict" / "None" (si usas HTTPS + CORS)
+                .build();
+
+        return ResponseEntity
+                .ok()
+                .header(HttpHeaders.SET_COOKIE, cookie.toString()) // 👈 ESTA LÍNEA FALTABA
+                .body(new ResponseDTO<>(false, token));
+
     }
 
     @PostMapping("/password/reset")

@@ -5,6 +5,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -69,8 +70,22 @@ public class JWTFilter extends OncePerRequestFilter{
         chain.doFilter(request, response);
     }
 
-    private String getToken(HttpServletRequest req) {
-        String header = req.getHeader("Authorization");
-        return header != null && header.startsWith("Bearer ") ? header.replace("Bearer ", "") : null;
+    private String getToken(HttpServletRequest request) {
+        // 1️⃣ Buscar token en cookies
+        if (request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if ("jwt".equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
+        }
+
+        // 2️⃣ Si no hay cookie, intentar obtenerlo del header Authorization
+        String header = request.getHeader("Authorization");
+        if (header != null && header.startsWith("Bearer ")) {
+            return header.substring(7);
+        }
+
+        return null;
     }
 }
