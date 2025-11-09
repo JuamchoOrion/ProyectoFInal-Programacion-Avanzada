@@ -10,6 +10,7 @@ import co.edu.uniquindio.stayNow.services.interfaces.ReviewService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -31,33 +32,26 @@ public class ReviewController {
     public ResponseEntity<ResponseDTO<ReviewDTO>> createReview(@Valid @RequestBody CreateReviewDTO reviewDto) throws Exception {
         String userId = SecurityContextHolder.getContext().getAuthentication().getName();
         ReviewDTO dto = reviewService.createReview(reviewDto);
-        return ResponseEntity.ok(reviewMapper.toDTO(review));
+        return  ResponseEntity.ok(new ResponseDTO<>(false, dto));
     }
-//encapsular en dto
     @GetMapping("/accommodation/{id}")
-    public ResponseEntity<Map<String, Object>> getReviews(
+    public ResponseEntity<ResponseDTO<Page<ReviewDTO>>> getReviews(
             @PathVariable Long id,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @RequestParam(defaultValue = "10") int size) throws Exception {
 
-        Page<Review> reviewPage = reviewService.getReviewsByAccommodation(id, page, size);
+        Page<ReviewDTO> reviewPage = reviewService.getReviewsByAccommodation(id, page, size);
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("items", reviewMapper.toDTOList(reviewPage.getContent()));
-        response.put("page", reviewPage.getNumber());
-        response.put("size", reviewPage.getSize());
-        response.put("totalItems", reviewPage.getTotalElements());
-        response.put("totalPages", reviewPage.getTotalPages());
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(new ResponseDTO<>(false, reviewPage));
     }
 
     @PostMapping("/{reviewId}/reply")
-    public ResponseEntity<ReplyDTO> replyToReview(@PathVariable Long reviewId,
+    public ResponseEntity<ResponseDTO<ReplyDTO>> replyToReview(@PathVariable Long reviewId,
                                                   @Valid @RequestBody ReplyReviewDTO dto) throws Exception {
         String hostId = authService.getUserID();
-        Reply reply = reviewService.replyToReview(reviewId, hostId, dto.message());
-        return ResponseEntity.ok(replyMapper.toDTO(reply));
+        ReplyDTO reply = reviewService.replyToReview( dto);
+        return ResponseEntity.ok(new ResponseDTO<>(false, reply));
     }
 
     @DeleteMapping("/{reviewId}")
