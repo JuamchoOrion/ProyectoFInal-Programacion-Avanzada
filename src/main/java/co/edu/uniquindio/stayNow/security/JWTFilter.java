@@ -88,4 +88,10 @@ public class JWTFilter extends OncePerRequestFilter{
 
         return null;
     }
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getServletPath();
+        // ⛔ NO aplicar el filtro a las rutas públicas
+        return path.startsWith("/api/auth");
+    }
 }

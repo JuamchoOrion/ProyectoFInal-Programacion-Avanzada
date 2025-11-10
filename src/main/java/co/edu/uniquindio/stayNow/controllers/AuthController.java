@@ -4,6 +4,7 @@ import co.edu.uniquindio.stayNow.dto.*;
 import co.edu.uniquindio.stayNow.services.implementation.UserServiceImpl;
 import co.edu.uniquindio.stayNow.services.interfaces.AuthService;
 import co.edu.uniquindio.stayNow.services.interfaces.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.antlr.v4.runtime.Token;
@@ -36,10 +37,10 @@ public class AuthController {
         String tokenstr = token.token();
         ResponseCookie cookie = ResponseCookie.from("jwt", tokenstr)
                 .httpOnly(true)          // No accesible desde JS
-                .secure(false)           // true si usas HTTPS
+                .secure(true)           // true si usas HTTPS
                 .path("/")               // accesible en toda la app
                 .maxAge(24 * 60 * 60)    // 1 día
-                .sameSite("Lax")         // o "Strict" / "None" (si usas HTTPS + CORS)
+                .sameSite("None")         // o "Strict" / "None" (si usas HTTPS + CORS)
                 .build();
 
         return ResponseEntity
@@ -61,6 +62,11 @@ public class AuthController {
             authService.confirmPassword(editPasswordRequestDTO);
             return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new ResponseDTO<>(false, "Password sent successfully"));
+    }
+    @GetMapping("/validate-token")
+    public ResponseEntity<ResponseDTO<Boolean>> validateToken(HttpServletRequest request) {
+        // El filtro JWT ya habrá validado el token y autenticado al usuario
+        return ResponseEntity.ok(new ResponseDTO<>(false, true));
     }
 
 }
