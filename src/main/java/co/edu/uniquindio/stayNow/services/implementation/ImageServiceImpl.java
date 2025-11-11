@@ -48,7 +48,8 @@ public class ImageServiceImpl implements ImageService {
     public Map delete(String imageId) throws Exception {
         return cloudinary.uploader().destroy(imageId, ObjectUtils.emptyMap());
     }
-
+// este metodo e spaar subir localmente solamente, puede que en edit user cause errores porque
+// ese ya es desde la web, con el metodo upload seria suficiente y cambiarlo a donde este este creo
     @Override
     public Map uploadFromPath(String filePath) throws Exception {
         File file = new File(filePath);

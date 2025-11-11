@@ -22,4 +22,5 @@ public interface UserService {
 
     void changePassword(ChangePasswordRequestDTO newPasswordRequest) throws Exception;
     void becomeHost() throws Exception;
+    String getAuthenticatedUserId() throws Exception;
 }

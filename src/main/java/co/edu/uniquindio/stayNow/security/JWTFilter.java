@@ -29,7 +29,7 @@ public class JWTFilter extends OncePerRequestFilter{
 
         // Obtener el token del header de la solicitud
         String token = getToken(request);
-
+        System.out.println("🔍 Cookie JWT recibida: " + token);
         // Si no hay token, continuar con la cadena de filtros
         if (token == null) {
             chain.doFilter(request, response);

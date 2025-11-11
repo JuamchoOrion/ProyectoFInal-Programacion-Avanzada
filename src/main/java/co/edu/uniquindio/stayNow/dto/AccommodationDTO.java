@@ -5,6 +5,7 @@ import co.edu.uniquindio.stayNow.model.enums.AccommodationStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 @NoArgsConstructor
@@ -21,7 +22,7 @@ public class AccommodationDTO {
     float longitude;
     int maxGuests;
     List<AccommodationServiceType> accommodationServiceTypes;
-    List<String> images;
+    List<String> images; //
     String mainImage;
     AccommodationStatus status;
 

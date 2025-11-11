@@ -37,10 +37,10 @@ public class AuthController {
         String tokenstr = token.token();
         ResponseCookie cookie = ResponseCookie.from("jwt", tokenstr)
                 .httpOnly(true)          // No accesible desde JS
-                .secure(true)           // true si usas HTTPS
+                .secure(false)           // true si usas HTTPS nota: cmabie a false para probar porqu epor ahora es http sin seguridad
                 .path("/")               // accesible en toda la app
                 .maxAge(24 * 60 * 60)    // 1 día
-                .sameSite("None")         // o "Strict" / "None" (si usas HTTPS + CORS)
+                .sameSite("lax")         // o "Strict" / "None" (si usas HTTPS + CORS)
                 .build();
 
         return ResponseEntity

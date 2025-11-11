@@ -22,8 +22,8 @@ public interface AccommodationMapper {
     @Mapping(target = "address.location.longitude", source = "longitude")
     @Mapping(target = "host", ignore = true)
     // El mapeo de 'mainImage' e 'images' es implícito, pero lo haremos explícito para mayor seguridad:
-    @Mapping(target = "mainImage", source = "mainImage")
-    @Mapping(target = "images", source = "images")
+    @Mapping(target = "mainImage", ignore = true) // ✅ se asigna después
+    @Mapping(target = "images", ignore = true)
     Accommodation toEntity(CreateAccommodationDTO accommodationDTO);
 
     // ✅ toAccommodationDTO: Mapeo implícito (o ajusta si necesitas la URL de la imagen principal separada)

@@ -2,6 +2,8 @@ package co.edu.uniquindio.stayNow.dto;
 
 import jakarta.validation.constraints.*;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.util.List;
 
 public record CreateAccommodationDTO(
@@ -18,29 +20,22 @@ public record CreateAccommodationDTO(
         @NotBlank @Length(max = 200)
         String address,
 
-        float latitude,
+        Float latitude,
 
-        float longitude,
+        Float longitude,
 
         @NotNull @Positive
         Double pricePerNight,
 
         @NotNull @Min(1)
-        Integer maxGuests,
+        Integer maxCapacity,
 
         @NotNull @Size(min = 1)
         List<@NotBlank String> services,
 
         @NotNull @Size(min = 1)
-        List<@NotBlank String> images,
+        List< MultipartFile> images// nota: cambie esto de list<string>a multipart
 
-        @NotBlank
-        String mainImage,
 
-        @NotNull @Min(1)
-        Integer minImage,
-
-        @NotNull @Max(20)
-        Integer maxImages
 ) {
 }

@@ -83,8 +83,11 @@ public class UserServiceImpl implements UserService {
 
         return new UserProfileDTO(
                 currentUser.getId(),
+                currentUser.getPhone(),
                 currentUser.getEmail(),
-                currentUser.getName()
+                currentUser.getName(),
+                currentUser.getPhotoUrl()
+
         );
     }
 
@@ -232,5 +235,9 @@ public class UserServiceImpl implements UserService {
 
         user.setRole(Role.HOST);
         userRepository.save(user);
+    }
+    @Override
+    public String getAuthenticatedUserId() throws Exception {
+        return authService.getUserID();
     }
 }

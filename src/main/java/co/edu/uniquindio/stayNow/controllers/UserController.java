@@ -40,6 +40,14 @@ public class UserController {
         userService.changePassword(newPasswordRequest);
         return ResponseEntity.ok(new ResponseDTO<>(false, "Password updated"));
     }
+    @GetMapping("/profile")
+    public ResponseEntity<ResponseDTO<UserProfileDTO>> getProfile() throws Exception {
+        // Obtiene el ID directamente desde el token (ya autenticado por el filtro JWT)
+        String id = userService.getAuthenticatedUserId();
+
+        UserProfileDTO userDTO = userService.get(id);
+        return ResponseEntity.ok(new ResponseDTO<>(false, userDTO));
+    }
 
 
 }

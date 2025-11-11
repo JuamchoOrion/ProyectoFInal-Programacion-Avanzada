@@ -78,8 +78,11 @@ public class AccommodationController {
         return ResponseEntity.ok(new ResponseDTO<>(false, result));
     }
 
-    @PostMapping("")
-    public ResponseEntity<ResponseDTO<AccommodationDTO>> createAccommodation(@RequestBody CreateAccommodationDTO accommodationDTO) throws Exception {
+
+    @PostMapping(consumes = "multipart/form-data")
+    public ResponseEntity<ResponseDTO<AccommodationDTO>> createAccommodation(
+            @ModelAttribute CreateAccommodationDTO accommodationDTO
+    ) throws Exception {
         AccommodationDTO dto = accommodationService.create(accommodationDTO);
         return ResponseEntity.ok(new ResponseDTO<>(false, dto));
     }

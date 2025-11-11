@@ -30,6 +30,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -58,7 +59,7 @@ public class AccommodationServiceImpl implements AccommodationService {
 
     @Value("${cloudinary.folderName}")
     private String cloudinaryFolderName;
-
+/*
     @Override
     public AccommodationDTO create(CreateAccommodationDTO accommodationDTO) throws Exception {
 
@@ -106,7 +107,55 @@ public class AccommodationServiceImpl implements AccommodationService {
         // 🧠 7️⃣ Convertir la entidad guardada a DTO de respuesta
         return accommodationMapper.toAccommodationDTO(saved);
     }
+*/
+@Override
+public AccommodationDTO create(CreateAccommodationDTO accommodationDTO) throws Exception {
 
+    List<String> uploadedImageUrls = new ArrayList<>();
+
+    // ✅ Subir las imágenes que vienen como MultipartFile
+    if (accommodationDTO.images() != null) {
+        for (MultipartFile file : accommodationDTO.images()) {
+            Map result = imageService.upload(file); // 👈 usa tu método que recibe MultipartFile
+            String url = (String) result.get("secure_url");
+            uploadedImageUrls.add(url);
+            System.out.println("✅ Imagen subida: " + url);
+        }
+    }
+
+    // 🔐 Validar el usuario autenticado
+    String id = authService.getUserID();
+    User user = userRepository.getUserById(id)
+            .orElseThrow(() -> new UserNotFoundException("User not found"));
+
+    if (!user.getRole().equals(Role.HOST)) {
+        throw new UnauthorizedActionException("User is not a host");
+    }
+
+    // 🧩 MapStruct crea la entidad base
+    Accommodation accommodation = accommodationMapper.toEntity(accommodationDTO);
+    accommodation.setHost(user);
+
+    // 💡 Servicios (enums)
+    if (accommodationDTO.services() != null && !accommodationDTO.services().isEmpty()) {
+        Set<AccommodationServiceType> serviceEnums = accommodationDTO.services().stream()
+                .map(String::toUpperCase)
+                .map(AccommodationServiceType::valueOf)
+                .collect(Collectors.toSet());
+        accommodation.setAccommodationServiceTypes(serviceEnums);
+    } else {
+        accommodation.setAccommodationServiceTypes(Set.of());
+    }
+
+    // 🖼️ Asignar imágenes subidas
+    if (!uploadedImageUrls.isEmpty()) {
+        accommodation.setImages(uploadedImageUrls);
+        accommodation.setMainImage(uploadedImageUrls.get(0));
+    }
+
+    Accommodation saved = accommodationRepo.save(accommodation);
+    return accommodationMapper.toAccommodationDTO(saved);
+}
 
     @Override
     public AccommodationDTO get(Long accomodationId) throws Exception {
@@ -258,7 +307,7 @@ public class AccommodationServiceImpl implements AccommodationService {
             LocalDateTime checkOut,
             Double minPrice,
             Double maxPrice,
-            List<String> services,
+            List<String>  services,
             Pageable pageable
     ) throws Exception {
 
