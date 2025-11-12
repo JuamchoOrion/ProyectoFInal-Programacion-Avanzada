@@ -1,7 +1,9 @@
 package co.edu.uniquindio.stayNow.controllers;
 
 import co.edu.uniquindio.stayNow.dto.*;
+import co.edu.uniquindio.stayNow.model.entity.User;
 import co.edu.uniquindio.stayNow.security.JWTUtils;
+import co.edu.uniquindio.stayNow.services.implementation.UserDetailsServiceImpl;
 import co.edu.uniquindio.stayNow.services.implementation.UserServiceImpl;
 import co.edu.uniquindio.stayNow.services.interfaces.AuthService;
 import co.edu.uniquindio.stayNow.services.interfaces.UserService;
@@ -16,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -74,11 +77,10 @@ public class AuthController {
     }
     @GetMapping("/validate-token")
     public ResponseEntity<ResponseDTO<Boolean>> validateToken(@CookieValue(value = "jwt", required = false) String jwt) {
+
         if (jwt == null || jwt.isEmpty()) {
-            // ⚠️ No hay cookie, pero no es error fatal
             return ResponseEntity.ok(new ResponseDTO<>(false, false, "Sin sesión activa"));
         }
-
         try {
             jwtUtil.parseJwt(jwt);
             return ResponseEntity.ok(new ResponseDTO<>(false, true, "Token válido"));
@@ -106,6 +108,31 @@ public class AuthController {
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, cookie.toString())
                 .body(result);
+    }
+    @GetMapping("/me")
+    public ResponseEntity<ResponseDTO<Map<String, Object>>> getCurrentUser() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        if (auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getPrincipal())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new ResponseDTO<>(true, Map.of("message", "No autenticado")));
+        }
+
+        org.springframework.security.core.userdetails.User springUser =
+                (org.springframework.security.core.userdetails.User) auth.getPrincipal();
+
+        String id = springUser.getUsername(); // tu id lo estás guardando como "username"
+        String role = springUser.getAuthorities().stream()
+                .findFirst()
+                .map(GrantedAuthority::getAuthority)
+                .orElse("UNKNOWN");
+
+        Map<String, Object> userInfo = Map.of(
+                "id", id,
+                "role", role
+        );
+
+        return ResponseEntity.ok(new ResponseDTO<>(false, userInfo));
     }
 
 }
