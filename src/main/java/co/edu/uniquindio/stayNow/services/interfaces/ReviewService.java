@@ -10,7 +10,7 @@ import org.springframework.data.domain.Pageable;
 
 public interface ReviewService {
 
-    ReviewDTO createReview(CreateReviewDTO reviewDTO) throws Exception;
+    ReviewDTO createReview(CreateReviewDTO dto, String userId) throws Exception;
 
     Page<ReviewDTO> getReviewsByAccommodation(Long accommodationId, int page, int size) throws Exception;
 

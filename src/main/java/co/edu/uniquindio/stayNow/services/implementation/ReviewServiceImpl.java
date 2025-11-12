@@ -37,36 +37,37 @@ public class ReviewServiceImpl implements ReviewService {
     private final ReplyMapper replyMapper;
 
     @Override
-    public ReviewDTO createReview(CreateReviewDTO createReviewDTO) throws Exception {
-        User user = userRepository.getUserById(authService.getUserID())
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
+    public ReviewDTO createReview(CreateReviewDTO dto, String userId) throws Exception {
+        // Obtener el usuario que está creando la reseña
+        User guest = userRepository.getUserById(userId)
+                .orElseThrow(() -> new Exception("Usuario no encontrado"));
 
-        var reservation = reservationRepository.findById(createReviewDTO.reservationId())
-                .orElseThrow(() -> new ReservationNotFoundException("Reservation not found"));
+        // Verificar que la reserva existe
+        Reservation reservation = reservationRepository.findById(dto.reservationId())
+                .orElseThrow(() -> new Exception("Reserva no encontrada"));
 
-        if (!reservation.getGuest().getId().equals(user.getId()))
-            throw new UnauthorizedReviewException("The reservation does not belong to the user");
+        // Verificar que la reserva pertenece a este usuario
+        if (!reservation.getGuest().getId().equals(userId)) {
+            throw new Exception("No tienes permiso para calificar esta reserva");
+        }
 
-        if (reservation.getCheckOut().isAfter(LocalDateTime.now()))
-            throw new Exception("The reservation has not yet finished");
+        // Verificar que no haya otra review para la misma reserva
+        boolean exists = reviewRepository.existsByReservation_Id(reservation.getId());
+        if (exists) {
+            throw new Exception("Ya existe una review para esta reserva");
+        }
 
-        if (reviewRepository.existsByReservation_Id(createReviewDTO.reservationId()))
-            throw new DuplicateReviewException("A review already exists for this reservation");
-
-        if (createReviewDTO.rating() < 1 || createReviewDTO.rating() > 5)
-            throw new OperationNotAllowedException("The rating must be between 1 and 5");
-
-        if (createReviewDTO.text() != null && createReviewDTO.text().length() > 500)
-            throw new OperationNotAllowedException("The comment cannot exceed 500 characters");
-
-        Review review = reviewMapper.toEntity(createReviewDTO);
-        review.setUser(user);
-        review.setReservation(reservation);
+        // Crear la entidad
+        Review review = reviewMapper.toEntity(dto);
+        review.setUser(guest);
         review.setAccommodation(reservation.getAccommodation());
-        review.setComment(createReviewDTO.text());
-        review.setRating(createReviewDTO.rating());
-        review.setCreatedAt(LocalDateTime.now());
-        return reviewMapper.toDTO(reviewRepository.save(review));
+        review.setReservation(reservation); // <-- asignar la reserva
+
+        // Guardar en BD
+        Review saved = reviewRepository.save(review);
+
+        // Devolver DTO
+        return reviewMapper.toDTO(saved);
     }
 
     // Get all reviews sorted by most recent creation date.
