@@ -15,6 +15,7 @@ public interface ReservationMapper {
     @Mapping(target = "reservationStatus", expression = "java(co.edu.uniquindio.stayNow.model.enums.ReservationStatus.PENDING)")
     @Mapping(target = "accommodation", ignore = true)
     @Mapping(target = "guest", ignore = true)
+    @Mapping(target = "guestsNumber", source = "guests")
     Reservation toEntity(CreateReservationDTO dto);
 
     @Mapping(target = "accommodationId", source = "accommodation.id")

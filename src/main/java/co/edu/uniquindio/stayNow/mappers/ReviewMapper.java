@@ -27,6 +27,7 @@ public interface ReviewMapper {
     @Mapping(target = "userName", source = "user.name")
     @Mapping(target = "text", source = "comment")
     @Mapping(target = "reply", expression = "java(review.getReply() != null ? review.getReply().getMessage() : null)")
+    @Mapping(target = "accommodationId", source = "accommodation.id")
     ReviewDTO toDTO(Review review);
 
     // Lista de reviews a DTOs.

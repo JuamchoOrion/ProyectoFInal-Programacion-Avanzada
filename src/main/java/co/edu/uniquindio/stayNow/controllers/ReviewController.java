@@ -30,9 +30,13 @@ public class ReviewController {
 
     @PostMapping
     public ResponseEntity<ResponseDTO<ReviewDTO>> createReview(@Valid @RequestBody CreateReviewDTO reviewDto) throws Exception {
-        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
-        ReviewDTO dto = reviewService.createReview(reviewDto);
-        return  ResponseEntity.ok(new ResponseDTO<>(false, dto));
+        // obtener ID del usuario autenticado desde el token JWT
+        String userId = authService.getUserID();
+
+        // crear la review pasando el usuario
+        ReviewDTO dto = reviewService.createReview(reviewDto, userId);
+
+        return ResponseEntity.ok(new ResponseDTO<>(false, dto));
     }
     @GetMapping("/accommodation/{id}")
     public ResponseEntity<ResponseDTO<Page<ReviewDTO>>> getReviews(
