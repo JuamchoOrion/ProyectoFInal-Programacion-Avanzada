@@ -46,6 +46,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                         token = token.substring(7);
                         try {
                             String userId = jwtUtils.parseJwt(token).getBody().getSubject();
+                           // String userId = jwtUtils.parseJwt(token).getPayload().getSubject();
+
                             accessor.setUser(new UsernamePasswordAuthenticationToken(userId, null, List.of()));
                         } catch (Exception e) {
                             throw new IllegalArgumentException("Token inválido");

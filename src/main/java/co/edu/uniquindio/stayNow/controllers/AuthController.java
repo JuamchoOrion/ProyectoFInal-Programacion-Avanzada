@@ -7,6 +7,7 @@ import co.edu.uniquindio.stayNow.services.implementation.UserDetailsServiceImpl;
 import co.edu.uniquindio.stayNow.services.implementation.UserServiceImpl;
 import co.edu.uniquindio.stayNow.services.interfaces.AuthService;
 import co.edu.uniquindio.stayNow.services.interfaces.UserService;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -134,5 +135,19 @@ public class AuthController {
 
         return ResponseEntity.ok(new ResponseDTO<>(false, userInfo));
     }
+    @GetMapping("/socket-token")
+    public ResponseEntity<ResponseDTO<String>> getSocketToken(HttpServletRequest request) {
+        if (request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if ("jwt".equals(cookie.getName())) {
+                    return ResponseEntity.ok(new ResponseDTO<>(false, cookie.getValue()));
+                }
+            }
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(new ResponseDTO<>(true, null, "No autenticado"));
+    }
+
+
 
 }
