@@ -181,7 +181,7 @@ public AccommodationDTO create(CreateAccommodationDTO accommodationDTO) throws E
         User currentUser = userRepository.getUserById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
-        // 🔒 Validar que el usuario sea el propietario
+
         if (!accommodation.getHost().getId().equals(currentUser.getId())) {
             throw new UnauthorizedActionException("You cannot edit an accommodation that does not belong to you");
         }
@@ -284,7 +284,6 @@ public AccommodationDTO create(CreateAccommodationDTO accommodationDTO) throws E
         User currentUser = userRepository.getUserById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
-        // 🔒 Solo el dueño o un admin pueden eliminar
         if (!accommodation.getHost().getId().equals(currentUser.getId())
                 && !currentUser.getRole().equals(Role.ADMIN)) {
             throw new UnauthorizedActionException("You cannot delete an accommodation that does not belong to you");

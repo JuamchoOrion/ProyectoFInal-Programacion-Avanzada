@@ -2,7 +2,7 @@
 # 🔐 TOKENS DE AUTENTICACIÓN
 ##############################################
 ### Token del host (ROLE_HOST)
-@tokenHost = eyJhbGciOiJIUzM4NCJ9.eyJuYW1lIjoiQWRtaW4iLCJyb2xlIjoiUk9MRV9IT1NUIiwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJzdWIiOiI4ZWQ3MzFiNS0wZGQ2LTQ3MzEtYTRlOC0wNWYwMWMxMDIzNTYiLCJpYXQiOjE3NjAyMjU5NTYsImV4cCI6MTc2MDIyOTU1Nn0.IsNJnjbFZv9hZQIEeDqdiuDhl1YdZjOWlS7yEADWRZa7m2b9vwUiwuU24ODLYlId
+@tokenHost = eyJhbGciOiJIUzM4NCJ9.eyJyb2xlIjoiUk9MRV9IT1NUIiwibmFtZSI6IkFkbWluIiwiZW1haWwiOiJhZG1pbkBnbWFpbC5jb20iLCJzdWIiOiI4ZWQ3MzFiNS0wZGQ2LTQ3MzEtYTRlOC0wNWYwMWMxMDIzNTYiLCJpYXQiOjE3NjI3OTU1ODcsImV4cCI6MTc2Mjc5OTE4N30.sGbWCa1Y0CJyj7R8vx7XgWwziMlxg06JOwNuR3vpysz4zRgRyK_lfxoUybeP_NJh
 
 ### Token del guest (ROLE_GUEST)
 @tokenGuest = eyJhbGciOiJIUzM4NCJ9.eyJuYW1lIjoidGVzdGVyIiwicm9sZSI6IlJPTEVfR1VFU1QiLCJlbWFpbCI6InJhbWlyZXNqdWFuZGExMjNAZ21haWwuY29tIiwic3ViIjoiMjJmYWNmMTktZmRhNi00OTdjLWFhMTQtZTZkOTA0NDMyNWI4IiwiaWF0IjoxNzYwMjIzNjEwLCJleHAiOjE3NjAyMjcyMTB9.gemamjVaMwiWzWGUNQdHjdPoqJXY6rKeLXjHD7tbdUfJuVYDmF1ia4jofo9IjP5e
@@ -26,10 +26,9 @@ Authorization: Bearer {{tokenHost}}
   "maxGuests": 4,
   "services": ["WIFI", "POOL"],
   "images": [
-    "C:\\Users\\ramir\\Downloads\\gato.jpg",
     "C:\\Users\\ramir\\Downloads\\roblox.jpg"
   ],
-  "mainImage": "C:\\Users\\ramir\\Downloads\\gato.jpg",
+  "mainImage": "C:\\Users\\ramir\\Downloads\\roblox.jpg",
   "minImage": 1,
   "maxImages": 5
 }

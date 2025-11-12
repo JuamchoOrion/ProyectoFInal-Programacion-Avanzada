@@ -1,10 +1,12 @@
 package co.edu.uniquindio.stayNow.controllers;
 
 import co.edu.uniquindio.stayNow.dto.*;
+import co.edu.uniquindio.stayNow.security.JWTUtils;
 import co.edu.uniquindio.stayNow.services.implementation.UserServiceImpl;
 import co.edu.uniquindio.stayNow.services.interfaces.AuthService;
 import co.edu.uniquindio.stayNow.services.interfaces.UserService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.antlr.v4.runtime.Token;
@@ -13,7 +15,13 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
+
 //TODAS LAS APIS LISTAS PARA ESTA SEMANA (28 DE SEPTIEMBRE)
 @RestController
 @RequestMapping("/api/auth")
@@ -22,6 +30,7 @@ public class AuthController {
 
     private final UserServiceImpl userService;
     private final AuthService authService;
+    private final JWTUtils jwtUtil;
 
     // Inyeccion de dependencias
     @PostMapping("/register")
@@ -64,9 +73,39 @@ public class AuthController {
                 .body(new ResponseDTO<>(false, "Password sent successfully"));
     }
     @GetMapping("/validate-token")
-    public ResponseEntity<ResponseDTO<Boolean>> validateToken(HttpServletRequest request) {
-        // El filtro JWT ya habrá validado el token y autenticado al usuario
-        return ResponseEntity.ok(new ResponseDTO<>(false, true));
+    public ResponseEntity<ResponseDTO<Boolean>> validateToken(@CookieValue(value = "jwt", required = false) String jwt) {
+        if (jwt == null || jwt.isEmpty()) {
+            // ⚠️ No hay cookie, pero no es error fatal
+            return ResponseEntity.ok(new ResponseDTO<>(false, false, "Sin sesión activa"));
+        }
+
+        try {
+            jwtUtil.parseJwt(jwt);
+            return ResponseEntity.ok(new ResponseDTO<>(false, true, "Token válido"));
+        } catch (Exception e) {
+            return ResponseEntity.ok(new ResponseDTO<>(false, false, "Token inválido o expirado"));
+        }
+    }
+
+
+    @PostMapping("/logout")
+    public ResponseEntity<Map<String, Object>> logout(HttpServletResponse response) {
+        // 🔹 Borra la cookie JWT
+        ResponseCookie cookie = ResponseCookie.from("jwt", "")
+                .httpOnly(true)
+                .secure(false)
+                .sameSite("Lax")
+                .path("/")
+                .maxAge(0)
+                .build();
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("error", false);
+        result.put("content", "Sesión cerrada correctamente.");
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                .body(result);
     }
 
 }

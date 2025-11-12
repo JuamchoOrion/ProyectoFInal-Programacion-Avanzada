@@ -79,7 +79,6 @@ public class JWTFilter extends OncePerRequestFilter{
                 }
             }
         }
-
         // 2️⃣ Si no hay cookie, intentar obtenerlo del header Authorization
         String header = request.getHeader("Authorization");
         if (header != null && header.startsWith("Bearer ")) {
@@ -92,6 +91,6 @@ public class JWTFilter extends OncePerRequestFilter{
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getServletPath();
         // ⛔ NO aplicar el filtro a las rutas públicas
-        return path.startsWith("/api/auth");
+        return path.equals("/api/auth/login") || path.equals("/api/auth/register");
     }
 }
