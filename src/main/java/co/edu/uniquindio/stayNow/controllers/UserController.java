@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/users")
@@ -29,9 +30,14 @@ public class UserController {
         return ResponseEntity.ok(new ResponseDTO<>(false, "The user has been deleted"));
     }
 
-    @PutMapping
-    public ResponseEntity<ResponseDTO<String>> edit( @Valid @RequestBody EditUserDTO userDTO) throws Exception {
-        userService.edit( userDTO);
+    @PutMapping(consumes = "multipart/form-data")
+    public ResponseEntity<ResponseDTO<String>> edit(
+            @Valid @RequestPart("user") EditUserDTO userDTO,
+            @RequestPart(value = "photo", required = false) MultipartFile photo
+    ) throws Exception {
+
+        userService.edit(userDTO, photo);
+
         return ResponseEntity.ok(new ResponseDTO<>(false, "The user has been updated"));
     }
 

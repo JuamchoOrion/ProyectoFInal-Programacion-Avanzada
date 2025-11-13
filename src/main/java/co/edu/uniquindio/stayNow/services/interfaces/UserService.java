@@ -3,6 +3,7 @@ package co.edu.uniquindio.stayNow.services.interfaces;
 
 
 import co.edu.uniquindio.stayNow.dto.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -19,7 +20,7 @@ public interface UserService {
 
     List<UserDTO> listAll();
 
-    void edit( EditUserDTO userDTO) throws Exception;
+    void edit(EditUserDTO userDTO, MultipartFile photo) throws Exception;
 
     void changePassword(ChangePasswordRequestDTO newPasswordRequest) throws Exception;
     void becomeHost() throws Exception;
