@@ -12,6 +12,7 @@ public interface UserService {
 
     boolean isHost(Long userId);
 
+    UserProfileDTO getProfile(String id) throws Exception;
     UserProfileDTO get(String id) throws Exception;
 
     void delete(String id) throws Exception;

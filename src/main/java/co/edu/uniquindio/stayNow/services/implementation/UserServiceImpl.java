@@ -71,17 +71,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserProfileDTO get(String id) throws Exception {
-        String currentUserId = authService.getUserID();
-        User currentUser = userRepository.getUserById(currentUserId)
+    public UserProfileDTO getProfile(String id) throws Exception {
+        String currentid = authService.getUserID();
+        User currentUser = userRepository.getUserById(currentid)
                 .orElseThrow(() -> new UserNotFoundException("Unauthenticated user."));
 
-        //arreglar despues att: Miguel :D
-
-        // Si el usuario autenticado no es admin ni está pidiendo su propio perfil, denegar
-//        if (!currentUserId.equals(id) && currentUser.getRole() != Role.ADMIN) {
-//            throw new UnauthorizedActionException("can't get other's user profile.");
-//        }
+       if (!currentid.equals(id)) {
+          throw new UnauthorizedActionException("can't get other's user profile.");
+       }
 
         return new UserProfileDTO(
                 currentUser.getId(),
@@ -90,6 +87,17 @@ public class UserServiceImpl implements UserService {
                 currentUser.getName(),
                 currentUser.getPhotoUrl()
 
+        );
+    }
+    @Override
+    public UserProfileDTO get(String id) throws Exception {
+        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User not found."));
+        return new UserProfileDTO(
+                user.getId(),
+                user.getPhone(),
+                user.getEmail(),
+                user.getName(),
+                user.getPhotoUrl()
         );
     }
 

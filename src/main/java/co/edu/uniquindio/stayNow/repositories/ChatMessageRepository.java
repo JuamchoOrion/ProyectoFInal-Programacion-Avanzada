@@ -13,13 +13,18 @@ public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long> 
             String senderId2, String receiverId2
     );
     @Query("""
-        SELECT DISTINCT\s
-            CASE\s
-                WHEN m.senderId = :userId THEN m.receiverId\s
-                ELSE m.senderId\s
-            END
-        FROM ChatMessage m
-        WHERE m.senderId = :userId OR m.receiverId = :userId
-       \s""")
+    SELECT DISTINCT\s
+        CASE\s
+            WHEN m.senderId = :userId THEN m.receiverId\s
+            ELSE m.senderId\s
+        END
+    FROM ChatMessage m
+    WHERE (m.senderId = :userId OR m.receiverId = :userId)
+      AND (CASE\s
+              WHEN m.senderId = :userId THEN m.receiverId\s
+              ELSE m.senderId\s
+           END) <> :userId
+""")
     List<String> findDistinctContacts(String userId);
+
 }

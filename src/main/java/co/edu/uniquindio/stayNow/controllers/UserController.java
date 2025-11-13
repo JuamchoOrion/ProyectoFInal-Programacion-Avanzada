@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     private final UserService userService;
 
-
+//cualquier perfil
     @GetMapping("/{id}")
     public ResponseEntity<ResponseDTO<UserProfileDTO>> get(@PathVariable String id) throws Exception{
         UserProfileDTO userDTO = userService.get(id);
@@ -44,8 +44,7 @@ public class UserController {
     public ResponseEntity<ResponseDTO<UserProfileDTO>> getProfile() throws Exception {
         // Obtiene el ID directamente desde el token (ya autenticado por el filtro JWT)
         String id = userService.getAuthenticatedUserId();
-
-        UserProfileDTO userDTO = userService.get(id);
+        UserProfileDTO userDTO = userService.getProfile(id);
         return ResponseEntity.ok(new ResponseDTO<>(false, userDTO));
     }
 

@@ -1,18 +1,12 @@
 package co.edu.uniquindio.stayNow.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
+import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDateTime;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class ChatMessageDTO {
-    private String senderId;
-    private String receiverId;
-    private String content;
-    private LocalDateTime timestamp;
-}
-
+public record ChatMessageDTO(
+        String senderId,
+        String receiverId,
+        String content,
+        @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss")
+        LocalDateTime timestamp
+) {}
