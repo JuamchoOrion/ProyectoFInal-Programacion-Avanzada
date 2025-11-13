@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -108,51 +109,38 @@ public class UserServiceImpl implements UserService {
         return userRepository.findAll().stream().map(userMapper::toUserDTO).collect(Collectors.toList());
     }
     @Override
-    public void edit(EditUserDTO userDTO) throws Exception {
+    public void edit(EditUserDTO userDTO, MultipartFile photo) throws Exception {
 
         String id = authService.getUserID();
         User user = userRepository.getUserById(id)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
-        User currentUser = userRepository.getUserById(id)
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
-
-        if (!currentUser.getRole().equals(Role.ADMIN)) {
-            // Solo puede editar su propia cuenta
-            if (!currentUser.getId().equals(user.getId())) {
-                throw new UnauthorizedActionException("can't edit other's user profile.");
-            }
-        }
-
-        // 1️⃣ Guardar URL antigua para borrado
+        // Guardar foto anterior
         String oldPhotoUrl = user.getPhotoUrl();
 
+        // Subir nueva foto si viene en el request
+        String newPhotoUrl = oldPhotoUrl;
 
-
-        // 3️⃣ Subir nueva foto si userDTO.photoUrl es ruta local
-        String newPhotoUrl = userDTO.photoUrl();
-        if (newPhotoUrl != null && !newPhotoUrl.isBlank() && newPhotoUrl.startsWith("C:\\")) {
-            Map uploadResult = imageService.uploadFromPath(newPhotoUrl);
+        if (photo != null && !photo.isEmpty()) {
+            Map uploadResult = imageService.upload(photo);
             newPhotoUrl = (String) uploadResult.get("secure_url");
         }
 
-        // 4️⃣ Actualizar campos manualmente
+        // Actualizar campos
         user.setName(userDTO.name());
         user.setPhone(userDTO.phone());
-
-        user.setPhotoUrl(newPhotoUrl); // nueva URL de Cloudinary
         user.setRole(userDTO.role());
+        user.setPhotoUrl(newPhotoUrl);
 
-
-        // 5️⃣ Eliminar foto antigua de Cloudinary si cambió
-        if (oldPhotoUrl != null && !oldPhotoUrl.isBlank() && !oldPhotoUrl.equals(newPhotoUrl)) {
+        // Borrar imagen anterior si cambió
+        if (oldPhotoUrl != null && newPhotoUrl != null && !oldPhotoUrl.equals(newPhotoUrl)) {
             String publicId = extractPublicId(oldPhotoUrl);
             if (publicId != null) {
                 imageService.delete(publicId);
             }
         }
 
-        // 6️⃣ Guardar cambios
+        // Guardar en BD
         userRepository.save(user);
     }
 
