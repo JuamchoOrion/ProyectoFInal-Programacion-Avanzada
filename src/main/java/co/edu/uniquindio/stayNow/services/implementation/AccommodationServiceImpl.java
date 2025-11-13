@@ -111,12 +111,37 @@ public class AccommodationServiceImpl implements AccommodationService {
 @Override
 public AccommodationDTO create(CreateAccommodationDTO accommodationDTO) throws Exception {
 
+    // ⚠️ Validar cantidad máxima de imágenes
+    if (accommodationDTO.images() != null && accommodationDTO.images().size() > 10) {
+        throw new IllegalArgumentException("Solo se permiten hasta 10 imágenes por alojamiento.");
+    }
+
     List<String> uploadedImageUrls = new ArrayList<>();
 
-    // ✅ Subir las imágenes que vienen como MultipartFile
+    // ⚠️ Validar tipo de archivo antes de subir
     if (accommodationDTO.images() != null) {
         for (MultipartFile file : accommodationDTO.images()) {
-            Map result = imageService.upload(file); // 👈 usa tu método que recibe MultipartFile
+
+            String contentType = file.getContentType();
+
+            // Lista blanca de formatos aceptados
+            List<String> allowedTypes = List.of(
+                    "image/png",
+                    "image/jpeg",
+                    "image/jpg",
+                    "image/webp",
+                    "image/gif"
+            );
+
+            if (contentType == null || !allowedTypes.contains(contentType.toLowerCase())) {
+                throw new IllegalArgumentException(
+                        "El archivo " + file.getOriginalFilename() +
+                                " no es un formato de imagen válido. Solo se permiten PNG, JPG, JPEG, WEBP o GIF."
+                );
+            }
+
+            // 📤 Subir imagen a Cloudinary
+            Map result = imageService.upload(file);
             String url = (String) result.get("secure_url");
             uploadedImageUrls.add(url);
             System.out.println("✅ Imagen subida: " + url);
@@ -132,11 +157,18 @@ public AccommodationDTO create(CreateAccommodationDTO accommodationDTO) throws E
         throw new UnauthorizedActionException("User is not a host");
     }
 
-    // 🧩 MapStruct crea la entidad base
+    // 🧩 Crear entidad desde el mapper
     Accommodation accommodation = accommodationMapper.toEntity(accommodationDTO);
     accommodation.setHost(user);
 
-    // 💡 Servicios (enums)
+    // 🧍 Capacidad máxima
+    if (accommodationDTO.maxCapacity() != null && accommodationDTO.maxCapacity() > 0) {
+        accommodation.setMaxGuests(accommodationDTO.maxCapacity());
+    } else {
+        accommodation.setMaxGuests(1);
+    }
+
+    // 💡 Servicios
     if (accommodationDTO.services() != null && !accommodationDTO.services().isEmpty()) {
         Set<AccommodationServiceType> serviceEnums = accommodationDTO.services().stream()
                 .map(String::toUpperCase)
@@ -153,7 +185,9 @@ public AccommodationDTO create(CreateAccommodationDTO accommodationDTO) throws E
         accommodation.setMainImage(uploadedImageUrls.get(0));
     }
 
+    // 💾 Guardar en la base de datos
     Accommodation saved = accommodationRepo.save(accommodation);
+
     return accommodationMapper.toAccommodationDTO(saved);
 }
 
