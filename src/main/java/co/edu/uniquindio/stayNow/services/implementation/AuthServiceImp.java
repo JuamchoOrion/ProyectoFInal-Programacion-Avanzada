@@ -59,6 +59,14 @@ public class AuthServiceImp implements AuthService {
                 "role", "ROLE_" + user.getRole().name()
         );
     }
+    public String getUserIDFromToken(String token) {
+        try {
+            return jwtUtils.parseJwt(token).getBody().getSubject();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
 
     // ======================================================
     // OBTENER ID DE USUARIO AUTENTICADO

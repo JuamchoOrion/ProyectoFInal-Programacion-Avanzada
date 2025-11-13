@@ -1,5 +1,6 @@
 package co.edu.uniquindio.stayNow.config;
 
+import co.edu.uniquindio.stayNow.handlers.ChatSocketHandler;
 import co.edu.uniquindio.stayNow.security.JWTUtils;
 import co.edu.uniquindio.stayNow.services.implementation.AuthServiceImp;
 import lombok.RequiredArgsConstructor;
@@ -13,26 +14,29 @@ import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
-import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
-import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
+import org.springframework.web.socket.config.annotation.*;
 
 import java.util.List;
 @Configuration
 @EnableWebSocketMessageBroker
 @RequiredArgsConstructor
-public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
+public class WebSocketConfig implements WebSocketMessageBrokerConfigurer, WebSocketConfigurer {
 
     private final JWTUtils jwtUtils;
     private final AuthServiceImp authService;
-
+    private final ChatSocketHandler chatSocketHandler;
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/chat-websocket")
                 .setAllowedOriginPatterns("*")
-                .withSockJS();
+                .setAllowedOrigins("http://localhost:4200");
     }
-
+    @Override
+    public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
+        registry.addHandler(chatSocketHandler, "/chat-websocket")
+                .setAllowedOrigins("http://localhost:4200") // tu frontend
+                .withSockJS(); // si quieres compatibilidad vieja, puedes quitarlo para socket puro
+    }
     @Override
     public void configureClientInboundChannel(ChannelRegistration registration) {
         registration.interceptors(new ChannelInterceptor() {

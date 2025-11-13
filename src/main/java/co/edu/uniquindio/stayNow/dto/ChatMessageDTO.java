@@ -10,6 +10,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ChatMessageDTO {
+    private String senderId;
     private String receiverId;
     private String content;
+    private LocalDateTime timestamp;
 }
+

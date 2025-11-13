@@ -25,12 +25,15 @@ public class EmailServiceImp implements EmailService {
                 .buildEmail();
 
         try (Mailer mailer = MailerBuilder
-                .withSMTPServer("smtp.gmail.com", 587, "devjuanchotest@gmail.com", "wtlnihfzpzuhgyjo")
+                .withSMTPServer("smtp.gmail.com", 587, "devjuanchotest@gmail.com", "niwmxbyyncyscqsl")
                 .withTransportStrategy(TransportStrategy.SMTP_TLS)
                 .withDebugLogging(true)
                 .buildMailer()) {
 
             mailer.sendMail(email);
+        }catch (Exception e) {
+            e.printStackTrace(); // 🔍 mostrará el código SMTP (535, 534, etc.)
+            throw new Exception("Error enviando correo: " + e.getMessage(), e);
         }
     }
 }

@@ -76,10 +76,12 @@ public class UserServiceImpl implements UserService {
         User currentUser = userRepository.getUserById(currentUserId)
                 .orElseThrow(() -> new UserNotFoundException("Unauthenticated user."));
 
+        //arreglar despues att: Miguel :D
+
         // Si el usuario autenticado no es admin ni está pidiendo su propio perfil, denegar
-        if (!currentUserId.equals(id) && currentUser.getRole() != Role.ADMIN) {
-            throw new UnauthorizedActionException("can't get other's user profile.");
-        }
+//        if (!currentUserId.equals(id) && currentUser.getRole() != Role.ADMIN) {
+//            throw new UnauthorizedActionException("can't get other's user profile.");
+//        }
 
         return new UserProfileDTO(
                 currentUser.getId(),

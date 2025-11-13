@@ -1,6 +1,6 @@
 
 ### 🔑 TOKEN DEL USUARIO
-@token = eyJhbGciOiJIUzM4NCJ9.eyJlbWFpbCI6Imp1YW5jaG9lamVtcGxvQGdtYWlsLmNvbSIsIm5hbWUiOiJKdWFuY2hvIiwicm9sZSI6IlJPTEVfR1VFU1QiLCJzdWIiOiI3ODFmMzViMS0yODY0LTRhNDktYWJlNC04MzI1NDRjZGM2ZWMiLCJpYXQiOjE3NjI5MzA2MjMsImV4cCI6MTc2MjkzNDIyM30.IdPPGQ71WXphiiF-goccWlGmc6vWHsMg4KhVQ0cHjgEAdVOKdtSqBUE3UUlFXKwg
+@token = eyJhbGciOiJIUzM4NCJ9.eyJlbWFpbCI6InJhbWlyZXNqdWFuZGEzMDA1QGdtYWlsLmNvbSIsIm5hbWUiOiJqdWFuY2hvQ29ycmVvIiwicm9sZSI6IlJPTEVfR1VFU1QiLCJzdWIiOiJkZWU1Y2ExMi1hZjcwLTRkN2MtYTJlNy01NjdkOGQzN2IwZmEiLCJpYXQiOjE3NjI5ODEwNjQsImV4cCI6MTc2Mjk4NDY2NH0.j_iX7OJy9yKq7AHIGt-rp_CmCbs-B5DF8ss-CP9YXxqI5jTqPspzKHFtTyumimca
 
 ##############################################################
 # 🏨 CREAR RESERVAS (10 ejemplos)
@@ -13,8 +13,8 @@ Content-Type: application/json
 
 {
   "accommodationId": 3,
-  "checkIn": "2025-12-15T14:00:00",
-  "checkOut": "2025-12-30T12:00:00",
+  "checkIn": "2028-12-15T14:00:00",
+  "checkOut": "2028-12-30T12:00:00",
   "guests": 2
 }
 
