@@ -103,11 +103,6 @@ public class ReservationServiceImp implements ReservationService {
                 .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado."));
 
 
-        if (!currentUser.getRole().equals(Role.GUEST)) {
-            throw new UnauthorizedActionException("Solo los usuarios GUEST pueden ver sus reservas.");
-        }
-
-
         List<Specification<Reservation>> filters = new ArrayList<>();
 
 

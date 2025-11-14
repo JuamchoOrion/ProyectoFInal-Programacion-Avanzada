@@ -11,6 +11,7 @@ import co.edu.uniquindio.stayNow.model.entity.Reply;
 import co.edu.uniquindio.stayNow.model.entity.Reservation;
 import co.edu.uniquindio.stayNow.model.entity.Review;
 import co.edu.uniquindio.stayNow.model.entity.User;
+import co.edu.uniquindio.stayNow.model.enums.ReservationStatus;
 import co.edu.uniquindio.stayNow.repositories.*;
 import co.edu.uniquindio.stayNow.services.interfaces.AuthService;
 import co.edu.uniquindio.stayNow.services.interfaces.ReviewService;
@@ -50,7 +51,9 @@ public class ReviewServiceImpl implements ReviewService {
         if (!reservation.getGuest().getId().equals(userId)) {
             throw new Exception("No tienes permiso para calificar esta reserva");
         }
-
+        if(!reservation.getReservationStatus().equals(ReservationStatus.COMPLETED)){
+            throw new BadRequestException("Reservation is not completed");
+        }
         // Verificar que no haya otra review para la misma reserva
         boolean exists = reviewRepository.existsByReservation_Id(reservation.getId());
         if (exists) {
