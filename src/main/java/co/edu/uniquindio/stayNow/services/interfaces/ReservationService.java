@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 public interface ReservationService {
     ReservationDTO create(CreateReservationDTO reservationDTO) throws Exception;
@@ -25,4 +26,6 @@ public interface ReservationService {
     ReservationDTO getReservationById(Long id) throws Exception;
 
     ReservationDTO cancelReservation(Long reservationId) throws Exception;
+
+    List<ReservationDTO> getReservationsByHost(String id) throws Exception;
 }

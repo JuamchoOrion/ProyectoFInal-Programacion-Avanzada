@@ -206,6 +206,31 @@ public class ReservationServiceImp implements ReservationService {
         return reservationMapper.toReservationDTO(reservationSaved);
     }
 
+    @Override
+    public List<ReservationDTO> getReservationsByHost(String id) throws Exception {
+
+        // 1️⃣ Obtener usuario actual
+        String currentUserId = authService.getUserID();
+
+        User currentUser = userRepository.getUserById(currentUserId)
+                .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado."));
+
+        // 2️⃣ Validar que el usuario es realmente el host solicitado
+        if (!currentUserId.equals(id)) {
+            throw new Exception("No tienes permiso para ver reservas de este anfitrión.");
+        }
+
+        // 3️⃣ Consultar todas las reservas de todos los alojamientos del host
+        List<Reservation> reservations = reservationRepository
+                .findByAccommodation_Host_Id(id);
+
+        // 4️⃣ Convertir a DTO
+        return reservations.stream()
+                .map(reservationMapper::toReservationDTO)
+                .toList();
+    }
+
+
     // 🔹 Métodos privados para validaciones
     private void validateAccommodation(Accommodation accommodation) throws Exception {
         if (accommodation == null) {

@@ -1,9 +1,11 @@
 package co.edu.uniquindio.stayNow.controllers;
 
 import co.edu.uniquindio.stayNow.dto.AccommodationDTO;
+import co.edu.uniquindio.stayNow.dto.ReservationDTO;
 import co.edu.uniquindio.stayNow.dto.UserProfileDTO;
 import co.edu.uniquindio.stayNow.model.entity.Accommodation;
 import co.edu.uniquindio.stayNow.services.interfaces.AccommodationService;
+import co.edu.uniquindio.stayNow.services.interfaces.ReservationService;
 import co.edu.uniquindio.stayNow.services.interfaces.UserService;
 import co.edu.uniquindio.stayNow.services.implementation.UserServiceImpl;
 import co.edu.uniquindio.stayNow.dto.ResponseDTO;
@@ -20,7 +22,7 @@ public class HostController {
 
     private final UserService userService;
     private final AccommodationService accommodationService;
-
+    private final ReservationService reservationService;
     /** Devuelve datos completos del host logeado */
     @GetMapping("/me")
     public ResponseEntity<ResponseDTO<UserProfileDTO>> getCurrentHost() {
@@ -53,6 +55,17 @@ public class HostController {
             List<AccommodationDTO> accommodations = accommodationService.getAccommodationsByHostId(id);
             return ResponseEntity.ok(new ResponseDTO<>(false, accommodations));
         } catch (Exception e) {
+            return ResponseEntity.status(404)
+                    .body(new ResponseDTO<>(true, null, e.getMessage()));
+        }
+    }
+
+    @GetMapping("/{id}/reservations")
+    public ResponseEntity<ResponseDTO<List<ReservationDTO>>> getHostReservations (@PathVariable String id){
+        try{
+            List<ReservationDTO> reservations = reservationService.getReservationsByHost(id);
+            return ResponseEntity.ok(new ResponseDTO<>(false, reservations));
+        }catch (Exception e) {
             return ResponseEntity.status(404)
                     .body(new ResponseDTO<>(true, null, e.getMessage()));
         }
