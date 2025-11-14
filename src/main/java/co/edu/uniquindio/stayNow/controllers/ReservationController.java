@@ -34,36 +34,44 @@ public class ReservationController {
         return ResponseEntity.ok(new ResponseDTO<>(false, dto));
 
     }
-
     @GetMapping
     public ResponseEntity<ResponseDTO<Page<ReservationDTO>>> getReservationsUser(
             @RequestParam(required = false) String status,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime from, // Fecha de creación desde
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime to,   // Fecha de creación hasta
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime checkIn, // Fecha de entrada
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime checkOut, // Fecha de salida
+            @RequestParam(required = false) String from,
+            @RequestParam(required = false) String to,
+            @RequestParam(required = false) String checkIn,
+            @RequestParam(required = false) String checkOut,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) throws Exception {
 
-        // 1️⃣ Crear el objeto de paginación
         Pageable pageable = PageRequest.of(page, size);
 
-        // 2️⃣ Llamar al servicio con los filtros
-        Page<ReservationDTO> reservationPage = reservationService.getReservationsUser(
-                status,
-                from,
-                to,
-                checkIn,
-                checkOut,
-                pageable
-        );
+        LocalDateTime fromDate =
+                (from != null && !from.isBlank()) ? LocalDateTime.parse(from) : null;
 
-        // 3️⃣ Retornar la respuesta estandarizada
-        return ResponseEntity.ok(
-                new ResponseDTO<>(false, reservationPage)
-        );
+        LocalDateTime toDate =
+                (to != null && !to.isBlank()) ? LocalDateTime.parse(to) : null;
+
+        LocalDateTime checkInDate =
+                (checkIn != null && !checkIn.isBlank()) ? LocalDateTime.parse(checkIn) : null;
+
+        LocalDateTime checkOutDate =
+                (checkOut != null && !checkOut.isBlank()) ? LocalDateTime.parse(checkOut) : null;
+
+        Page<ReservationDTO> reservationPage =
+                reservationService.getReservationsUser(
+                        status,
+                        fromDate,
+                        toDate,
+                        checkInDate,
+                        checkOutDate,
+                        pageable
+                );
+
+        return ResponseEntity.ok(new ResponseDTO<>(false, reservationPage));
     }
+
     @GetMapping("/{id}")
     public ResponseEntity<ResponseDTO<ReservationDTO>> getReservationById(@PathVariable Long id) throws Exception {
         ReservationDTO dto = reservationService.getReservationById(id);
