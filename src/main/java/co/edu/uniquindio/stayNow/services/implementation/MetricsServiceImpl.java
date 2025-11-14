@@ -74,8 +74,7 @@ public class MetricsServiceImpl implements MetricsService {
         double averageRating = 0.0;
         if (!reviewsByAccommodation.isEmpty()) {
             averageRating = reviewsByAccommodation.stream()
-                    .mapToDouble(Review::getRate)
-                    .average()
+                    .mapToDouble(r -> r.getRating() != null ? r.getRating() : 0)                    .average()
                     .orElse(0.0);
         }
 

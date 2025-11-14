@@ -112,14 +112,16 @@ public class ReviewServiceImpl implements ReviewService {
 
     // Reply to a review. Only the host of the accommodation can reply.
     @Override
-    public ReplyDTO replyToReview(ReplyReviewDTO dto) throws Exception {
+    public ReplyDTO replyToReview(ReplyReviewDTO dto, String hostId) throws Exception {
         var review = reviewRepository.findById(dto.reviewId())
                 .orElseThrow(() -> new ReviewNotFoundException("Review not found"));
 
-        var host = userRepository.findById(review.getUser().getId())
+        // aquí obtenemos al host autenticado (el que quiere responder)
+        var host = userRepository.findById(hostId)
                 .orElseThrow(() -> new UserNotFoundException("Host not found"));
 
-        if (!review.getAccommodation().getHost().getId().equals(host.getId())) {
+        // validamos que el host es el dueño del alojamiento
+        if (!review.getAccommodation().getHost().getId().equals(hostId)) {
             throw new UnauthorizedActionException("Not authorized to reply to this review");
         }
 
@@ -131,7 +133,10 @@ public class ReviewServiceImpl implements ReviewService {
         reply.setMessage(dto.message());
         reply.setRepliedAt(LocalDateTime.now());
         reply.setReview(review);
+
         review.setReply(reply);
+
         return replyMapper.toDTO(replyRepository.save(reply));
     }
+
 }

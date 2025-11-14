@@ -18,5 +18,4 @@ public interface ReviewService {
 
     void deleteReview(Long reviewId, String userId) throws Exception;
 
-    ReplyDTO replyToReview(ReplyReviewDTO replyDTO) throws Exception;
-}
+    ReplyDTO replyToReview(ReplyReviewDTO dto, String hostId) throws Exception;}

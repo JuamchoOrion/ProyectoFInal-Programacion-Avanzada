@@ -51,10 +51,15 @@ public class ReviewController {
     }
 
     @PostMapping("/{reviewId}/reply")
-    public ResponseEntity<ResponseDTO<ReplyDTO>> replyToReview(@PathVariable Long reviewId,
-                                                  @Valid @RequestBody ReplyReviewDTO dto) throws Exception {
+    public ResponseEntity<ResponseDTO<ReplyDTO>> replyToReview(
+            @PathVariable Long reviewId,
+            @Valid @RequestBody ReplyReviewDTO dto) throws Exception {
+
         String hostId = authService.getUserID();
-        ReplyDTO reply = reviewService.replyToReview( dto);
+
+        // IMPORTANTE — pasar el hostId al service
+        ReplyDTO reply = reviewService.replyToReview(dto, hostId);
+
         return ResponseEntity.ok(new ResponseDTO<>(false, reply));
     }
 
