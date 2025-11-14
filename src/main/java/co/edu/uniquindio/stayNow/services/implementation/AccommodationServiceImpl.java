@@ -450,4 +450,24 @@ public AccommodationDTO create(CreateAccommodationDTO accommodationDTO) throws E
         return page.map(reservationMapper::toReservationDTO);
     }
 
+    @Override
+public List<AccommodationDTO> getAccommodationsByHostId(String hostId) throws Exception {
+    // 1️⃣ Verificar que el usuario existe
+    User host = userRepository.findById(hostId)
+            .orElseThrow(() -> new UserNotFoundException("Host not found"));
+
+    // 2️⃣ Verificar que el usuario es un host
+    if (host.getRole() != Role.HOST) {
+        throw new UnauthorizedActionException("User is not a host");
+    }
+
+    // 3️⃣ Buscar todos los alojamientos del host
+    List<Accommodation> accommodations = accommodationRepo.findByHostId(hostId);
+
+    // 4️⃣ Convertir a DTO
+    return accommodations.stream()
+            .map(accommodationMapper::toAccommodationDTO)
+            .collect(Collectors.toList());
+}
+
 }

@@ -34,6 +34,7 @@ public interface AccommodationService {
                                          List<String> status,
                                          Pageable pageable) throws Exception;
 
+    List<AccommodationDTO> getAccommodationsByHostId(String hostId) throws Exception;
 
 
 }

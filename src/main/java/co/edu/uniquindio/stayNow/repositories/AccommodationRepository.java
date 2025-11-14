@@ -15,4 +15,5 @@ import java.util.List;
 public interface AccommodationRepository extends JpaRepository<Accommodation, Long>, JpaSpecificationExecutor<Accommodation> {
 
     List<Accommodation> findAllByStatus(AccommodationStatus status);
+    List<Accommodation> findByHostId(String hostId);
 }
