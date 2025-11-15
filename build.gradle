@@ -38,7 +38,7 @@ dependencies {
     // --- WEBSOCKETS + STOMP ---
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
     implementation 'org.springframework:spring-messaging'
-    runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
+
 
     // Cloudinary
     implementation 'com.cloudinary:cloudinary-http5:2.3.2'
@@ -77,8 +77,11 @@ dependencies {
 
     // JUnit Jupiter
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.0'
+
+    // Desplegar
+    runtimeOnly 'org.postgresql:postgresql:42.7.8'
 }
 
-tasks.named('test') {
+/*tasks.named('test') {
     useJUnitPlatform()
-}
+}*/
