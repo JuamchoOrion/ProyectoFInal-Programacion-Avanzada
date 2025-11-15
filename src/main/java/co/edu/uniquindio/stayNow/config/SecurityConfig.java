@@ -69,7 +69,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
 
-        config.setAllowedOriginPatterns(List.of("http://localhost:4200"));
+        config.setAllowedOriginPatterns(List.of("http://localhost:4200", "https://proyecto-staynow.web.app"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         config.setAllowedHeaders(List.of("*")); // ✅ permite todos los headers
         config.setExposedHeaders(List.of("Authorization", "Content-Type", "Set-Cookie")); // ✅ deja ver cookies
