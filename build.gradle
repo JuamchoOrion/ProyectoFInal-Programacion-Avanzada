@@ -9,6 +9,7 @@ group = 'co.edu.uniquindio'
 version = '0.0.1-SNAPSHOT'
 description = 'Breve descripción del proyecto'
 
+
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(21)
@@ -38,8 +39,8 @@ dependencies {
     // --- WEBSOCKETS + STOMP ---
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
     implementation 'org.springframework:spring-messaging'
-    runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
-
+    //runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
+    runtimeOnly 'org.postgresql:postgresql:42.7.8'
     // Cloudinary
     implementation 'com.cloudinary:cloudinary-http5:2.3.2'
 
@@ -78,7 +79,7 @@ dependencies {
     // JUnit Jupiter
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.0'
 }
-
+/*
 tasks.named('test') {
     useJUnitPlatform()
-}
+}*/

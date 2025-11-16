@@ -53,7 +53,7 @@ public class AuthController {
                 .secure(false)           // true si usas HTTPS nota: cmabie a false para probar porqu epor ahora es http sin seguridad
                 .path("/")               // accesible en toda la app
                 .maxAge(24 * 60 * 60)    // 1 día
-                .sameSite("lax")         // o "Strict" / "None" (si usas HTTPS + CORS)
+                .sameSite("None")         // o "Strict" / "None" (si usas HTTPS + CORS)
                 .build();
 
         return ResponseEntity
