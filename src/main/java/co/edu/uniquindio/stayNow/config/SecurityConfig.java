@@ -65,23 +65,26 @@ public class SecurityConfig {
         return http.build();
     }
 
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration config = new CorsConfiguration();
+@Bean
+public CorsConfigurationSource corsConfigurationSource() {
+    CorsConfiguration config = new CorsConfiguration();
 
-        config.setAllowedOriginPatterns(List.of(        "http://localhost:4200",
-                "https://TU-PROYECTO.firebaseapp.com",
-                "https://TU-PROYECTO.web.app",
-                "https://proyectofinal-programacion-avanzada-production-5ceb.up.railway.app"));
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
-        config.setAllowedHeaders(List.of("*")); // ✅ permite todos los headers
-        config.setExposedHeaders(List.of("Authorization", "Content-Type", "Set-Cookie")); // ✅ deja ver cookies
-        config.setAllowCredentials(true);
+    config.setAllowedOriginPatterns(List.of(
+            "http://localhost:4200",
+            "https://staynowtravel.web.app",
+            "https://staynowtravel.firebaseapp.com",
+            "https://proyectofinal-programacion-avanzada-production-5ceb.up.railway.app"
+    ));
+    config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+    config.setAllowedHeaders(List.of("*"));
+    config.setExposedHeaders(List.of("Authorization", "Content-Type", "Set-Cookie"));
+    config.setAllowCredentials(true);
 
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", config);
-        return source;
-    }
+    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    source.registerCorsConfiguration("/**", config);
+    return source;
+}
+
 
 
     @Bean
