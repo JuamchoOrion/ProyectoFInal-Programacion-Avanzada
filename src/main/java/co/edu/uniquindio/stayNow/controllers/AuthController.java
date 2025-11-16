@@ -48,13 +48,13 @@ public class AuthController {
     public ResponseEntity<ResponseDTO<TokenDTO>> login(@RequestBody LoginRequestDTO loginDTO) throws Exception {
         TokenDTO token = authService.login(loginDTO);
         String tokenstr = token.token();
-        ResponseCookie cookie = ResponseCookie.from("jwt", tokenstr)
-                .httpOnly(true)
-                .secure(false)       // local frontend = http
-                .sameSite("None")     // permite enviar cookies a dominio HTTPS
-                .path("/")
-                .maxAge(24 * 60 * 60)
-                .build();
+ResponseCookie cookie = ResponseCookie.from("jwt", tokenstr)
+        .httpOnly(true)
+        .secure(true)   //  obligatorio para SameSite=None
+        .sameSite("None")
+        .path("/")
+        .maxAge(24 * 60 * 60)
+        .build();
 
 
         return ResponseEntity
