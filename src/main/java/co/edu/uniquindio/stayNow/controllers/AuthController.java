@@ -51,7 +51,7 @@ public class AuthController {
         ResponseCookie cookie = ResponseCookie.from("jwt", tokenstr)
                 .httpOnly(true)
                 .secure(false)       // local frontend = http
-                .sameSite("Lax")     // permite enviar cookies a dominio HTTPS
+                .sameSite("None")     // permite enviar cookies a dominio HTTPS
                 .path("/")
                 .maxAge(24 * 60 * 60)
                 .build();
