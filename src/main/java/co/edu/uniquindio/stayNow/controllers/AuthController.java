@@ -49,12 +49,13 @@ public class AuthController {
         TokenDTO token = authService.login(loginDTO);
         String tokenstr = token.token();
         ResponseCookie cookie = ResponseCookie.from("jwt", tokenstr)
-                .httpOnly(true)          // No accesible desde JS
-                .secure(false)           // true si usas HTTPS nota: cmabie a false para probar porqu epor ahora es http sin seguridad
-                .path("/")               // accesible en toda la app
-                .maxAge(24 * 60 * 60)    // 1 día
-                .sameSite("None")         // o "Strict" / "None" (si usas HTTPS + CORS)
+                .httpOnly(true)
+                .secure(false)       // local frontend = http
+                .sameSite("Lax")     // permite enviar cookies a dominio HTTPS
+                .path("/")
+                .maxAge(24 * 60 * 60)
                 .build();
+
 
         return ResponseEntity
                 .ok()

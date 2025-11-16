@@ -71,7 +71,8 @@ public class SecurityConfig {
 
         config.setAllowedOriginPatterns(List.of(        "http://localhost:4200",
                 "https://TU-PROYECTO.firebaseapp.com",
-                "https://TU-PROYECTO.web.app"));
+                "https://TU-PROYECTO.web.app",
+                "https://proyectofinal-programacion-avanzada-production-5ceb.up.railway.app"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         config.setAllowedHeaders(List.of("*")); // ✅ permite todos los headers
         config.setExposedHeaders(List.of("Authorization", "Content-Type", "Set-Cookie")); // ✅ deja ver cookies
